@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <link rel="stylesheet" href="">
+</head>
+<body>
+    <canvas width="500px" height="500px">
+        
+    </canvas>
+    <input type="file" name="" value="" placeholder="">
+    <!-- <button type="button" id="openroom" class="add">選擇檔案</button>     -->
+    <button type="button" class="add">音量+</button>
+    <button type="button" class="lost">音量-</button>
+    <button  type="button" id="join-room">Join Room</button>
+    <audio id='audio-container'></audio>
+</body>
+
+<script src="dist/RTCMultiConnection.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.webrtc-experiment.com:443/FileBufferReader.js"></script>
+<script src="https://cdn.webrtc-experiment.com/getMediaElement.js"></script>
+<script type="text/javascript" charset="utf-8">
+    // let ws = new WebSocket("ws://140.124.181.149:5000","http")
+    var connection = new RTCMultiConnection(); 
+    let fileInput = document.querySelector('input'),
+        add = document.querySelector('.add'), //音量+
+        lost = document.querySelector('.lost'), //音量-
+        audioCtx = new window.AudioContext, //创建环境
+        analyser = audioCtx.createAnalyser(), //analyser分析器
+        gainNode = audioCtx.createGain(), //控制音量大小
+        recorder = audioCtx.createScriptProcessor(1024, 2, 2), //缓冲区音频处理模块
+        canvas = document.querySelector('canvas'),
+        canvasCtx = canvas.getContext('2d');
+
+    // document.getElementById('openroom').onclick = function(){
+    //     var selector = new FileSelector();
+    //     selector.accept = '*.webm'; 
+    //     selector.selectSingleFile(function(file) {
+    //                 if(file.name.search(/.webm|.mp3/g) === -1) {
+    //                     // document.getElementById('open-room').disabled = false;
+    //                     // document.getElementById('join-room').disabled = false;
+    //                     // document.getElementById('room-id').disabled = false;
+    //                     alert('Please select either WebM or Mp3 file.');
+    //                     return;
+    //                 }
+    //                 var audio = document.createElement('audio');
+    //                 audio.loop = true;
+    //                 audio.src = URL.createObjectURL(file);
+    //                 audio.play();
+    //                 try{
+    //                     connection.preRecorededStream = video.captureStream();
+    //                 }catch(e){
+    //                     connection.preRecorededStream = null;
+    //                 }
+    //                 var stream = new MediaStream();
+    //                     connection.preRecorededStream.getTracks().forEach(function(track) {
+    //                         stream.addTrack(track);
+    //                 });
+    //                 connection.attachStreams.push(stream);
+    //                     connection.onstream({
+    //                         userid: connection.userid,
+    //                         extra: connection.extra,
+    //                         type: 'local',
+    //                         stream: stream,
+    //                         mediaElement: audio
+    //                     });
+    //                     connection.open('test', function() {
+    //                         console.log('room open')
+    //                         // showRoomURL(connection.sessionid);
+    //                     });
+    //                 // setTimeout(function() {
+    //                 //     audio.play();
+    //                 //     try {
+    //                 //         // if('captureStream' in video) {
+    //                 //             // connection.preRecorededStream = video.captureStream();
+    //                 //         // }
+    //                 //         // else if('mozCaptureStream' in video) {
+    //                 //         //     connection.preRecorededStream = video.mozCaptureStream();
+    //                 //         // }
+    //                 //         // else if('webkitCaptureStream' in video) {
+    //                 //         //     connection.preRecorededStream = video.webkitCaptureStream();
+    //                 //         // }
+    //                 //     }
+    //                 //     catch(e) {
+    //                 //         connection.preRecorededStream = null;
+    //                 //     }
+    //                 //     // if(!connection.preRecorededStream) {
+    //                 //     //     oldBrowserDetected();
+    //                 //     //     return;
+    //                 //     // }
+    //                 //     var stream = new MediaStream();
+    //                 //     connection.preRecorededStream.getTracks().forEach(function(track) {
+    //                 //         stream.addTrack(track);
+    //                 //     });
+    //                 //     // attach pre-recorded steam
+    //                 //     connection.attachStreams.push(stream);
+    //                 //     connection.onstream({
+    //                 //         userid: connection.userid,
+    //                 //         extra: connection.extra,
+    //                 //         type: 'local',
+    //                 //         stream: stream,
+    //                 //         mediaElement: audio
+    //                 //     });
+    //                 //     connection.open('test', function() {
+    //                 //         // showRoomURL(connection.sessionid);
+    //                 //     });
+    //                 // }, 2000);
+    //             });
+    //         };
+        //     };
+        // };
+    fileInput.onchange = function(ev){
+        let file = ev.target.files[0]
+        console.log(file)
+        // fr = new FileReader();
+        
+        var audio = document.createElement('audio');
+                    audio.loop = true;
+                    // audio.src = ''
+        if(ev.target.files && file){
+            var reader = new FileReader();
+            reader.onload = function(e){
+                // $('aduio').attr('src',e.target.result)
+                $(audio).attr('src', e.target.result);
+                audio.play();
+            }
+            reader.readAsDataURL(file);
+        }
+        setTimeout(function(){
+            audio.play();
+
+            try{
+                //  console.log(audio)
+                connection.preRecorededStream = audio.captureStream();
+            }catch(e){
+                console.log(e)
+                connection.preRecorededStream = null;
+            }
+
+        var stream = new MediaStream();
+        connection.preRecorededStream.getTracks().forEach(function(track) {
+            stream.addTrack(track);
+        });
+        connection.attachStreams.push(stream);
+        // connection.onstream({
+        //     userid: connection.userid,
+        //     extra: connection.extra,
+        //     type: 'local',
+        //     stream: stream,
+        //     mediaElement: audio
+        // });
+        connection.open('test', function() {
+            alert('ROom has been created')
+            // showRoomURL(connection.sessionid);
+        });
+        },2000)
+       
+    };
+
+    document.getElementById('join-room').onclick = function() {
+        // disableInputButtons();
+        connection.join('87g5tndgvfn');
+    };
+
+    connection.dontCaptureUserMedia = true;
+    connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+    // connection.socketURL = 'http://140.124.181.149:9001/';    
+    connection.socketMessageEvent = 'pre-recorded-media-streaming-demo';
+    connection.session = {
+                audio: true,
+                // video: true,
+                oneway: true
+            };
+    connection.sdpConstraints.mandatory = {
+        OfferToReceiveAudio: true,
+        OfferToReceiveVideo: true
+    };
+    var audiocontainer = document.getElementById('audio-container')
+    connection.onstream = function(event) {
+        console.log(even.blobURL)
+        audiocontainer.src = event.blobURL;
+        audiocontainer.play();
+        // mediaElement.id = event.streamid;
+    };
+    //修改音量大小
+    add.onclick = function(){
+        gainNode.gain.value += 0.1;
+    };
+    lost.onclick = function(){
+        gainNode.gain.value -= 0.1;
+    }
+
+    function getBuffer(audioBuffer){
+        //创建对象，用过AudioBuffer对象来播放音频数据
+        let source  = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        //将source与analyser分析器连接
+        source.connect(analyser);
+        //将analyser与gainNode分析器连接
+        analyser.connect(gainNode);
+        //音量控制器与输出设备链接
+        gainNode.connect(recorder);
+        recorder.connect(audioCtx.destination);
+        //播放
+        source.start(0); 
+        draw(analyser);
+        //音频采集
+        recorder.onaudioprocess = function (e) {
+            /*输入流，必须要链接到输出流，audioCtx.destination才能有输出*/
+              let inputBuffer = e.inputBuffer, outputBuffer = e.outputBuffer;
+              let inputBufferTest = e.inputBuffer.getChannelData(0);
+              // console.log(inputBufferTest.buffer)
+              ws.send(inputBufferTest.buffer);
+                outputBuffer.copyToChannel(inputBuffer.getChannelData(0), 0, 0);
+                outputBuffer.copyToChannel(inputBuffer.getChannelData(1), 1, 0);
+        };
+    }
+    let WIDTH = 500, HEIGHT = 500;
+    //绘制波形图
+    function draw() {
+        requestAnimationFrame(draw);
+        //保存频率数据
+      let dataArray = new Uint8Array(analyser.fftSize),
+          bufferLength = analyser.fftSize;
+      //获取频域的输出信息 
+      analyser.getByteTimeDomainData(dataArray);
+      canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+      canvasCtx.fillRect(0, 0, 500, 500);
+
+      canvasCtx.lineWidth = 2;
+      canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+
+      canvasCtx.beginPath();
+
+      var sliceWidth = WIDTH * 1.0 / bufferLength;
+      var x = 0;
+
+      for(var i = 0; i < bufferLength; i++) {
+   
+        var v = dataArray[i] / 128.0;
+        var y = v * HEIGHT/2;
+
+        if(i === 0) {
+          canvasCtx.moveTo(x, y);
+        } else {
+          canvasCtx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+      }
+
+      canvasCtx.lineTo(canvas.width, canvas.height/2);
+      canvasCtx.stroke();
+    };
+</script>
+</html>
