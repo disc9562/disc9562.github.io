@@ -160,12 +160,17 @@
         },2000)
        
     };
-
+    document.onload = function(){
+        setTimeout(function(){
+            console.log('join')
+            connection.join('test');
+         },500)
+    }
+ 
     
     document.getElementById('join-room').onclick = function() {
         // disableInputButtons();
         console.log('join')
-        connection.join('test');
     };
 
     connection.dontCaptureUserMedia = true;
