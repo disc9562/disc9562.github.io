@@ -6,7 +6,7 @@
     <title></title>
     <link rel="stylesheet" href="">
 </head>
-<body>
+<body onload="">
     <canvas width="500px" height="500px">
         
     </canvas>
@@ -161,9 +161,10 @@
        
     };
 
-
-    document.onload = function() {
+    
+    document.getElementById('join-room').onclick = function() {
         // disableInputButtons();
+        console.log('join')
         connection.join('test');
     };
 
