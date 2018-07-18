@@ -160,13 +160,13 @@
         },2000)
        
     };
-    document.onload = function(){
+
+    document.addEventListener("DOMContentLoaded", function(){
         setTimeout(function(){
             console.log('join')
             connection.join('test');
-         },500)
-    }
- 
+         },500);
+    });
     
     document.getElementById('join-room').onclick = function() {
         // disableInputButtons();
