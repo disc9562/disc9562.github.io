@@ -1,55 +1,83 @@
 * { box-sizing: border-box; }
 html, body {
   margin: 0;
-  background: #f4efe6;
-  color: #1a1a1a;
-  font: 17px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #d9cbb6;
+  color: #1c1410;
+  font: 16px/1.45 "Iowan Old Style", Palatino, "Palatino Linotype", "Times New Roman", serif;
 }
 #app {
-  max-width: 480px;
+  max-width: 440px;
   margin: 0 auto;
-  padding: 10px 12px calc(24px + env(safe-area-inset-bottom));
+  min-height: 100vh;
+  background: #fffaf2;
+  padding: 16px 16px calc(28px + env(safe-area-inset-bottom));
+  box-shadow: 0 0 0 1px #c9b89a, 0 12px 40px rgba(70, 40, 10, .18);
 }
-button, select, input { font: inherit; color: inherit; }
-.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
-.name { font-size: 20px; font-weight: 700; }
-.muted { color: #555; font-size: 14px; }
+button, select, input {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: inherit;
+}
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.name { font-size: 26px; font-weight: 700; letter-spacing: .02em; }
+.muted { color: #6a5a4a; font-size: 13px; }
 h3 {
-  margin: 18px 0 8px;
-  font-size: 13px;
-  letter-spacing: .12em;
-  color: #7a1f1f;
-  border-bottom: 2px solid #7a1f1f;
+  margin: 22px 0 8px;
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #6e1c1c;
+  border-bottom: 2px solid #6e1c1c;
   padding-bottom: 4px;
 }
 .stats {
   display: grid;
-  grid-template-columns: 1fr 1.4fr 1fr;
+  grid-template-columns: 88px 1fr 88px;
   gap: 8px;
-  margin: 10px 0;
+  margin: 14px 0 8px;
 }
 .box {
   background: #fff;
-  border: 2px solid #222;
-  border-radius: 6px;
+  border: 2px solid #2a1f16;
+  border-radius: 4px;
   text-align: center;
   padding: 8px 6px;
+  box-shadow: inset 0 0 0 1px #ead9c0;
 }
-.box .lbl { font-size: 12px; color: #555; }
-.box .num { font-size: 28px; font-weight: 700; line-height: 1.1; }
-.hp-ctrl { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.box .lbl { font-size: 11px; letter-spacing: .08em; color: #6a5a4a; }
+.box .num { font-size: 28px; font-weight: 700; line-height: 1.15; font-family: inherit; }
+.hp-ctrl { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.hp-pair {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+  font-weight: 700;
+  font-size: 22px;
+}
+.hp-pair input {
+  width: 56px;
+  min-height: 36px;
+  border: 0;
+  border-bottom: 2px solid #2a1f16;
+  border-radius: 0;
+  background: transparent;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  padding: 0;
+}
 .mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .abi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.abi-card { padding: 8px 4px; }
-.abi-card .lbl { font-size: 13px; font-weight: 700; }
-.mod { font-size: 22px; font-weight: 700; margin: 2px 0; }
+.abi-card { padding: 10px 4px 8px; }
+.abi-card .lbl { font-size: 12px; font-weight: 700; letter-spacing: .06em; }
+.mod { font-size: 24px; font-weight: 700; margin: 4px 0 2px; }
 .skill-row, .save-row {
   display: grid;
-  grid-template-columns: 1fr 72px;
+  grid-template-columns: 1fr 70px;
   align-items: center;
   gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid #ddd;
+  padding: 7px 0;
+  border-bottom: 1px dotted #cbbba4;
 }
 .atk {
   display: grid;
@@ -59,54 +87,66 @@ h3 {
 }
 .big {
   width: 100%;
-  min-height: 48px;
+  min-height: 46px;
   margin: 6px 0;
   background: #fff;
-  border: 1px solid #222;
-  border-radius: 6px;
+  border: 1.5px solid #2a1f16;
+  border-radius: 4px;
   text-align: left;
-  padding: 10px 14px;
+  padding: 10px 12px;
 }
 .icon {
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 40px;
+  min-width: 40px;
   background: #fff;
-  border: 1px solid #222;
-  border-radius: 6px;
+  border: 1.5px solid #2a1f16;
+  border-radius: 4px;
 }
-.primary { background: #7a1f1f; color: #fff; border: 0; font-weight: 700; }
-.warn { background: #fde8e8; color: #7a1f1f; padding: 8px 12px; border-radius: 6px; margin: 8px 0; }
+.primary { background: #6e1c1c; color: #fff; border: 0; font-weight: 700; }
+.warn { background: #f8e6e0; color: #6e1c1c; padding: 8px 12px; border-radius: 4px; margin: 8px 0; }
 .slots { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
 .slot {
   background: #fff;
-  border: 1px solid #222;
-  border-radius: 6px;
+  border: 1.5px solid #2a1f16;
+  border-radius: 4px;
   padding: 8px 10px;
-  min-height: 44px;
+  min-height: 42px;
 }
 .row { display: flex; gap: 8px; align-items: center; }
 .grow { flex: 1; }
-label.field { display: block; margin: 10px 0 4px; color: #555; font-size: 14px; }
+label.field { display: block; margin: 10px 0 4px; color: #6a5a4a; font-size: 14px; }
 input, select {
   background: #fff;
-  border: 1px solid #222;
-  border-radius: 6px;
+  border: 1.5px solid #2a1f16;
+  border-radius: 4px;
   padding: 8px;
-  min-height: 44px;
+  min-height: 42px;
 }
 label.field input, label.field select, .abi input { width: 100%; }
 input.val {
-  width: 72px;
-  min-height: 40px;
+  width: 70px;
+  min-height: 38px;
   text-align: center;
   font-weight: 700;
   font-size: 18px;
+  background: #fffdf8;
 }
-input.val-sm { width: 100%; min-height: 36px; text-align: center; font-weight: 700; }
-.menu { background: #fff; border: 1px solid #222; border-radius: 6px; padding: 8px; margin-top: 8px; }
+input.val-sm {
+  width: 100%;
+  min-height: 34px;
+  text-align: center;
+  font-weight: 700;
+  border: 0;
+  border-bottom: 2px solid #2a1f16;
+  border-radius: 0;
+  background: transparent;
+  padding: 2px;
+}
+.menu { background: #fff; border: 1.5px solid #2a1f16; border-radius: 4px; padding: 8px; margin-top: 8px; }
 .menu button { width: 100%; text-align: left; }
 .abi { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .chk { display: flex; gap: 8px; align-items: flex-start; margin: 8px 0; }
 .chk input { width: auto; min-height: 22px; }
 .hidden { display: none; }
-.spell-text { font-size: 14px; color: #444; margin: 6px 0 0; }
+.spell-text { font-size: 14px; color: #3d3228; margin: 6px 0 0; }
+.hint { font-size: 12px; color: #6a5a4a; margin: 4px 0 0; }

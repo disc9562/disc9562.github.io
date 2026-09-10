@@ -187,13 +187,17 @@ function combatHtml(c) {
       <div class="box"><div class="lbl">AC</div>
         <input class="val-sm" data-act="ac" type="number" value="${c.ac}"></div>
       <div class="box">
-        <div class="lbl">生命</div>
+        <div class="lbl">生命　目前 / 上限</div>
         <div class="hp-ctrl">
           <button class="icon" data-act="hp" data-d="-1">−</button>
-          <div class="num">${c.hp.current}</div>
+          <div class="hp-pair">
+            <input data-act="hpcur" type="number" value="${c.hp.current}">
+            <span>/</span>
+            <input data-act="hpmax" type="number" value="${c.hp.max}">
+          </div>
           <button class="icon" data-act="hp" data-d="1">＋</button>
         </div>
-        <div class="muted">最大 <input class="val" data-act="hpmax" type="number" value="${c.hp.max}" style="width:64px;min-height:32px"></div>
+        <div class="hint">骰錯上限可直接改右邊數字</div>
       </div>
       <div class="box"><div class="lbl">速度</div>
         <input class="val-sm" data-act="speed" type="number" value="${c.speed}"></div>
@@ -209,7 +213,6 @@ function combatHtml(c) {
     <h3>豁免</h3>
     ${saveRows}
     <h3>技能</h3>
-    <p class="muted">自己填加值，跟紙本一樣。空白＝還沒寫。</p>
     ${skillRows}
     <h3>攻擊</h3>
     ${attacks}
@@ -453,10 +456,19 @@ el.addEventListener('change', e => {
   if (act === 'ac') { const c = current(); if (c) { c.ac = Number(t.value); persist(true) } }
   if (act === 'speed') { const c = current(); if (c) { c.speed = Number(t.value); persist(true) } }
   if (act === 'init') { const c = current(); if (c) { c.initiative = Number(t.value); persist(true) } }
+  if (act === 'hpcur') {
+    const c = current(); if (!c) return
+    const n = Number(t.value)
+    c.hp.current = Math.max(0, Math.min(c.hp.max, Number.isNaN(n) ? 0 : n))
+    persist(true)
+  }
   if (act === 'hpmax') {
     const c = current(); if (!c) return
-    c.hp.max = Number(t.value)
+    const n = Number(t.value)
+    c.hp.max = Number.isNaN(n) || n < 1 ? c.hp.max : n
     if (c.hp.current > c.hp.max) c.hp.current = c.hp.max
+    const cur = el.querySelector('[data-act="hpcur"]')
+    if (cur) cur.value = c.hp.current
     persist(true)
   }
   if (act === 'atkname') { const c = current(); if (c && c.attacks[t.dataset.i]) { c.attacks[t.dataset.i].name = t.value; persist(true) } }
