@@ -338,6 +338,22 @@ input.val-sm {
   color: #f7efe0;
   border-color: var(--rule);
 }
+.icon.is-lock {
+  background: var(--rule);
+  color: #f7efe0;
+  border-color: var(--rule);
+}
+.is-locked input:disabled,
+.is-locked select:disabled,
+.is-locked button:disabled {
+  opacity: 1;
+  color: inherit;
+  cursor: default;
+  background: transparent;
+  border-color: transparent;
+}
+.is-locked .lockable { display: none; }
+.is-locked .name-edit:disabled { border-bottom-color: transparent; }
 
 .sheet-grid { display: block; }
 

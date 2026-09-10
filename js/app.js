@@ -71,6 +71,7 @@ function render() {
   else if (view === 'levelup' || view === 'pending') el.innerHTML = levelHtml(c)
   else el.innerHTML = combatHtml(c)
   ;[...el.querySelectorAll('details')].forEach((d, i) => { if (opened[i]) d.open = true })
+  el.classList.toggle('is-locked', !!(c && c.locked && view === 'combat'))
 }
 
 function createHtml() {
@@ -107,32 +108,33 @@ function combatHtml(c) {
   const pending = (c.pendingChoices || []).length
   const skills = c.skills || {}
   const saveBonus = c.saveBonus || {}
+  const lock = c.locked ? ' disabled' : ''
   const abiCards = Object.keys(ABI_NAME).map(k => {
     const m = Rules.abilityMod(c.abilities[k])
     return `<div class="abi-card">
       <div class="lbl">${esc(ABI_NAME[k])}</div>
       <div class="mod-ring" data-mod="${k}">${m >= 0 ? '+' : ''}${m}</div>
-      <input class="val-sm" data-act="abival" data-k="${k}" type="number" value="${c.abilities[k]}">
+      <input class="val-sm" data-act="abival" data-k="${k}" type="number" value="${c.abilities[k]}"${lock}>
     </div>`
   }).join('')
   const saveRows = Object.keys(ABI_NAME).map(k =>
     `<div class="save-row"><span>${esc(ABI_NAME[k])}</span>
-      <input class="val" data-act="saveval" data-k="${k}" type="number" value="${esc(fieldVal(saveBonus, k))}" placeholder="—"></div>`
+      <input class="val" data-act="saveval" data-k="${k}" type="number" value="${esc(fieldVal(saveBonus, k))}" placeholder="—"${lock}></div>`
   ).join('')
   const skillRows = SKILLS.map(s =>
     `<div class="skill-row"><span>${esc(s.name)} <span class="muted">${esc(ABI_NAME[s.abi])}</span></span>
-      <input class="val" data-act="skillval" data-id="${s.id}" type="number" value="${esc(fieldVal(skills, s.id))}" placeholder="—"></div>`
+      <input class="val" data-act="skillval" data-id="${s.id}" type="number" value="${esc(fieldVal(skills, s.id))}" placeholder="—"${lock}></div>`
   ).join('')
   const attacks = `<div class="atk muted"><span>名稱</span><span>命中</span><span>傷害</span><span></span></div>` +
     (c.attacks || []).map((a, i) =>
       `<div class="atk">
-        <input data-act="atkname" data-i="${i}" value="${esc(a.name)}">
-        <input class="val" data-act="atkbonus" data-i="${i}" type="number" value="${a.bonus}">
-        <input data-act="atkdmg" data-i="${i}" value="${esc(a.damage)}">
-        <button class="icon" data-act="delatk" data-i="${i}">×</button>
+        <input data-act="atkname" data-i="${i}" value="${esc(a.name)}"${lock}>
+        <input class="val" data-act="atkbonus" data-i="${i}" type="number" value="${a.bonus}"${lock}>
+        <input data-act="atkdmg" data-i="${i}" value="${esc(a.damage)}"${lock}>
+        <button class="icon lockable" data-act="delatk" data-i="${i}"${lock}>×</button>
       </div>`
     ).join('') +
-    `<button class="big" data-act="addatk">＋攻擊</button>`
+    `<button class="big lockable" data-act="addatk"${lock}>＋攻擊</button>`
   const spells = (c.spells || []).map(id => {
     const s = data.spells[id]
     if (!s) return ''
@@ -140,18 +142,18 @@ function combatHtml(c) {
     return `<div class="spell-line">
       <button class="big grow" data-act="togglespell" data-id="${esc(id)}">${esc(s.name)} <span class="muted">${s.level === 0 ? '戲法' : s.level + '環'}</span>
         ${open ? `<p class="spell-text">${esc(s.text)}</p>` : ''}</button>
-      <button class="icon" data-act="delspell" data-id="${esc(id)}">×</button>
+      <button class="icon lockable" data-act="delspell" data-id="${esc(id)}"${lock}>×</button>
     </div>`
   }).join('')
-  const spellAdd = `<select data-act="addspell"><option value="">＋加入法術</option>${Object.keys(data.spells).filter(id => (c.spells || []).indexOf(id) < 0).map(id => {
+  const spellAdd = `<select class="lockable" data-act="addspell"${lock}><option value="">＋加入法術</option>${Object.keys(data.spells).filter(id => (c.spells || []).indexOf(id) < 0).map(id => {
     const s = data.spells[id]
     return `<option value="${esc(id)}">${esc(s.name)}（${s.level === 0 ? '戲法' : s.level + '環'}）</option>`
   }).join('')}</select>`
   const featChips = (c.feats || []).map(id => {
     const f = data.feats[id]
-    return `<div class="chip">${esc(f ? f.name : id)}<button class="icon" data-act="delfeat" data-id="${esc(id)}">×</button></div>`
+    return `<div class="chip">${esc(f ? f.name : id)}<button class="icon lockable" data-act="delfeat" data-id="${esc(id)}"${lock}>×</button></div>`
   }).join('')
-  const featAdd = `<select data-act="addfeat"><option value="">＋專長</option>${Object.keys(data.feats).filter(id => (c.feats || []).indexOf(id) < 0).map(id =>
+  const featAdd = `<select class="lockable" data-act="addfeat"${lock}><option value="">＋專長</option>${Object.keys(data.feats).filter(id => (c.feats || []).indexOf(id) < 0).map(id =>
     `<option value="${esc(id)}">${esc(data.feats[id].name)}</option>`).join('')}</select>`
   const subOpts = `<option value="">（未選／重選）</option>` + (cls.subclasses || []).map(s =>
     `<option value="${esc(s.id)}" ${c.subclass === s.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')
@@ -190,10 +192,11 @@ function combatHtml(c) {
     <p class="mast">冒險者紀錄</p>
     <div class="top">
       <div>
-        <input class="name-edit" data-act="name" value="${esc(c.name)}">
-        <div class="kicker">${esc(raceName(c.race))}　${esc(className(c.class))} ${c.level}</div>
+        <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
+        <div class="kicker">${esc(raceName(c.race))}　${esc(className(c.class))} ${c.level}${c.locked ? '　已鎖定' : ''}</div>
       </div>
       <div class="row">
+        <button class="icon${c.locked ? ' is-lock' : ''}" data-act="lock">${c.locked ? '鎖' : '開'}</button>
         <button class="icon" data-act="levelup">升級</button>
         <button class="icon" data-act="menu">⋯</button>
       </div>
@@ -203,12 +206,12 @@ function combatHtml(c) {
     ${menu}
     <div class="ident">
       <label class="field">副職業
-        <select data-act="subclass">${subOpts}</select>
+        <select data-act="subclass"${lock}>${subOpts}</select>
       </label>
     </div>
     <div class="stats">
       <div class="box"><div class="lbl">AC</div>
-        <input class="val-sm" data-act="ac" type="number" value="${c.ac}"></div>
+        <input class="val-sm" data-act="ac" type="number" value="${c.ac}"${lock}></div>
       <div class="box">
         <div class="lbl">生命　目前 / 上限</div>
         <div class="hp-ctrl">
@@ -216,18 +219,18 @@ function combatHtml(c) {
           <div class="hp-pair">
             <input data-act="hpcur" type="number" value="${c.hp.current}">
             <span>/</span>
-            <input data-act="hpmax" type="number" value="${c.hp.max}">
+            <input data-act="hpmax" type="number" value="${c.hp.max}"${lock}>
           </div>
           <button class="icon" data-act="hp" data-d="1">＋</button>
         </div>
         <div class="hint">骰錯上限可直接改右邊數字</div>
       </div>
       <div class="box"><div class="lbl">速度</div>
-        <input class="val-sm" data-act="speed" type="number" value="${c.speed}"></div>
+        <input class="val-sm" data-act="speed" type="number" value="${c.speed}"${lock}></div>
     </div>
     <div class="mini">
       <div class="box"><div class="lbl">先攻</div>
-        <input class="val-sm" data-act="init" type="number" value="${c.initiative}"></div>
+        <input class="val-sm" data-act="init" type="number" value="${c.initiative}"${lock}></div>
       <div class="box"><div class="lbl">熟練</div><div class="num">+${c.proficiency}</div></div>
     </div>
     ${death}
@@ -317,6 +320,12 @@ el.addEventListener('click', e => {
   const c = current()
   banner = ''
   if (act === 'menu') { menuOpen = !menuOpen; render(); return }
+  if (act === 'lock') {
+    const next = JSON.parse(JSON.stringify(c))
+    next.locked = !c.locked
+    replace(next)
+    return
+  }
   if (act === 'new') { view = 'create'; menuOpen = false; render(); return }
   if (act === 'back') { view = current() ? 'combat' : 'create'; render(); return }
   if (act === 'create') {
@@ -369,6 +378,7 @@ el.addEventListener('click', e => {
     a.click()
     return
   }
+  if (c && c.locked && ['addatk', 'delatk', 'delspell', 'delfeat'].indexOf(act) >= 0) return
   if (act === 'addatk') {
     const next = JSON.parse(JSON.stringify(c))
     next.attacks = (next.attacks || []).concat([{ name: '新攻擊', bonus: 0, damage: '1d6' }])
