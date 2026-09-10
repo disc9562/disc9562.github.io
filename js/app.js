@@ -33,6 +33,7 @@ let pickSpells = []
 let pickFeat = ''
 let pickAsi = ['str', 'str']
 let openSpell = ''
+let openFeat = ''
 let hpRoll = ''
 
 function esc(s) {
@@ -113,6 +114,11 @@ function fieldVal(obj, k) {
 function combatHtml(c) {
   const cls = data.classes[c.class] || {}
   const pending = (c.pendingChoices || []).length
+  const freshSlots = Rules.slotsFor(Rules.casterOf(cls, c.subclass), c.level)
+  if (Object.keys(freshSlots).length && (!c.spellSlots || !Object.keys(c.spellSlots).length)) {
+    c.spellSlots = freshSlots
+    persist(true)
+  }
   const skills = c.skills || {}
   const saveBonus = c.saveBonus || {}
   const lock = c.locked ? ' disabled' : ''
@@ -158,7 +164,12 @@ function combatHtml(c) {
   }).join('')}</select>`
   const featChips = (c.feats || []).map(id => {
     const f = data.feats[id]
-    return `<div class="chip">${esc(f ? f.name : id)}<button class="icon lockable" data-act="delfeat" data-id="${esc(id)}"${lock}>×</button></div>`
+    const open = openFeat === id
+    return `<div class="spell-line">
+      <button class="big grow" data-act="togglefeat" data-id="${esc(id)}">${esc(f ? f.name : id)}
+        ${open && f && f.text ? `<p class="spell-text">${esc(f.text)}</p>` : ''}</button>
+      <button class="icon lockable" data-act="delfeat" data-id="${esc(id)}"${lock}>×</button>
+    </div>`
   }).join('')
   const featAdd = `<select class="lockable" data-act="addfeat"${lock}><option value="">＋專長</option>${Object.keys(data.feats).filter(id => (c.feats || []).indexOf(id) < 0).map(id =>
     `<option value="${esc(id)}">${esc(data.feats[id].name)}</option>`).join('')}</select>`
@@ -257,6 +268,9 @@ function combatHtml(c) {
       <div class="box"><div class="lbl">熟練</div><div class="num">+${c.proficiency}</div></div>
     </div>
     ${death}
+    <h3>法術環</h3>
+    ${slotRows || '<p class="muted">還沒有法術環</p>'}
+    <button class="big lockable" data-act="addcircle"${lock}>＋法術環</button>
     <div class="sheet-grid">
       <div>
         <h3>能力</h3>
@@ -270,12 +284,11 @@ function combatHtml(c) {
         <h3>攻擊</h3>
         ${attacks}
         ${res ? `<h3>資源</h3><div class="slots">${res}</div>` : ''}
-        ${slotRows ? `<h3>法術環</h3>${slotRows}` : ''}
         <h3>法術</h3>
         ${spells}
         ${spellAdd}
         <h3>專長</h3>
-        <div class="chips">${featChips}</div>
+        ${featChips || '<p class="muted">點專長看效果</p>'}
         ${featAdd}
         <h3>背包</h3>
         ${gearRows}
@@ -404,6 +417,7 @@ el.addEventListener('click', e => {
     return
   }
   if (act === 'togglespell') { openSpell = openSpell === btn.dataset.id ? '' : btn.dataset.id; render(); return }
+  if (act === 'togglefeat') { openFeat = openFeat === btn.dataset.id ? '' : btn.dataset.id; render(); return }
   if (act === 'long') { menuOpen = false; replace(Rules.longRest(c)); return }
   if (act === 'short') { menuOpen = false; replace(Rules.shortRest(c)); return }
   if (act === 'export') {
@@ -414,7 +428,13 @@ el.addEventListener('click', e => {
     a.click()
     return
   }
-  if (c && c.locked && ['addatk', 'delatk', 'delspell', 'delfeat', 'addgear', 'delgear'].indexOf(act) >= 0) return
+  if (c && c.locked && ['addatk', 'delatk', 'delspell', 'delfeat', 'addgear', 'delgear', 'addcircle'].indexOf(act) >= 0) return
+  if (act === 'addcircle') {
+    const keys = Object.keys((c.spellSlots || {})).map(Number).filter(n => !Number.isNaN(n))
+    const nextK = keys.length ? Math.max.apply(null, keys) + 1 : 1
+    replace(Rules.setSlotMax(c, nextK, 1))
+    return
+  }
   if (act === 'addgear') {
     const next = JSON.parse(JSON.stringify(c))
     next.gear = (next.gear || []).concat([{ name: '新物品', qty: 1 }])
