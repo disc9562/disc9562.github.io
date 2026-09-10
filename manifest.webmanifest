@@ -3,7 +3,7 @@
   "short_name": "角色卡",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f4efe6",
-  "theme_color": "#f4efe6",
+  "background_color": "#efe4cc",
+  "theme_color": "#efe4cc",
   "lang": "zh-Hant"
 }

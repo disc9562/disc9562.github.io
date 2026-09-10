@@ -83,6 +83,7 @@ function createHtml() {
       <input data-act="abi" data-k="${k}" type="number" min="1" max="20" value="10">
     </label>`).join('')
   return `
+    <p class="mast">冒險者紀錄</p>
     <h2>建角</h2>
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
     <label class="field">名字 <input id="f-name" placeholder="角色名"></label>
@@ -108,10 +109,13 @@ function combatHtml(c) {
   const saveBonus = c.saveBonus || {}
   const abiCards = Object.keys(ABI_NAME).map(k => {
     const m = Rules.abilityMod(c.abilities[k])
-    return `<div class="box abi-card">
-      <div class="lbl">${esc(ABI_NAME[k])}</div>
-      <input class="val-sm" data-act="abival" data-k="${k}" type="number" value="${c.abilities[k]}">
-      <div class="mod" data-mod="${k}">${m >= 0 ? '+' : ''}${m}</div>
+    return `<div class="seal">
+      <svg class="seal-svg" viewBox="0 0 100 110" aria-hidden="true"><polygon points="50,4 96,28 96,82 50,106 4,82 4,28" fill="#fffaf1" stroke="#24160f" stroke-width="2.4"/></svg>
+      <div class="seal-inner">
+        <div class="lbl">${esc(ABI_NAME[k])}</div>
+        <div class="mod" data-mod="${k}">${m >= 0 ? '+' : ''}${m}</div>
+        <input class="val-sm" data-act="abival" data-k="${k}" type="number" value="${c.abilities[k]}">
+      </div>
     </div>`
   }).join('')
   const saveRows = Object.keys(ABI_NAME).map(k =>
@@ -156,7 +160,7 @@ function combatHtml(c) {
   ).join('')
   const condPick = CONDITIONS.map(n => {
     const on = cond.indexOf(n) >= 0
-    return `<button class="slot" data-act="cond" data-n="${esc(n)}">${on ? '✓ ' : ''}${esc(n)}</button>`
+    return `<button class="slot${on ? ' cond-on' : ''}" data-act="cond" data-n="${esc(n)}">${esc(n)}</button>`
   }).join('')
   const menu = menuOpen ? `
     <div class="menu">
@@ -170,10 +174,11 @@ function combatHtml(c) {
       <label class="big" style="display:block">匯入<input id="import" type="file" accept="application/json" class="hidden"></label>
     </div>` : ''
   return `
+    <p class="mast">冒險者紀錄</p>
     <div class="top">
       <div>
         <div class="name">${esc(c.name)}</div>
-        <div class="muted">${esc(raceName(c.race))}　${esc(className(c.class))} ${c.level}</div>
+        <div class="kicker">${esc(raceName(c.race))}　${esc(className(c.class))} ${c.level}</div>
       </div>
       <div class="row">
         <button class="icon" data-act="levelup">升級</button>
@@ -263,6 +268,7 @@ function levelHtml(c) {
     return `<label class="chk"><input type="checkbox" data-act="check" data-id="${esc(it.id)}" ${on ? 'checked' : ''}>${esc(label)}</label>${extra}`
   }).join('')
   return `
+    <p class="mast">冒險者紀錄</p>
     <div class="top">
       <button class="icon" data-act="back">返回</button>
       <div>${esc(c.name)} · ${view === 'pending' ? '未選項目' : className(c.class) + ' ' + c.level + ' → ' + (c.level + 1)}</div>
