@@ -34,7 +34,29 @@ let pickFeat = ''
 let pickAsi = ['str', 'str']
 let openSpell = ''
 let openFeat = ''
+let openClassFeat = ''
 let hpRoll = ''
+let ruleset = '2014'
+
+function packFor(year) {
+  const y = year || '2014'
+  if (y === '2024') {
+    return {
+      races: data.races2024 || data.races,
+      classes: data.classes2024 || data.classes,
+      spells: data.spells,
+      feats: data.feats,
+      features: data.features || {}
+    }
+  }
+  return {
+    races: data.races,
+    classes: data.classes,
+    spells: data.spells,
+    feats: data.feats,
+    features: data.features || {}
+  }
+}
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
@@ -65,11 +87,13 @@ function replace(next) {
   persist()
 }
 
-function raceName(id) {
-  return (data.races[id] && data.races[id].name) || id
+function raceName(id, year) {
+  const p = packFor(year)
+  return (p.races[id] && p.races[id].name) || id
 }
-function className(id) {
-  return (data.classes[id] && data.classes[id].name) || id
+function className(id, year) {
+  const p = packFor(year)
+  return (p.classes[id] && p.classes[id].name) || id
 }
 
 function render() {
@@ -83,10 +107,11 @@ function render() {
 }
 
 function createHtml() {
-  const races = Object.keys(data.races).map(id =>
-    `<option value="${esc(id)}">${esc(data.races[id].name)}</option>`).join('')
-  const classes = Object.keys(data.classes).map(id =>
-    `<option value="${esc(id)}">${esc(data.classes[id].name)}</option>`).join('')
+  const pack = packFor(ruleset)
+  const races = Object.keys(pack.races).map(id =>
+    `<option value="${esc(id)}">${esc(pack.races[id].name)}</option>`).join('')
+  const classes = Object.keys(pack.classes).map(id =>
+    `<option value="${esc(id)}">${esc(pack.classes[id].name)}</option>`).join('')
   const abis = Object.keys(ABI_NAME).map(k =>
     `<label class="field">${esc(ABI_NAME[k])}
       <input data-act="abi" data-k="${k}" type="number" min="1" max="20" value="10">
@@ -95,11 +120,17 @@ function createHtml() {
     <p class="mast">冒險者紀錄</p>
     <h2>建角</h2>
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
+    <label class="field">規則
+      <select data-act="ruleset">
+        <option value="2014" ${ruleset === '2014' ? 'selected' : ''}>2014 PHB</option>
+        <option value="2024" ${ruleset === '2024' ? 'selected' : ''}>2024 PHB</option>
+      </select>
+    </label>
     <label class="field">名字 <input id="f-name" placeholder="角色名"></label>
-    <label class="field">種族 <select id="f-race">${races}</select></label>
+    <label class="field">${ruleset === '2024' ? '物種' : '種族'} <select id="f-race">${races}</select></label>
     <label class="field">職業 <select id="f-class">${classes}</select></label>
     <label class="field">等級 <input id="f-level" type="number" min="1" max="20" value="1"></label>
-    <p class="muted">六項是加種族前的數字</p>
+    <p class="muted">${ruleset === '2024' ? '六項填最終分數（2024 種族不加點）' : '六項是加種族前的數字'}</p>
     <div class="abi">${abis}</div>
     <label class="field">最大生命（1 級留空＝骰面最大＋體質） <input id="f-hpmax" type="number" min="1" placeholder="1 級可留空"></label>
     <button class="big primary" data-act="create">建立</button>
@@ -112,9 +143,10 @@ function fieldVal(obj, k) {
 }
 
 function combatHtml(c) {
-  const cls = data.classes[c.class] || {}
+  const pack = packFor(c.ruleset || '2014')
+  const cls = pack.classes[c.class] || {}
   const pending = (c.pendingChoices || []).length
-  const synced = Rules.syncSpellSlots(c, data)
+  const synced = Rules.syncSpellSlots(c, pack)
   if (synced !== c) {
     c.spellSlots = synced.spellSlots
     persist(true)
@@ -214,7 +246,7 @@ function combatHtml(c) {
   const menu = menuOpen ? `
     <div class="menu">
       ${(state.characters).map(x =>
-        `<button class="big" data-act="switch" data-id="${esc(x.id)}">${esc(x.name)}　${esc(className(x.class))} ${x.level}${x.id === c.id ? ' ←' : ''}</button>`
+        `<button class="big" data-act="switch" data-id="${esc(x.id)}">${esc(x.name)}　${esc(className(x.class, x.ruleset))} ${x.level}${x.id === c.id ? ' ←' : ''}</button>`
       ).join('')}
       <button class="big" data-act="new">新增角色</button>
       <button class="big" data-act="short">短休</button>
@@ -227,7 +259,7 @@ function combatHtml(c) {
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
-        <div class="kicker">${esc(raceName(c.race))}　${esc(className(c.class))} ${c.level}${c.locked ? '　已鎖定' : ''}</div>
+        <div class="kicker">${esc(raceName(c.race, c.ruleset))}　${esc(className(c.class, c.ruleset))} ${c.level}　${c.ruleset === '2024' ? '2024' : '2014'}${c.locked ? '　已鎖定' : ''}</div>
       </div>
       <div class="row">
         <button class="icon${c.locked ? ' is-lock' : ''}" data-act="lock" aria-label="${c.locked ? '解鎖' : '鎖定'}">${lockIcon(!!c.locked)}</button>
@@ -267,6 +299,11 @@ function combatHtml(c) {
         <input class="val-sm" data-act="init" type="number" value="${c.initiative}"${lock}></div>
       <div class="box"><div class="lbl">熟練</div><div class="num">+${c.proficiency}</div></div>
     </div>
+    ${cls.caster && cls.caster !== 'none' ? `<div class="mini">
+      <div class="box"><div class="lbl">法術DC</div><div class="num">${Rules.spellSaveDC(c, cls)}</div></div>
+      <div class="box"><div class="lbl">法術攻擊</div><div class="num">${Rules.spellAttack(c, cls) >= 0 ? '+' : ''}${Rules.spellAttack(c, cls)}</div></div>
+    </div>` : ''}
+    <button class="slot${c.concentrating ? ' cond-on' : ''}" data-act="conc">專注${c.concentrating ? '中' : ''}</button>
     ${death}
     <h3>法術環</h3>
     ${slotRows || '<p class="muted">還沒有法術環</p>'}
@@ -279,6 +316,13 @@ function combatHtml(c) {
         ${saveRows}
         <h3>技能</h3>
         ${skillRows}
+        <h3>職業特性</h3>
+        ${(pack.features[c.class] || []).filter(f => f.level <= c.level).map(f => {
+          const id = f.level + '-' + f.name
+          const open = openClassFeat === id
+          return `<button class="big" data-act="toggleclassfeat" data-id="${esc(id)}">${esc(f.name)} <span class="muted">${f.level}級</span>
+            ${open ? `<p class="spell-text">${esc(f.text)}</p>` : ''}</button>`
+        }).join('') || '<p class="muted">沒有特性資料</p>'}
       </div>
       <div>
         <h3>攻擊</h3>
@@ -290,6 +334,12 @@ function combatHtml(c) {
         <h3>專長</h3>
         ${featChips || '<p class="muted">點專長看效果</p>'}
         ${featAdd}
+        <h3>錢幣</h3>
+        <div class="money">
+          <label>GP <input class="val" data-act="gp" type="number" value="${(c.money && c.money.gp) || 0}"${lock}></label>
+          <label>SP <input class="val" data-act="sp" type="number" value="${(c.money && c.money.sp) || 0}"${lock}></label>
+          <label>CP <input class="val" data-act="cp" type="number" value="${(c.money && c.money.cp) || 0}"${lock}></label>
+        </div>
         <h3>背包</h3>
         ${gearRows}
         <button class="big lockable" data-act="addgear"${lock}>＋物品</button>
@@ -301,9 +351,10 @@ function combatHtml(c) {
 }
 
 function levelHtml(c) {
-  const items = view === 'pending' ? (c.pendingChoices || []) : Rules.checklistFor(c, data)
+  const pack = packFor(c.ruleset || '2014')
+  const items = view === 'pending' ? (c.pendingChoices || []) : Rules.checklistFor(c, pack)
   const missing = items.some(x => x.type === 'missing')
-  const cls = data.classes[c.class] || { subclasses: [], spellPicks: {} }
+  const cls = pack.classes[c.class] || { subclasses: [], spellPicks: {} }
   const boxes = items.map(it => {
     const on = checkedIds.indexOf(it.id) >= 0
     let extra = ''
@@ -342,7 +393,7 @@ function levelHtml(c) {
     <p class="mast">冒險者紀錄</p>
     <div class="top">
       <button class="icon" data-act="back">返回</button>
-      <div>${esc(c.name)} · ${view === 'pending' ? '未選項目' : className(c.class) + ' ' + c.level + ' → ' + (c.level + 1)}</div>
+      <div>${esc(c.name)} · ${view === 'pending' ? '未選項目' : className(c.class, c.ruleset) + ' ' + c.level + ' → ' + (c.level + 1)}</div>
     </div>
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
     ${boxes || '<p class="muted">沒有要選的</p>'}
@@ -380,8 +431,9 @@ el.addEventListener('click', e => {
     if (level > 1 && hpMax == null) { banner = '等級大於 1 請填最大生命（骰＋體質加總）'; render(); return }
     const ch = Rules.createCharacter({
       name: name.trim(), race, class: classId, level, abilities,
-      hpMax: hpMax == null ? undefined : hpMax
-    }, data)
+      hpMax: hpMax == null ? undefined : hpMax,
+      ruleset
+    }, packFor(ruleset))
     state.characters.push(ch)
     state.currentId = ch.id
     view = 'combat'
@@ -406,8 +458,8 @@ el.addEventListener('click', e => {
     if (r.ok) replace(r.character)
     return
   }
-  if (act === 'levelup') { view = 'levelup'; checkedIds = []; pickSpells = []; hpRoll = ''; pickSubclass = ((data.classes[c.class] || {}).subclasses || [])[0] && data.classes[c.class].subclasses[0].id || ''; menuOpen = false; render(); return }
-  if (act === 'pending') { view = 'pending'; checkedIds = (c.pendingChoices || []).map(x => x.id); pickSpells = []; pickSubclass = ((data.classes[c.class] || {}).subclasses || [])[0] && data.classes[c.class].subclasses[0].id || ''; render(); return }
+  if (act === 'levelup') { view = 'levelup'; checkedIds = []; pickSpells = []; hpRoll = ''; pickSubclass = ((packFor(c.ruleset).classes[c.class] || {}).subclasses || [])[0] && packFor(c.ruleset).classes[c.class].subclasses[0].id || ''; menuOpen = false; render(); return }
+  if (act === 'pending') { view = 'pending'; checkedIds = (c.pendingChoices || []).map(x => x.id); pickSpells = []; pickSubclass = ((packFor(c.ruleset).classes[c.class] || {}).subclasses || [])[0] && packFor(c.ruleset).classes[c.class].subclasses[0].id || ''; render(); return }
   if (act === 'check') {
     const id = btn.dataset.id
     const i = checkedIds.indexOf(id)
@@ -418,6 +470,13 @@ el.addEventListener('click', e => {
   }
   if (act === 'togglespell') { openSpell = openSpell === btn.dataset.id ? '' : btn.dataset.id; render(); return }
   if (act === 'togglefeat') { openFeat = openFeat === btn.dataset.id ? '' : btn.dataset.id; render(); return }
+  if (act === 'toggleclassfeat') { openClassFeat = openClassFeat === btn.dataset.id ? '' : btn.dataset.id; render(); return }
+  if (act === 'conc') {
+    const next = JSON.parse(JSON.stringify(c))
+    next.concentrating = !c.concentrating
+    replace(next)
+    return
+  }
   if (act === 'long') { menuOpen = false; replace(Rules.longRest(c)); return }
   if (act === 'short') { menuOpen = false; replace(Rules.shortRest(c)); return }
   if (act === 'export') {
@@ -461,7 +520,7 @@ el.addEventListener('click', e => {
     return
   }
   if (act === 'delspell') {
-    replace(Rules.removeSpell(c, btn.dataset.id, data))
+    replace(Rules.removeSpell(c, btn.dataset.id, packFor(c.ruleset)))
     return
   }
   if (act === 'delfeat') {
@@ -500,7 +559,8 @@ el.addEventListener('click', e => {
   }
   if (act === 'apply') {
     const next = JSON.parse(JSON.stringify(c))
-    const items = view === 'pending' ? (next.pendingChoices || []) : Rules.checklistFor(c, data)
+    const pack = packFor(c.ruleset || '2014')
+    const items = view === 'pending' ? (next.pendingChoices || []) : Rules.checklistFor(c, pack)
     const on = id => checkedIds.indexOf(id) >= 0
     if (items.some(it => it.type === 'subclass' && on(it.id)) && pickSubclass) next.subclass = pickSubclass
     if (items.some(it => it.type === 'spells' && on(it.id)) && pickSpells.length) {
@@ -513,7 +573,7 @@ el.addEventListener('click', e => {
         next.abilities[pickAsi[1]] += 1
       }
     }
-    const cls = data.classes[next.class]
+    const cls = pack.classes[next.class]
     const caster = Rules.casterOf(cls, next.subclass)
     const fresh = Rules.slotsFor(caster, next.level)
     if (Object.keys(fresh).length && (!next.spellSlots || !Object.keys(next.spellSlots).length)) next.spellSlots = fresh
@@ -523,7 +583,7 @@ el.addEventListener('click', e => {
       replace(next)
       return
     }
-    const applied = Rules.applyLevelUp(next, checkedIds, data, { hpRoll: Number(hpRoll) })
+    const applied = Rules.applyLevelUp(next, checkedIds, pack, { hpRoll: Number(hpRoll) })
     if (!applied.ok) { banner = applied.missing && applied.missing[0] === 'hpRoll' ? '請填這次生命骰點數' : '還沒勾完'; render(); return }
     view = 'combat'
     replace(applied.character)
@@ -601,9 +661,16 @@ el.addEventListener('change', e => {
     if (cur) cur.value = c.hp.current
     persist(true)
   }
+  if (act === 'gp' || act === 'sp' || act === 'cp') {
+    const c = current(); if (!c) return
+    c.money = c.money || { gp: 0, sp: 0, cp: 0 }
+    c.money[act] = Number(t.value) || 0
+    persist(true)
+  }
   if (act === 'name') { const c = current(); if (c) { c.name = t.value; persist(true) } }
-  if (act === 'subclass') { const c = current(); if (c) replace(Rules.setSubclass(c, t.value, data)) }
-  if (act === 'addspell') { const c = current(); if (c && t.value) replace(Rules.addSpell(c, t.value, data)) }
+  if (act === 'ruleset') { ruleset = t.value; render(); return }
+  if (act === 'subclass') { const c = current(); if (c) replace(Rules.setSubclass(c, t.value, packFor(c.ruleset))) }
+  if (act === 'addspell') { const c = current(); if (c && t.value) replace(Rules.addSpell(c, t.value, packFor(c.ruleset))) }
   if (act === 'addfeat') {
     const c = current(); if (!c || !t.value) return
     const next = JSON.parse(JSON.stringify(c))
@@ -638,13 +705,16 @@ el.addEventListener('change', e => {
 
 async function boot() {
   try {
-    const [races, classes, spells, feats] = await Promise.all([
+    const [races, classes, spells, feats, features, races2024, classes2024] = await Promise.all([
       fetch('data/races.json').then(r => r.json()),
       fetch('data/classes.json').then(r => r.json()),
       fetch('data/spells.json').then(r => r.json()),
-      fetch('data/feats.json').then(r => r.json())
+      fetch('data/feats.json').then(r => r.json()),
+      fetch('data/features.json').then(r => r.json()),
+      fetch('data/races2024.json').then(r => r.json()),
+      fetch('data/classes2024.json').then(r => r.json())
     ])
-    data = { races, classes, spells, feats }
+    data = { races, classes, spells, feats, features, races2024, classes2024 }
     state = Store.loadState(localStorage)
     view = current() ? 'combat' : 'create'
     render()

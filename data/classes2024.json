@@ -1,0 +1,508 @@
+{
+  "barbarian": {
+    "name": "野蠻人",
+    "nameEn": "Barbarian",
+    "hitDie": 12,
+    "saves": [
+      "str",
+      "con"
+    ],
+    "primary": "str",
+    "subclassLevel": 3,
+    "caster": "none",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "berserker",
+        "name": "狂戰士"
+      },
+      {
+        "id": "totem",
+        "name": "圖騰戰士"
+      }
+    ],
+    "defaultAttack": {
+      "name": "巨斧",
+      "damageDie": 12
+    },
+    "resources": [
+      {
+        "id": "rage",
+        "name": "狂暴",
+        "rest": "longRest",
+        "max": 2
+      }
+    ]
+  },
+  "bard": {
+    "name": "吟遊詩人",
+    "nameEn": "Bard",
+    "hitDie": 8,
+    "saves": [
+      "dex",
+      "cha"
+    ],
+    "primary": "cha",
+    "subclassLevel": 3,
+    "caster": "full",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "lore",
+        "name": "逸聞學院"
+      },
+      {
+        "id": "valor",
+        "name": "勇氣學院"
+      }
+    ],
+    "spellPicks": {
+      "1": 4,
+      "later": 1
+    },
+    "defaultAttack": {
+      "name": "短劍",
+      "damageDie": 6
+    },
+    "resources": [
+      {
+        "id": "bardic-inspiration",
+        "name": "詩人激勵",
+        "rest": "longRest",
+        "max": 3
+      }
+    ]
+  },
+  "cleric": {
+    "name": "牧師",
+    "nameEn": "Cleric",
+    "hitDie": 8,
+    "saves": [
+      "wis",
+      "cha"
+    ],
+    "primary": "wis",
+    "subclassLevel": 3,
+    "caster": "full",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "life",
+        "name": "生命領域"
+      },
+      {
+        "id": "war",
+        "name": "戰爭領域"
+      }
+    ],
+    "spellPicks": {
+      "1": 0,
+      "later": 0
+    },
+    "defaultAttack": {
+      "name": "釘頭錘",
+      "damageDie": 6
+    },
+    "resources": []
+  },
+  "druid": {
+    "name": "德魯伊",
+    "nameEn": "Druid",
+    "hitDie": 8,
+    "saves": [
+      "int",
+      "wis"
+    ],
+    "primary": "wis",
+    "subclassLevel": 3,
+    "caster": "full",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "land",
+        "name": "大地結社"
+      },
+      {
+        "id": "moon",
+        "name": "月亮結社"
+      }
+    ],
+    "spellPicks": {
+      "1": 0,
+      "later": 0
+    },
+    "defaultAttack": {
+      "name": "鐮刀",
+      "damageDie": 4
+    },
+    "resources": []
+  },
+  "fighter": {
+    "name": "戰士",
+    "nameEn": "Fighter",
+    "hitDie": 10,
+    "saves": [
+      "str",
+      "con"
+    ],
+    "primary": "str",
+    "subclassLevel": 3,
+    "caster": "none",
+    "asiLevels": [
+      4,
+      6,
+      8,
+      12,
+      14,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "champion",
+        "name": "勇士"
+      },
+      {
+        "id": "battlemaster",
+        "name": "戰鬥大師"
+      },
+      {
+        "id": "eldritch-knight",
+        "name": "奧法騎士"
+      }
+    ],
+    "defaultAttack": {
+      "name": "長劍",
+      "damageDie": 8
+    },
+    "resources": [
+      {
+        "id": "second-wind",
+        "name": "重整旗鼓",
+        "rest": "shortRest",
+        "max": 1
+      },
+      {
+        "id": "action-surge",
+        "name": "動作如潮",
+        "rest": "shortRest",
+        "max": 1
+      }
+    ]
+  },
+  "monk": {
+    "name": "武僧",
+    "nameEn": "Monk",
+    "hitDie": 8,
+    "saves": [
+      "str",
+      "dex"
+    ],
+    "primary": "dex",
+    "subclassLevel": 3,
+    "caster": "none",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "open-hand",
+        "name": "開掌宗"
+      },
+      {
+        "id": "shadow",
+        "name": "暗影宗"
+      }
+    ],
+    "defaultAttack": {
+      "name": "徒手",
+      "damageDie": 4
+    },
+    "resources": [
+      {
+        "id": "ki",
+        "name": "氣",
+        "rest": "shortRest",
+        "max": 3
+      }
+    ]
+  },
+  "paladin": {
+    "name": "聖騎士",
+    "nameEn": "Paladin",
+    "hitDie": 10,
+    "saves": [
+      "wis",
+      "cha"
+    ],
+    "primary": "str",
+    "subclassLevel": 3,
+    "caster": "half",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "devotion",
+        "name": "奉獻之誓"
+      },
+      {
+        "id": "vengeance",
+        "name": "復仇之誓"
+      }
+    ],
+    "spellPicks": {
+      "1": 0,
+      "later": 0
+    },
+    "defaultAttack": {
+      "name": "長劍",
+      "damageDie": 8
+    },
+    "resources": [
+      {
+        "id": "lay-on-hands",
+        "name": "聖療",
+        "rest": "longRest",
+        "max": 5
+      }
+    ]
+  },
+  "ranger": {
+    "name": "遊俠",
+    "nameEn": "Ranger",
+    "hitDie": 10,
+    "saves": [
+      "str",
+      "dex"
+    ],
+    "primary": "dex",
+    "subclassLevel": 3,
+    "caster": "half",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "hunter",
+        "name": "獵人"
+      },
+      {
+        "id": "beast",
+        "name": "獸王"
+      }
+    ],
+    "spellPicks": {
+      "1": 0,
+      "later": 1
+    },
+    "defaultAttack": {
+      "name": "短劍",
+      "damageDie": 6
+    },
+    "resources": []
+  },
+  "rogue": {
+    "name": "遊蕩者",
+    "nameEn": "Rogue",
+    "hitDie": 8,
+    "saves": [
+      "dex",
+      "int"
+    ],
+    "primary": "dex",
+    "subclassLevel": 3,
+    "caster": "none",
+    "asiLevels": [
+      4,
+      8,
+      10,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "thief",
+        "name": "盜賊"
+      },
+      {
+        "id": "assassin",
+        "name": "刺客"
+      },
+      {
+        "id": "arcane-trickster",
+        "name": "奧法詐術師"
+      }
+    ],
+    "defaultAttack": {
+      "name": "短劍",
+      "damageDie": 6
+    },
+    "resources": []
+  },
+  "sorcerer": {
+    "name": "術士",
+    "nameEn": "Sorcerer",
+    "hitDie": 6,
+    "saves": [
+      "con",
+      "cha"
+    ],
+    "primary": "cha",
+    "subclassLevel": 3,
+    "caster": "full",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "draconic",
+        "name": "龍族血脈"
+      },
+      {
+        "id": "wild",
+        "name": "野性魔法"
+      }
+    ],
+    "spellPicks": {
+      "1": 2,
+      "later": 1
+    },
+    "defaultAttack": {
+      "name": "法杖",
+      "damageDie": 6
+    },
+    "resources": [
+      {
+        "id": "sorcery-points",
+        "name": "術法點",
+        "rest": "longRest",
+        "max": 2
+      }
+    ]
+  },
+  "warlock": {
+    "name": "契術師",
+    "nameEn": "Warlock",
+    "hitDie": 8,
+    "saves": [
+      "wis",
+      "cha"
+    ],
+    "primary": "cha",
+    "subclassLevel": 3,
+    "caster": "warlock",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "fiend",
+        "name": "邪魔"
+      },
+      {
+        "id": "archfey",
+        "name": "至高妖精"
+      }
+    ],
+    "spellPicks": {
+      "1": 2,
+      "later": 1
+    },
+    "defaultAttack": {
+      "name": "匕首",
+      "damageDie": 4
+    },
+    "resources": []
+  },
+  "wizard": {
+    "name": "法師",
+    "nameEn": "Wizard",
+    "hitDie": 6,
+    "saves": [
+      "int",
+      "wis"
+    ],
+    "primary": "int",
+    "subclassLevel": 3,
+    "caster": "full",
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16,
+      19
+    ],
+    "subclasses": [
+      {
+        "id": "evocation",
+        "name": "塑能學派"
+      },
+      {
+        "id": "abjuration",
+        "name": "防護學派"
+      }
+    ],
+    "spellPicks": {
+      "1": 6,
+      "later": 2
+    },
+    "defaultAttack": {
+      "name": "法杖",
+      "damageDie": 6
+    },
+    "resources": [
+      {
+        "id": "arcane-recovery",
+        "name": "奧術恢復",
+        "rest": "shortRest",
+        "max": 1
+      }
+    ]
+  }
+}

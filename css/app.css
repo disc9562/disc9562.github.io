@@ -294,6 +294,14 @@ h3::after {
 }
 .is-locked .gear { grid-template-columns: minmax(0, 1fr) 64px; }
 .gear input { width: 100%; min-width: 0; }
+.money {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin: 8px 0;
+}
+.money label { font-size: 13px; color: var(--ink-soft); }
+.money input { width: 100%; }
 .icon:active { transform: translateY(1px); }
 
 .primary {

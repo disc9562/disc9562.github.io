@@ -55,6 +55,18 @@ assert.equal(c.attacks[0].damage, '1d6-1')
 assert.ok(Array.isArray(c.pendingChoices) && c.pendingChoices.length > 0)
 assert.ok(c.saves.int === true && c.saves.wis === true && c.saves.str === false)
 assert.deepEqual(c.skillProf, [])
+assert.equal(R.spellSaveDC(c, data.classes.wizard), 13)
+assert.equal(R.spellAttack(c, data.classes.wizard), 5)
+const c24 = R.createCharacter({
+  name: '新',
+  race: 'human',
+  class: 'wizard',
+  level: 1,
+  abilities: { str: 8, dex: 14, con: 13, int: 15, wis: 10, cha: 12 },
+  ruleset: '2024'
+}, data)
+assert.equal(c24.abilities.int, 15)
+assert.equal(c24.ruleset, '2024')
 console.log('task2 ok')
 
 const c3 = R.createCharacter({

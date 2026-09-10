@@ -1,0 +1,82 @@
+{
+  "human": {
+    "name": "人類",
+    "nameEn": "Human",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["足智多謀：長休後獲得英雄激勵", "多才：一項額外熟練", "屬性由背景決定，種族不加點"]
+  },
+  "elf": {
+    "name": "精靈",
+    "nameEn": "Elf",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["黑暗視覺 60 呎", "妖精血統：魅惑豁免優勢", "Trance 4 小時休息"]
+  },
+  "dwarf": {
+    "name": "矮人",
+    "nameEn": "Dwarf",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["黑暗視覺 120 呎", "堅韌：抗毒、中毒豁免優勢"]
+  },
+  "halfling": {
+    "name": "半身人",
+    "nameEn": "Halfling",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["幸運：d20 擲 1 可重骰", "勇敢：恐懼豁免優勢", "靈活：可穿過比你大的生物空間"]
+  },
+  "gnome": {
+    "name": "侏儒",
+    "nameEn": "Gnome",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["黑暗視覺 60 呎", "侏儒狡獪：智力、感知、魅力豁免優勢"]
+  },
+  "orc": {
+    "name": "獸人",
+    "nameEn": "Orc",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["黑暗視覺 120 呎", "腎上腺素爆發：疾走不引發藉機，並得暫時 HP"]
+  },
+  "dragonborn": {
+    "name": "龍裔",
+    "nameEn": "Dragonborn",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["吐息武器", "傷害抗性", "龍翼（高等級）"]
+  },
+  "tiefling": {
+    "name": "提夫林",
+    "nameEn": "Tiefling",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["黑暗視覺 60 呎", "火焰抗性", "煉獄遺贈戲法"]
+  },
+  "goliath": {
+    "name": "巨人裔",
+    "nameEn": "Goliath",
+    "speed": 35,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["巨人之力", "巨人之耐力（減傷害）", "大體型"]
+  },
+  "aasimar": {
+    "name": "阿斯莫",
+    "nameEn": "Aasimar",
+    "speed": 30,
+    "bonuses": {},
+    "extraHpPerLevel": 0,
+    "traits": ["黑暗視覺 60 呎", "光耀抗性", "治療之手", "天界啟示"]
+  }
+}

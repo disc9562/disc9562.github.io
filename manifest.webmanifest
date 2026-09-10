@@ -5,5 +5,8 @@
   "display": "standalone",
   "background_color": "#efe4cc",
   "theme_color": "#efe4cc",
-  "lang": "zh-Hant"
+  "lang": "zh-Hant",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
 }

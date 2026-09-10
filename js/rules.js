@@ -154,8 +154,10 @@ function createCharacter(input, data) {
   const race = data.races[input.race]
   const cls = data.classes[input.class]
   const abilities = Object.assign({}, input.abilities)
-  const bonuses = (race && race.bonuses) || {}
-  for (const k of Object.keys(bonuses)) abilities[k] = (abilities[k] || 0) + bonuses[k]
+  if ((input.ruleset || '2014') !== '2024') {
+    const bonuses = (race && race.bonuses) || {}
+    for (const k of Object.keys(bonuses)) abilities[k] = (abilities[k] || 0) + bonuses[k]
+  }
   const conMod = abilityMod(abilities.con)
   const extra = (race && race.extraHpPerLevel) || 0
   const hpRolls = (input.hpRolls || []).slice()
@@ -195,7 +197,11 @@ function createCharacter(input, data) {
     resources: (cls.resources || []).map(r => ({ id: r.id, name: r.name, rest: r.rest, used: 0, max: r.max || 1 })),
     conditions: [],
     deathSaves: { success: 0, fail: 0 },
-    asiTaken: []
+    asiTaken: [],
+    ruleset: input.ruleset || '2014',
+    money: { gp: 0, sp: 0, cp: 0 },
+    concentrating: false,
+    gear: []
   }
   character.pendingChoices = pendingFor(character, cls)
   return character
@@ -302,6 +308,19 @@ function applyLevelUp(character, checkedIds, data, opts) {
   return { ok: true, character: next }
 }
 
+function spellMod(character, classDef) {
+  const abi = (classDef && classDef.primary) || 'int'
+  return abilityMod(character.abilities[abi] || 10)
+}
+
+function spellSaveDC(character, classDef) {
+  return 8 + (character.proficiency || 2) + spellMod(character, classDef)
+}
+
+function spellAttack(character, classDef) {
+  return (character.proficiency || 2) + spellMod(character, classDef)
+}
+
 function changeHp(character, delta) {
   const next = clone(character)
   next.hp.current = Math.max(0, Math.min(next.hp.max, next.hp.current + delta))
@@ -391,6 +410,8 @@ const Rules = {
   casterOf,
   checklistFor,
   applyLevelUp,
+  spellSaveDC,
+  spellAttack,
   changeHp,
   useSpellSlot,
   setSlotUsed,
