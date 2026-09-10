@@ -316,6 +316,26 @@ function useSpellSlot(character, circle) {
   return { ok: true, character: next }
 }
 
+function setSlotUsed(character, circle, used) {
+  const slot = character.spellSlots && character.spellSlots[circle]
+  if (!slot) return { ok: false }
+  const next = clone(character)
+  const key = String(circle)
+  next.spellSlots[key].used = Math.max(0, Math.min(next.spellSlots[key].max, Number(used) || 0))
+  return { ok: true, character: next }
+}
+
+function setSlotMax(character, circle, max) {
+  const next = clone(character)
+  const key = String(circle)
+  const n = Number(max)
+  if (!n || n < 0) return next
+  const prev = (next.spellSlots && next.spellSlots[key]) || { max: 0, used: 0 }
+  next.spellSlots = next.spellSlots || {}
+  next.spellSlots[key] = { max: n, used: Math.min(prev.used, n) }
+  return next
+}
+
 function longRest(character) {
   const next = clone(character)
   next.hp.current = next.hp.max
@@ -350,6 +370,8 @@ const Rules = {
   applyLevelUp,
   changeHp,
   useSpellSlot,
+  setSlotUsed,
+  setSlotMax,
   longRest,
   shortRest,
   setSubclass,

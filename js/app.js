@@ -41,6 +41,13 @@ function esc(s) {
   }[c]))
 }
 
+function lockIcon(locked) {
+  if (locked) {
+    return '<svg class="lock-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>'
+  }
+  return '<svg class="lock-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2" fill="none" stroke="currentColor" stroke-width="2"/></svg>'
+}
+
 function current() {
   return state.characters.find(c => c.id === state.currentId)
 }
@@ -157,10 +164,26 @@ function combatHtml(c) {
     `<option value="${esc(id)}">${esc(data.feats[id].name)}</option>`).join('')}</select>`
   const subOpts = `<option value="">（未選／重選）</option>` + (cls.subclasses || []).map(s =>
     `<option value="${esc(s.id)}" ${c.subclass === s.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')
-  const slotBtns = Object.keys(c.spellSlots || {}).sort().map(k => {
+  const slotRows = Object.keys(c.spellSlots || {}).sort((a, b) => Number(a) - Number(b)).map(k => {
     const sl = c.spellSlots[k]
-    return `<button class="slot" data-act="slot" data-k="${esc(k)}">${k}環 ${sl.max - sl.used}/${sl.max}</button>`
+    const pips = Array.from({ length: sl.max }, (_, i) => {
+      const spent = i < sl.used
+      return `<button class="pip${spent ? ' spent' : ''}" data-act="pip" data-k="${esc(k)}" data-i="${i}" aria-label="${k}環"></button>`
+    }).join('')
+    return `<div class="slot-row">
+      <span class="slot-lbl">${k}環</span>
+      <div class="pips">${pips}</div>
+      <input class="val lockable" data-act="slotmax" data-k="${esc(k)}" type="number" min="0" value="${sl.max}"${lock}>
+    </div>`
   }).join('')
+  const gear = c.gear || []
+  const gearRows = gear.map((g, i) =>
+    `<div class="gear">
+      <input data-act="gearname" data-i="${i}" value="${esc(g.name)}"${lock}>
+      <input class="val" data-act="gearqty" data-i="${i}" type="number" min="0" value="${g.qty == null ? 1 : g.qty}">
+      <button class="icon lockable" data-act="delgear" data-i="${i}"${lock}>×</button>
+    </div>`
+  ).join('')
   const cond = (c.conditions || [])
   const death = c.hp.current === 0 ? `
     <div class="box" style="margin:8px 0">死亡豁免　成功 ${c.deathSaves.success}/3　失敗 ${c.deathSaves.fail}/3
@@ -196,7 +219,7 @@ function combatHtml(c) {
         <div class="kicker">${esc(raceName(c.race))}　${esc(className(c.class))} ${c.level}${c.locked ? '　已鎖定' : ''}</div>
       </div>
       <div class="row">
-        <button class="icon${c.locked ? ' is-lock' : ''}" data-act="lock">${c.locked ? '鎖' : '開'}</button>
+        <button class="icon${c.locked ? ' is-lock' : ''}" data-act="lock" aria-label="${c.locked ? '解鎖' : '鎖定'}">${lockIcon(!!c.locked)}</button>
         <button class="icon" data-act="levelup">升級</button>
         <button class="icon" data-act="menu">⋯</button>
       </div>
@@ -247,13 +270,16 @@ function combatHtml(c) {
         <h3>攻擊</h3>
         ${attacks}
         ${res ? `<h3>資源</h3><div class="slots">${res}</div>` : ''}
-        ${slotBtns ? `<h3>法術位</h3><div class="slots">${slotBtns}</div>` : ''}
+        ${slotRows ? `<h3>法術環</h3>${slotRows}` : ''}
         <h3>法術</h3>
         ${spells}
         ${spellAdd}
         <h3>專長</h3>
         <div class="chips">${featChips}</div>
         ${featAdd}
+        <h3>背包</h3>
+        ${gearRows}
+        <button class="big lockable" data-act="addgear"${lock}>＋物品</button>
         <h3>狀態</h3>
         <div class="slots">${condPick}</div>
       </div>
@@ -357,6 +383,16 @@ el.addEventListener('click', e => {
     else { banner = '法術位用完了'; render() }
     return
   }
+  if (act === 'pip') {
+    const k = btn.dataset.k
+    const i = Number(btn.dataset.i)
+    const sl = c.spellSlots && c.spellSlots[k]
+    if (!sl) return
+    const used = i < sl.used ? i : i + 1
+    const r = Rules.setSlotUsed(c, k, used)
+    if (r.ok) replace(r.character)
+    return
+  }
   if (act === 'levelup') { view = 'levelup'; checkedIds = []; pickSpells = []; hpRoll = ''; pickSubclass = ((data.classes[c.class] || {}).subclasses || [])[0] && data.classes[c.class].subclasses[0].id || ''; menuOpen = false; render(); return }
   if (act === 'pending') { view = 'pending'; checkedIds = (c.pendingChoices || []).map(x => x.id); pickSpells = []; pickSubclass = ((data.classes[c.class] || {}).subclasses || [])[0] && data.classes[c.class].subclasses[0].id || ''; render(); return }
   if (act === 'check') {
@@ -378,7 +414,20 @@ el.addEventListener('click', e => {
     a.click()
     return
   }
-  if (c && c.locked && ['addatk', 'delatk', 'delspell', 'delfeat'].indexOf(act) >= 0) return
+  if (c && c.locked && ['addatk', 'delatk', 'delspell', 'delfeat', 'addgear', 'delgear'].indexOf(act) >= 0) return
+  if (act === 'addgear') {
+    const next = JSON.parse(JSON.stringify(c))
+    next.gear = (next.gear || []).concat([{ name: '新物品', qty: 1 }])
+    replace(next)
+    return
+  }
+  if (act === 'delgear') {
+    const next = JSON.parse(JSON.stringify(c))
+    next.gear = (next.gear || []).slice()
+    next.gear.splice(Number(btn.dataset.i), 1)
+    replace(next)
+    return
+  }
   if (act === 'addatk') {
     const next = JSON.parse(JSON.stringify(c))
     next.attacks = (next.attacks || []).concat([{ name: '新攻擊', bonus: 0, damage: '1d6' }])
@@ -541,6 +590,20 @@ el.addEventListener('change', e => {
     next.feats = next.feats || []
     if (next.feats.indexOf(t.value) < 0) next.feats.push(t.value)
     replace(next)
+  }
+  if (act === 'slotmax') {
+    const c = current(); if (!c || c.locked) return
+    replace(Rules.setSlotMax(c, t.dataset.k, t.value))
+  }
+  if (act === 'gearname') {
+    const c = current(); if (!c || !c.gear || !c.gear[t.dataset.i]) return
+    c.gear[t.dataset.i].name = t.value
+    persist(true)
+  }
+  if (act === 'gearqty') {
+    const c = current(); if (!c || !c.gear || !c.gear[t.dataset.i]) return
+    c.gear[t.dataset.i].qty = Number(t.value)
+    persist(true)
   }
   if (act === 'atkname') { const c = current(); if (c && c.attacks[t.dataset.i]) { c.attacks[t.dataset.i].name = t.value; persist(true) } }
   if (act === 'atkbonus') { const c = current(); if (c && c.attacks[t.dataset.i]) { c.attacks[t.dataset.i].bonus = Number(t.value); persist(true) } }
