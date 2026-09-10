@@ -45,10 +45,10 @@ function current() {
   return state.characters.find(c => c.id === state.currentId)
 }
 
-function persist() {
+function persist(silent) {
   const r = Store.saveState(localStorage, state)
-  if (!r.ok) banner = '存不了，先匯出備份'
-  render()
+  if (!r.ok) { banner = '存不了，先匯出備份'; render(); return }
+  if (!silent) render()
 }
 
 function replace(next) {
@@ -97,12 +97,40 @@ function createHtml() {
   `
 }
 
+function fieldVal(obj, k) {
+  return obj && obj[k] != null && obj[k] !== '' ? obj[k] : ''
+}
+
 function combatHtml(c) {
   const cls = data.classes[c.class] || {}
   const pending = (c.pendingChoices || []).length
-  const attacks = (c.attacks || []).map((a, i) =>
-    `<button class="big" data-act="noop">攻擊　${esc(a.name)}　${a.bonus >= 0 ? '+' : ''}${a.bonus}　${esc(a.damage)}</button>`
+  const skills = c.skills || {}
+  const saveBonus = c.saveBonus || {}
+  const abiCards = Object.keys(ABI_NAME).map(k => {
+    const m = Rules.abilityMod(c.abilities[k])
+    return `<div class="box abi-card">
+      <div class="lbl">${esc(ABI_NAME[k])}</div>
+      <input class="val-sm" data-act="abival" data-k="${k}" type="number" value="${c.abilities[k]}">
+      <div class="mod" data-mod="${k}">${m >= 0 ? '+' : ''}${m}</div>
+    </div>`
+  }).join('')
+  const saveRows = Object.keys(ABI_NAME).map(k =>
+    `<div class="save-row"><span>${esc(ABI_NAME[k])}</span>
+      <input class="val" data-act="saveval" data-k="${k}" type="number" value="${esc(fieldVal(saveBonus, k))}" placeholder="—"></div>`
   ).join('')
+  const skillRows = SKILLS.map(s =>
+    `<div class="skill-row"><span>${esc(s.name)} <span class="muted">${esc(ABI_NAME[s.abi])}</span></span>
+      <input class="val" data-act="skillval" data-id="${s.id}" type="number" value="${esc(fieldVal(skills, s.id))}" placeholder="—"></div>`
+  ).join('')
+  const attacks = `<div class="atk muted"><span>名稱</span><span>命中</span><span>傷害</span></div>` +
+    (c.attacks || []).map((a, i) =>
+      `<div class="atk">
+        <input data-act="atkname" data-i="${i}" value="${esc(a.name)}">
+        <input class="val" data-act="atkbonus" data-i="${i}" type="number" value="${a.bonus}">
+        <input data-act="atkdmg" data-i="${i}" value="${esc(a.damage)}">
+      </div>`
+    ).join('') +
+    `<button class="big" data-act="addatk">＋攻擊</button>`
   const spells = (c.spells || []).map(id => {
     const s = data.spells[id]
     if (!s) return ''
@@ -112,41 +140,17 @@ function combatHtml(c) {
   }).join('')
   const slotBtns = Object.keys(c.spellSlots || {}).sort().map(k => {
     const sl = c.spellSlots[k]
-    const left = sl.max - sl.used
-    return `<button class="slot" data-act="slot" data-k="${esc(k)}">${k}環 ${left}/${sl.max}</button>`
+    return `<button class="slot" data-act="slot" data-k="${esc(k)}">${k}環 ${sl.max - sl.used}/${sl.max}</button>`
   }).join('')
   const cond = (c.conditions || [])
-  const condRow = cond.length
-    ? `<p>狀態：${cond.map(x => esc(x)).join('、')}</p>`
-    : ''
   const death = c.hp.current === 0 ? `
-    <div class="drawer">死亡豁免　成功 ${c.deathSaves.success}/3　失敗 ${c.deathSaves.fail}/3
+    <div class="box" style="margin:8px 0">死亡豁免　成功 ${c.deathSaves.success}/3　失敗 ${c.deathSaves.fail}/3
       <div class="row">
         <button class="icon grow" data-act="ds" data-k="success">成功</button>
         <button class="icon grow" data-act="ds" data-k="fail">失敗</button>
         <button class="icon grow" data-act="ds-reset">重設</button>
       </div>
     </div>` : ''
-  const abiLine = Object.keys(ABI_NAME).map(k => {
-    const m = Rules.abilityMod(c.abilities[k])
-    return esc(ABI_NAME[k]) + ' ' + c.abilities[k] + ' (' + (m >= 0 ? '+' : '') + m + ')'
-  }).join('　')
-  const skillRows = `<p class="muted">${abiLine}</p>` + SKILLS.map(s => {
-    const on = (c.skillProf || []).indexOf(s.id) >= 0
-    const bonus = Rules.abilityMod(c.abilities[s.abi]) + (on ? c.proficiency : 0)
-    const sign = bonus >= 0 ? '+' : ''
-    return `<div class="row" style="margin:6px 0">
-      <div class="grow">${esc(s.name)} <span class="muted">${esc(ABI_NAME[s.abi])}</span></div>
-      <strong>${sign}${bonus}</strong>
-      <button class="icon" data-act="skill" data-id="${s.id}">${on ? '熟練' : '未練'}</button>
-    </div>`
-  }).join('')
-  const saveRows = Object.keys(ABI_NAME).map(k => {
-    const on = c.saves && c.saves[k]
-    const bonus = Rules.abilityMod(c.abilities[k]) + (on ? c.proficiency : 0)
-    const sign = bonus >= 0 ? '+' : ''
-    return `<div>${esc(ABI_NAME[k])} ${sign}${bonus}${on ? ' 熟練' : ''}</div>`
-  }).join('')
   const res = (c.resources || []).map((r, i) =>
     `<button class="slot" data-act="res" data-i="${i}">${esc(r.name)} ${r.max - r.used}/${r.max}</button>`
   ).join('')
@@ -168,8 +172,8 @@ function combatHtml(c) {
   return `
     <div class="top">
       <div>
-        <div>${esc(c.name)} · ${esc(raceName(c.race))} ${esc(className(c.class))} ${c.level}</div>
-        <div class="muted">${cls.nameEn || ''}　熟練 +${c.proficiency}</div>
+        <div class="name">${esc(c.name)}</div>
+        <div class="muted">${esc(raceName(c.race))}　${esc(className(c.class))} ${c.level}</div>
       </div>
       <div class="row">
         <button class="icon" data-act="levelup">升級</button>
@@ -179,31 +183,41 @@ function combatHtml(c) {
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
     ${pending ? `<button class="big warn" data-act="pending">還有未選項目（${pending}）</button>` : ''}
     ${menu}
-    <div class="hp-row">
-      <div>
-        <div class="row">
+    <div class="stats">
+      <div class="box"><div class="lbl">AC</div>
+        <input class="val-sm" data-act="ac" type="number" value="${c.ac}"></div>
+      <div class="box">
+        <div class="lbl">生命</div>
+        <div class="hp-ctrl">
           <button class="icon" data-act="hp" data-d="-1">−</button>
-          <div class="num">${c.hp.current}/${c.hp.max}</div>
+          <div class="num">${c.hp.current}</div>
           <button class="icon" data-act="hp" data-d="1">＋</button>
         </div>
-        <div class="muted">HP</div>
+        <div class="muted">最大 <input class="val" data-act="hpmax" type="number" value="${c.hp.max}" style="width:64px;min-height:32px"></div>
       </div>
-      <div>
-        <div class="num">${c.ac}</div>
-        <div class="muted">AC</div>
-      </div>
+      <div class="box"><div class="lbl">速度</div>
+        <input class="val-sm" data-act="speed" type="number" value="${c.speed}"></div>
     </div>
-    ${condRow}
+    <div class="mini">
+      <div class="box"><div class="lbl">先攻</div>
+        <input class="val-sm" data-act="init" type="number" value="${c.initiative}"></div>
+      <div class="box"><div class="lbl">熟練</div><div class="num">+${c.proficiency}</div></div>
+    </div>
     ${death}
+    <h3>能力</h3>
+    <div class="abi-grid">${abiCards}</div>
+    <h3>豁免</h3>
+    ${saveRows}
+    <h3>技能</h3>
+    <p class="muted">自己填加值，跟紙本一樣。空白＝還沒寫。</p>
+    ${skillRows}
+    <h3>攻擊</h3>
     ${attacks}
-    ${spells}
-    ${slotBtns ? `<div class="muted">法術位</div><div class="slots">${slotBtns}</div>` : ''}
-    ${res ? `<div class="slots">${res}</div>` : ''}
-    <details class="drawer"><summary>技能／豁免</summary>${skillRows}<hr>${saveRows}</details>
-    <details class="drawer"><summary>先攻／速度</summary>
-      <p>先攻 ${c.initiative >= 0 ? '+' : ''}${c.initiative}　速度 ${c.speed} 呎</p>
-    </details>
-    <details class="drawer"><summary>狀態</summary><div class="slots">${condPick}</div></details>
+    ${res ? `<h3>資源</h3><div class="slots">${res}</div>` : ''}
+    ${slotBtns ? `<h3>法術位</h3><div class="slots">${slotBtns}</div>` : ''}
+    ${spells ? `<h3>法術</h3>${spells}` : ''}
+    <h3>狀態</h3>
+    <div class="slots">${condPick}</div>
   `
 }
 
@@ -258,7 +272,7 @@ function levelHtml(c) {
 
 el.addEventListener('click', e => {
   const t = e.target
-  if (t.id === 'import' || (t.closest && t.closest('label') && t.closest('label').querySelector('#import') && t.id !== undefined && t.tagName === 'INPUT')) return
+  if (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA') return
   const btn = t.closest('[data-act]')
   if (!btn) return
   const act = btn.dataset.act
@@ -317,13 +331,9 @@ el.addEventListener('click', e => {
     a.click()
     return
   }
-  if (act === 'skill') {
-    const id = btn.dataset.id
+  if (act === 'addatk') {
     const next = JSON.parse(JSON.stringify(c))
-    next.skillProf = next.skillProf || []
-    const i = next.skillProf.indexOf(id)
-    if (i < 0) next.skillProf.push(id)
-    else next.skillProf.splice(i, 1)
+    next.attacks = (next.attacks || []).concat([{ name: '新攻擊', bonus: 0, damage: '1d6' }])
     replace(next)
     return
   }
@@ -418,14 +428,45 @@ el.addEventListener('change', e => {
   if (act === 'asi1') pickAsi[1] = t.value
   if (act === 'feat') pickFeat = t.value
   if (act === 'hproll') hpRoll = t.value
+  if (act === 'skillval') {
+    const c = current(); if (!c) return
+    c.skills = c.skills || {}
+    if (t.value === '') delete c.skills[t.dataset.id]
+    else c.skills[t.dataset.id] = Number(t.value)
+    persist(true)
+  }
+  if (act === 'saveval') {
+    const c = current(); if (!c) return
+    c.saveBonus = c.saveBonus || {}
+    if (t.value === '') delete c.saveBonus[t.dataset.k]
+    else c.saveBonus[t.dataset.k] = Number(t.value)
+    persist(true)
+  }
+  if (act === 'abival') {
+    const c = current(); if (!c) return
+    c.abilities[t.dataset.k] = Number(t.value)
+    const m = Rules.abilityMod(Number(t.value))
+    const label = t.parentElement && t.parentElement.querySelector('.mod')
+    if (label) label.textContent = (m >= 0 ? '+' : '') + m
+    persist(true)
+  }
+  if (act === 'ac') { const c = current(); if (c) { c.ac = Number(t.value); persist(true) } }
+  if (act === 'speed') { const c = current(); if (c) { c.speed = Number(t.value); persist(true) } }
+  if (act === 'init') { const c = current(); if (c) { c.initiative = Number(t.value); persist(true) } }
+  if (act === 'hpmax') {
+    const c = current(); if (!c) return
+    c.hp.max = Number(t.value)
+    if (c.hp.current > c.hp.max) c.hp.current = c.hp.max
+    persist(true)
+  }
+  if (act === 'atkname') { const c = current(); if (c && c.attacks[t.dataset.i]) { c.attacks[t.dataset.i].name = t.value; persist(true) } }
+  if (act === 'atkbonus') { const c = current(); if (c && c.attacks[t.dataset.i]) { c.attacks[t.dataset.i].bonus = Number(t.value); persist(true) } }
+  if (act === 'atkdmg') { const c = current(); if (c && c.attacks[t.dataset.i]) { c.attacks[t.dataset.i].damage = t.value; persist(true) } }
   if (act === 'check') {
     const id = t.dataset.id
     const i = checkedIds.indexOf(id)
     if (t.checked && i < 0) checkedIds.push(id)
     if (!t.checked && i >= 0) checkedIds.splice(i, 1)
-  }
-  if (act === 'skill') {
-    /* handled in click too; change fires as well */
   }
 })
 
