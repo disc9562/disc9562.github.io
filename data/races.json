@@ -1,0 +1,74 @@
+{
+  "human": {
+    "name": "人類",
+    "nameEn": "Human",
+    "speed": 30,
+    "bonuses": { "str": 1, "dex": 1, "con": 1, "int": 1, "wis": 1, "cha": 1 },
+    "extraHpPerLevel": 0,
+    "traits": ["六項能力各 +1"]
+  },
+  "dwarf": {
+    "name": "矮人",
+    "nameEn": "Dwarf",
+    "speed": 25,
+    "bonuses": { "con": 2, "wis": 1 },
+    "extraHpPerLevel": 1,
+    "traits": ["丘陵矮人：體質 +2、感知 +1", "每級額外 +1 HP", "黑暗視覺 60 呎"]
+  },
+  "elf": {
+    "name": "精靈",
+    "nameEn": "Elf",
+    "speed": 30,
+    "bonuses": { "dex": 2, "int": 1 },
+    "extraHpPerLevel": 0,
+    "traits": ["高等精靈：敏捷 +2、智力 +1", "黑暗視覺 60 呎", "敏銳感官、妖精血統"]
+  },
+  "halfling": {
+    "name": "半身人",
+    "nameEn": "Halfling",
+    "speed": 25,
+    "bonuses": { "dex": 2, "cha": 1 },
+    "extraHpPerLevel": 0,
+    "traits": ["輕足：敏捷 +2、魅力 +1", "幸運、勇敢"]
+  },
+  "dragonborn": {
+    "name": "龍裔",
+    "nameEn": "Dragonborn",
+    "speed": 30,
+    "bonuses": { "str": 2, "cha": 1 },
+    "extraHpPerLevel": 0,
+    "traits": ["力量 +2、魅力 +1", "吐息武器、傷害抗性"]
+  },
+  "gnome": {
+    "name": "侏儒",
+    "nameEn": "Gnome",
+    "speed": 25,
+    "bonuses": { "int": 2, "con": 1 },
+    "extraHpPerLevel": 0,
+    "traits": ["岩石侏儒：智力 +2、體質 +1", "黑暗視覺 60 呎"]
+  },
+  "half-elf": {
+    "name": "半精靈",
+    "nameEn": "Half-Elf",
+    "speed": 30,
+    "bonuses": { "cha": 2 },
+    "extraHpPerLevel": 0,
+    "traits": ["魅力 +2（另兩項 +1 請自己加進屬性）", "黑暗視覺、妖精血統"]
+  },
+  "half-orc": {
+    "name": "半獸人",
+    "nameEn": "Half-Orc",
+    "speed": 30,
+    "bonuses": { "str": 2, "con": 1 },
+    "extraHpPerLevel": 0,
+    "traits": ["力量 +2、體質 +1", "黑暗視覺、不屈不撓"]
+  },
+  "tiefling": {
+    "name": "提夫林",
+    "nameEn": "Tiefling",
+    "speed": 30,
+    "bonuses": { "int": 1, "cha": 2 },
+    "extraHpPerLevel": 0,
+    "traits": ["智力 +1、魅力 +2", "黑暗視覺、煉獄抗性"]
+  }
+}

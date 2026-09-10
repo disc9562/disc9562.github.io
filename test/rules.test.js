@@ -134,3 +134,23 @@ const spent = R.useSpellSlot(wl, 1).character
 const sr = R.shortRest(spent)
 assert.equal(sr.spellSlots['1'].used, 0)
 console.log('task3 ok')
+
+const fs = require('fs')
+const real = {
+  races: JSON.parse(fs.readFileSync('data/races.json', 'utf8')),
+  classes: JSON.parse(fs.readFileSync('data/classes.json', 'utf8')),
+  spells: JSON.parse(fs.readFileSync('data/spells.json', 'utf8')),
+  feats: JSON.parse(fs.readFileSync('data/feats.json', 'utf8'))
+}
+const w = R.createCharacter({
+  name: '艾琳',
+  race: 'human',
+  class: 'wizard',
+  level: 1,
+  abilities: { str: 8, dex: 14, con: 13, int: 15, wis: 10, cha: 12 }
+}, real)
+assert.equal(w.hp.max, 8)
+assert.equal(real.classes.wizard.name, '法師')
+assert.equal(Object.keys(real.races).length, 9)
+assert.equal(Object.keys(real.classes).length, 12)
+console.log('task5 ok')
