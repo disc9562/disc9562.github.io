@@ -110,7 +110,7 @@ function combatHtml(c) {
   const abiCards = Object.keys(ABI_NAME).map(k => {
     const m = Rules.abilityMod(c.abilities[k])
     return `<div class="seal">
-      <svg class="seal-svg" viewBox="0 0 100 110" aria-hidden="true"><polygon points="50,4 96,28 96,82 50,106 4,82 4,28" fill="#fffaf1" stroke="#24160f" stroke-width="2.4"/></svg>
+      <svg class="seal-svg" viewBox="0 0 100 110" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><polygon points="50,4 96,28 96,82 50,106 4,82 4,28" fill="#fffaf1" stroke="#24160f" stroke-width="2.4"/></svg>
       <div class="seal-inner">
         <div class="lbl">${esc(ABI_NAME[k])}</div>
         <div class="mod" data-mod="${k}">${m >= 0 ? '+' : ''}${m}</div>
@@ -213,19 +213,25 @@ function combatHtml(c) {
       <div class="box"><div class="lbl">熟練</div><div class="num">+${c.proficiency}</div></div>
     </div>
     ${death}
-    <h3>能力</h3>
-    <div class="abi-grid">${abiCards}</div>
-    <h3>豁免</h3>
-    ${saveRows}
-    <h3>技能</h3>
-    ${skillRows}
-    <h3>攻擊</h3>
-    ${attacks}
-    ${res ? `<h3>資源</h3><div class="slots">${res}</div>` : ''}
-    ${slotBtns ? `<h3>法術位</h3><div class="slots">${slotBtns}</div>` : ''}
-    ${spells ? `<h3>法術</h3>${spells}` : ''}
-    <h3>狀態</h3>
-    <div class="slots">${condPick}</div>
+    <div class="sheet-grid">
+      <div>
+        <h3>能力</h3>
+        <div class="abi-grid">${abiCards}</div>
+        <h3>豁免</h3>
+        ${saveRows}
+        <h3>技能</h3>
+        ${skillRows}
+      </div>
+      <div>
+        <h3>攻擊</h3>
+        ${attacks}
+        ${res ? `<h3>資源</h3><div class="slots">${res}</div>` : ''}
+        ${slotBtns ? `<h3>法術位</h3><div class="slots">${slotBtns}</div>` : ''}
+        ${spells ? `<h3>法術</h3>${spells}` : ''}
+        <h3>狀態</h3>
+        <div class="slots">${condPick}</div>
+      </div>
+    </div>
   `
 }
 
