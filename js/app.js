@@ -109,13 +109,10 @@ function combatHtml(c) {
   const saveBonus = c.saveBonus || {}
   const abiCards = Object.keys(ABI_NAME).map(k => {
     const m = Rules.abilityMod(c.abilities[k])
-    return `<div class="seal">
-      <svg class="seal-svg" viewBox="0 0 100 110" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><polygon points="50,4 96,28 96,82 50,106 4,82 4,28" fill="#fffaf1" stroke="#24160f" stroke-width="2.4"/></svg>
-      <div class="seal-inner">
-        <div class="lbl">${esc(ABI_NAME[k])}</div>
-        <div class="mod" data-mod="${k}">${m >= 0 ? '+' : ''}${m}</div>
-        <input class="val-sm" data-act="abival" data-k="${k}" type="number" value="${c.abilities[k]}">
-      </div>
+    return `<div class="abi-card">
+      <div class="lbl">${esc(ABI_NAME[k])}</div>
+      <div class="mod-ring" data-mod="${k}">${m >= 0 ? '+' : ''}${m}</div>
+      <input class="val-sm" data-act="abival" data-k="${k}" type="number" value="${c.abilities[k]}">
     </div>`
   }).join('')
   const saveRows = Object.keys(ABI_NAME).map(k =>
@@ -503,7 +500,7 @@ el.addEventListener('change', e => {
     const c = current(); if (!c) return
     c.abilities[t.dataset.k] = Number(t.value)
     const m = Rules.abilityMod(Number(t.value))
-    const label = t.parentElement && t.parentElement.querySelector('.mod')
+    const label = t.parentElement && t.parentElement.querySelector('.mod-ring')
     if (label) label.textContent = (m >= 0 ? '+' : '') + m
     persist(true)
   }
