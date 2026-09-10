@@ -65,13 +65,35 @@ button, select, input { font: inherit; color: inherit; }
 }
 
 .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-.name {
+.name, .name-edit {
   font-family: var(--display);
   font-size: 28px;
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: .01em;
 }
+.name-edit {
+  width: min(100%, 420px);
+  min-height: 40px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  padding: 0;
+}
+.name-edit:focus { outline: none; border-bottom-color: var(--rule); }
+.ident { margin: 8px 0 4px; max-width: 360px; }
+.spell-line { display: flex; gap: 6px; align-items: flex-start; }
+.spell-line .big { margin: 4px 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--fill);
+  border: 1.5px solid var(--ink);
+  padding: 4px 6px 4px 10px;
+}
+.chip .icon { min-height: 32px; min-width: 32px; }
 .muted { color: var(--ink-soft); font-size: 13px; }
 .kicker {
   margin-top: 4px;
@@ -221,9 +243,10 @@ h3::after {
 
 .atk {
   display: grid;
-  grid-template-columns: 1.4fr 64px 1fr;
+  grid-template-columns: 1.4fr 64px 1fr 40px;
   gap: 6px;
   margin: 6px 0;
+  align-items: center;
 }
 
 .big, .icon, .slot, .menu, .atk input, .skill-row input, .save-row input, label.field input, label.field select {

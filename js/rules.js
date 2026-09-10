@@ -205,6 +205,39 @@ function clone(c) {
   return JSON.parse(JSON.stringify(c))
 }
 
+function mergeSlots(oldSlots, fresh) {
+  const merged = {}
+  for (const k of Object.keys(fresh || {})) {
+    const used = (oldSlots && oldSlots[k] && oldSlots[k].used) || 0
+    merged[k] = { max: fresh[k].max, used: Math.min(used, fresh[k].max) }
+  }
+  return merged
+}
+
+function setSubclass(character, subclassId, data) {
+  const next = clone(character)
+  const cls = data.classes[next.class]
+  next.subclass = subclassId || null
+  next.pendingChoices = pendingFor(next, cls)
+  next.spellSlots = mergeSlots(next.spellSlots, slotsFor(casterOf(cls, next.subclass), next.level))
+  return next
+}
+
+function addSpell(character, spellId, data) {
+  const next = clone(character)
+  next.spells = (next.spells || []).slice()
+  if (spellId && next.spells.indexOf(spellId) < 0) next.spells.push(spellId)
+  next.pendingChoices = pendingFor(next, data.classes[next.class])
+  return next
+}
+
+function removeSpell(character, spellId, data) {
+  const next = clone(character)
+  next.spells = (next.spells || []).filter(id => id !== spellId)
+  next.pendingChoices = pendingFor(next, data.classes[next.class])
+  return next
+}
+
 function extraHp(character, data) {
   const race = data.races[character.race]
   return (race && race.extraHpPerLevel) || 0
@@ -318,7 +351,10 @@ const Rules = {
   changeHp,
   useSpellSlot,
   longRest,
-  shortRest
+  shortRest,
+  setSubclass,
+  addSpell,
+  removeSpell
 }
 
 if (typeof module !== 'undefined') module.exports = Rules

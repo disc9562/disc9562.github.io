@@ -139,6 +139,20 @@ const sr = R.shortRest(spent)
 assert.equal(sr.spellSlots['1'].used, 0)
 console.log('task3 ok')
 
+const picked = R.setSubclass(c3, 'evocation', data)
+assert.equal(picked.subclass, 'evocation')
+assert.ok(!picked.pendingChoices.some(x => x.type === 'subclass'))
+const swapped = R.setSubclass(picked, 'abjuration', data)
+assert.equal(swapped.subclass, 'abjuration')
+const cleared = R.setSubclass(swapped, '', data)
+assert.equal(cleared.subclass, null)
+assert.ok(cleared.pendingChoices.some(x => x.type === 'subclass'))
+const withSpell = R.addSpell(c3, 'fireball', data)
+assert.ok(withSpell.spells.indexOf('fireball') >= 0)
+const gone = R.removeSpell(withSpell, 'fireball', data)
+assert.ok(gone.spells.indexOf('fireball') < 0)
+console.log('edit ok')
+
 const fs = require('fs')
 const real = {
   races: JSON.parse(fs.readFileSync('data/races.json', 'utf8')),

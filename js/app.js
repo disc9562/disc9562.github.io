@@ -126,12 +126,13 @@ function combatHtml(c) {
     `<div class="skill-row"><span>${esc(s.name)} <span class="muted">${esc(ABI_NAME[s.abi])}</span></span>
       <input class="val" data-act="skillval" data-id="${s.id}" type="number" value="${esc(fieldVal(skills, s.id))}" placeholder="—"></div>`
   ).join('')
-  const attacks = `<div class="atk muted"><span>名稱</span><span>命中</span><span>傷害</span></div>` +
+  const attacks = `<div class="atk muted"><span>名稱</span><span>命中</span><span>傷害</span><span></span></div>` +
     (c.attacks || []).map((a, i) =>
       `<div class="atk">
         <input data-act="atkname" data-i="${i}" value="${esc(a.name)}">
         <input class="val" data-act="atkbonus" data-i="${i}" type="number" value="${a.bonus}">
         <input data-act="atkdmg" data-i="${i}" value="${esc(a.damage)}">
+        <button class="icon" data-act="delatk" data-i="${i}">×</button>
       </div>`
     ).join('') +
     `<button class="big" data-act="addatk">＋攻擊</button>`
@@ -139,9 +140,24 @@ function combatHtml(c) {
     const s = data.spells[id]
     if (!s) return ''
     const open = openSpell === id
-    return `<button class="big" data-act="togglespell" data-id="${esc(id)}">${esc(s.name)} <span class="muted">${s.level === 0 ? '戲法' : s.level + '環'}</span>
-      ${open ? `<p class="spell-text">${esc(s.text)}</p>` : ''}</button>`
+    return `<div class="spell-line">
+      <button class="big grow" data-act="togglespell" data-id="${esc(id)}">${esc(s.name)} <span class="muted">${s.level === 0 ? '戲法' : s.level + '環'}</span>
+        ${open ? `<p class="spell-text">${esc(s.text)}</p>` : ''}</button>
+      <button class="icon" data-act="delspell" data-id="${esc(id)}">×</button>
+    </div>`
   }).join('')
+  const spellAdd = `<select data-act="addspell"><option value="">＋加入法術</option>${Object.keys(data.spells).filter(id => (c.spells || []).indexOf(id) < 0).map(id => {
+    const s = data.spells[id]
+    return `<option value="${esc(id)}">${esc(s.name)}（${s.level === 0 ? '戲法' : s.level + '環'}）</option>`
+  }).join('')}</select>`
+  const featChips = (c.feats || []).map(id => {
+    const f = data.feats[id]
+    return `<div class="chip">${esc(f ? f.name : id)}<button class="icon" data-act="delfeat" data-id="${esc(id)}">×</button></div>`
+  }).join('')
+  const featAdd = `<select data-act="addfeat"><option value="">＋專長</option>${Object.keys(data.feats).filter(id => (c.feats || []).indexOf(id) < 0).map(id =>
+    `<option value="${esc(id)}">${esc(data.feats[id].name)}</option>`).join('')}</select>`
+  const subOpts = `<option value="">（未選／重選）</option>` + (cls.subclasses || []).map(s =>
+    `<option value="${esc(s.id)}" ${c.subclass === s.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')
   const slotBtns = Object.keys(c.spellSlots || {}).sort().map(k => {
     const sl = c.spellSlots[k]
     return `<button class="slot" data-act="slot" data-k="${esc(k)}">${k}環 ${sl.max - sl.used}/${sl.max}</button>`
@@ -177,7 +193,7 @@ function combatHtml(c) {
     <p class="mast">冒險者紀錄</p>
     <div class="top">
       <div>
-        <div class="name">${esc(c.name)}</div>
+        <input class="name-edit" data-act="name" value="${esc(c.name)}">
         <div class="kicker">${esc(raceName(c.race))}　${esc(className(c.class))} ${c.level}</div>
       </div>
       <div class="row">
@@ -188,6 +204,11 @@ function combatHtml(c) {
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
     ${pending ? `<button class="big warn" data-act="pending">還有未選項目（${pending}）</button>` : ''}
     ${menu}
+    <div class="ident">
+      <label class="field">副職業
+        <select data-act="subclass">${subOpts}</select>
+      </label>
+    </div>
     <div class="stats">
       <div class="box"><div class="lbl">AC</div>
         <input class="val-sm" data-act="ac" type="number" value="${c.ac}"></div>
@@ -227,7 +248,12 @@ function combatHtml(c) {
         ${attacks}
         ${res ? `<h3>資源</h3><div class="slots">${res}</div>` : ''}
         ${slotBtns ? `<h3>法術位</h3><div class="slots">${slotBtns}</div>` : ''}
-        ${spells ? `<h3>法術</h3>${spells}` : ''}
+        <h3>法術</h3>
+        ${spells}
+        ${spellAdd}
+        <h3>專長</h3>
+        <div class="chips">${featChips}</div>
+        ${featAdd}
         <h3>狀態</h3>
         <div class="slots">${condPick}</div>
       </div>
@@ -349,6 +375,22 @@ el.addEventListener('click', e => {
   if (act === 'addatk') {
     const next = JSON.parse(JSON.stringify(c))
     next.attacks = (next.attacks || []).concat([{ name: '新攻擊', bonus: 0, damage: '1d6' }])
+    replace(next)
+    return
+  }
+  if (act === 'delatk') {
+    const next = JSON.parse(JSON.stringify(c))
+    next.attacks.splice(Number(btn.dataset.i), 1)
+    replace(next)
+    return
+  }
+  if (act === 'delspell') {
+    replace(Rules.removeSpell(c, btn.dataset.id, data))
+    return
+  }
+  if (act === 'delfeat') {
+    const next = JSON.parse(JSON.stringify(c))
+    next.feats = (next.feats || []).filter(id => id !== btn.dataset.id)
     replace(next)
     return
   }
@@ -482,6 +524,16 @@ el.addEventListener('change', e => {
     const cur = el.querySelector('[data-act="hpcur"]')
     if (cur) cur.value = c.hp.current
     persist(true)
+  }
+  if (act === 'name') { const c = current(); if (c) { c.name = t.value; persist(true) } }
+  if (act === 'subclass') { const c = current(); if (c) replace(Rules.setSubclass(c, t.value, data)) }
+  if (act === 'addspell') { const c = current(); if (c && t.value) replace(Rules.addSpell(c, t.value, data)) }
+  if (act === 'addfeat') {
+    const c = current(); if (!c || !t.value) return
+    const next = JSON.parse(JSON.stringify(c))
+    next.feats = next.feats || []
+    if (next.feats.indexOf(t.value) < 0) next.feats.push(t.value)
+    replace(next)
   }
   if (act === 'atkname') { const c = current(); if (c && c.attacks[t.dataset.i]) { c.attacks[t.dataset.i].name = t.value; persist(true) } }
   if (act === 'atkbonus') { const c = current(); if (c && c.attacks[t.dataset.i]) { c.attacks[t.dataset.i].bonus = Number(t.value); persist(true) } }
