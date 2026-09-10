@@ -199,6 +199,104 @@ function createCharacter(input, data) {
   return character
 }
 
+function clone(c) {
+  return JSON.parse(JSON.stringify(c))
+}
+
+function extraHp(character, data) {
+  const race = data.races[character.race]
+  return (race && race.extraHpPerLevel) || 0
+}
+
+function checklistFor(character, data) {
+  const cls = data.classes && data.classes[character.class]
+  const next = character.level + 1
+  if (!cls || next > 20) {
+    return [{ id: 'missing', type: 'missing', label: '這筆資料還沒做' }]
+  }
+  const conMod = abilityMod(character.abilities.con)
+  const gained = hitDieAverage(cls.hitDie) + conMod + extraHp(character, data)
+  const items = [{ id: 'hp', type: 'hp', label: 'HP +' + gained + '（平均）' }]
+  if (cls.subclassLevel === next && !character.subclass) {
+    items.push({ id: 'subclass-' + next, type: 'subclass', level: next })
+  }
+  if ((cls.asiLevels || []).includes(next)) {
+    items.push({ id: 'asi-' + next, type: 'asi', level: next })
+  }
+  if (cls.spellPicks && (cls.spellPicks.later || 0) > 0) {
+    items.push({ id: 'spells', type: 'spells', count: cls.spellPicks.later })
+  }
+  return items
+}
+
+function applyLevelUp(character, checkedIds, data) {
+  const list = checklistFor(character, data)
+  if (list.some(x => x.type === 'missing')) return { ok: false }
+  const missing = list.filter(x => checkedIds.indexOf(x.id) === -1).map(x => x.id)
+  if (missing.length) return { ok: false, missing }
+  const next = clone(character)
+  const cls = data.classes[next.class]
+  const newLevel = next.level + 1
+  next.level = newLevel
+  const conMod = abilityMod(next.abilities.con)
+  const newMax = maxHp({
+    hitDie: cls.hitDie,
+    conMod,
+    level: newLevel,
+    extraPerLevel: extraHp(next, data)
+  })
+  const delta = newMax - next.hp.max
+  next.hp.max = newMax
+  next.hp.current = Math.min(newMax, next.hp.current + delta)
+  next.proficiency = proficiencyBonus(newLevel)
+  const fresh = slotsFor(casterOf(cls, next.subclass), newLevel)
+  const merged = {}
+  for (const k of Object.keys(fresh)) {
+    const used = (next.spellSlots[k] && next.spellSlots[k].used) || 0
+    merged[k] = { max: fresh[k].max, used: Math.min(used, fresh[k].max) }
+  }
+  next.spellSlots = merged
+  if ((cls.asiLevels || []).includes(newLevel)) {
+    next.asiTaken = (next.asiTaken || []).concat([newLevel])
+  }
+  next.pendingChoices = pendingFor(next, cls)
+  return { ok: true, character: next }
+}
+
+function changeHp(character, delta) {
+  const next = clone(character)
+  next.hp.current = Math.max(0, Math.min(next.hp.max, next.hp.current + delta))
+  return next
+}
+
+function useSpellSlot(character, circle) {
+  const slot = character.spellSlots && character.spellSlots[circle]
+  if (!slot || slot.used >= slot.max) return { ok: false }
+  const next = clone(character)
+  next.spellSlots[String(circle)].used += 1
+  return { ok: true, character: next }
+}
+
+function longRest(character) {
+  const next = clone(character)
+  next.hp.current = next.hp.max
+  for (const k of Object.keys(next.spellSlots || {})) next.spellSlots[k].used = 0
+  next.deathSaves = { success: 0, fail: 0 }
+  for (const r of next.resources || []) r.used = 0
+  return next
+}
+
+function shortRest(character) {
+  const next = clone(character)
+  if (next.class === 'warlock') {
+    for (const k of Object.keys(next.spellSlots || {})) next.spellSlots[k].used = 0
+  }
+  for (const r of next.resources || []) {
+    if (r.rest === 'shortRest') r.used = 0
+  }
+  return next
+}
+
 const Rules = {
   abilityMod,
   proficiencyBonus,
@@ -207,7 +305,13 @@ const Rules = {
   slotsFor,
   pendingFor,
   createCharacter,
-  casterOf
+  casterOf,
+  checklistFor,
+  applyLevelUp,
+  changeHp,
+  useSpellSlot,
+  longRest,
+  shortRest
 }
 
 if (typeof module !== 'undefined') module.exports = Rules

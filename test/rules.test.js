@@ -55,3 +55,82 @@ assert.ok(Array.isArray(c.pendingChoices) && c.pendingChoices.length > 0)
 assert.ok(c.saves.int === true && c.saves.wis === true && c.saves.str === false)
 assert.deepEqual(c.skillProf, [])
 console.log('task2 ok')
+
+const c3 = R.createCharacter({
+  name: '艾琳',
+  race: 'human',
+  class: 'wizard',
+  level: 3,
+  abilities: { str: 8, dex: 14, con: 13, int: 15, wis: 10, cha: 12 }
+}, data)
+assert.equal(c3.level, 3)
+assert.equal(c3.hp.max, 20)
+assert.equal(c3.spellSlots['1'].max, 4)
+assert.equal(c3.spellSlots['2'].max, 2)
+assert.ok(c3.pendingChoices.some(x => x.type === 'subclass'))
+assert.ok(c3.pendingChoices.some(x => x.type === 'spells'))
+
+const list = R.checklistFor(c3, data)
+assert.ok(list.some(x => x.type === 'hp'))
+assert.ok(list.some(x => x.type === 'asi'))
+assert.ok(!list.find(x => x.type === 'missing'))
+
+const blocked = R.applyLevelUp(c3, [], data)
+assert.equal(blocked.ok, false)
+
+const ids = list.map(x => x.id)
+const applied = R.applyLevelUp(c3, ids, data)
+assert.equal(applied.ok, true)
+assert.equal(applied.character.level, 4)
+assert.equal(applied.character.hp.max, 26)
+assert.equal(applied.character.spellSlots['2'].max, 3)
+
+let hp = R.changeHp(c3, -100)
+assert.equal(hp.hp.current, 0)
+hp = R.changeHp(c3, 100)
+assert.equal(hp.hp.current, hp.hp.max)
+
+const no = R.useSpellSlot({ ...c3, spellSlots: { 1: { max: 4, used: 4 } } }, 1)
+assert.equal(no.ok, false)
+const slotOk = R.useSpellSlot({ ...c3, spellSlots: { 1: { max: 4, used: 0 } } }, 1)
+assert.equal(slotOk.ok, true)
+assert.equal(slotOk.character.spellSlots['1'].used, 1)
+
+const rested = R.longRest({
+  ...c3,
+  hp: { current: 1, max: c3.hp.max },
+  spellSlots: { 1: { max: 4, used: 3 } }
+})
+assert.equal(rested.hp.current, rested.hp.max)
+assert.equal(rested.spellSlots['1'].used, 0)
+
+const warlockClass = {
+  ...data,
+  classes: {
+    ...data.classes,
+    warlock: {
+      name: '術師',
+      hitDie: 8,
+      saves: ['wis', 'cha'],
+      primary: 'cha',
+      subclassLevel: 1,
+      caster: 'warlock',
+      asiLevels: [4, 8, 12, 16, 19],
+      subclasses: [{ id: 'fiend', name: '邪魔' }],
+      spellPicks: { 1: 2, later: 1 },
+      defaultAttack: { name: '石首', damageDie: 4 },
+      resources: [{ id: 'pact-slots', rest: 'shortRest' }]
+    }
+  }
+}
+const wl = R.createCharacter({
+  name: 'W',
+  race: 'human',
+  class: 'warlock',
+  level: 1,
+  abilities: { str: 8, dex: 14, con: 13, int: 10, wis: 12, cha: 15 }
+}, warlockClass)
+const spent = R.useSpellSlot(wl, 1).character
+const sr = R.shortRest(spent)
+assert.equal(sr.spellSlots['1'].used, 0)
+console.log('task3 ok')
