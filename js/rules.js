@@ -325,6 +325,29 @@ function setSlotUsed(character, circle, used) {
   return { ok: true, character: next }
 }
 
+function syncSpellSlots(character, data) {
+  const cls = data.classes && data.classes[character.class]
+  if (!cls) return character
+  const fresh = slotsFor(casterOf(cls, character.subclass), character.level)
+  const cur = character.spellSlots || {}
+  let changed = false
+  const next = {}
+  for (const k of Object.keys(cur)) next[k] = cur[k]
+  for (const k of Object.keys(fresh)) {
+    if (!next[k]) {
+      next[k] = { max: fresh[k].max, used: 0 }
+      changed = true
+    } else if (fresh[k].max > next[k].max) {
+      next[k] = { max: fresh[k].max, used: Math.min(next[k].used, fresh[k].max) }
+      changed = true
+    }
+  }
+  if (!changed) return character
+  const out = clone(character)
+  out.spellSlots = next
+  return out
+}
+
 function setSlotMax(character, circle, max) {
   const next = clone(character)
   const key = String(circle)
@@ -372,6 +395,7 @@ const Rules = {
   useSpellSlot,
   setSlotUsed,
   setSlotMax,
+  syncSpellSlots,
   longRest,
   shortRest,
   setSubclass,

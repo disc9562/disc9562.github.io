@@ -177,4 +177,20 @@ assert.equal(w.hp.max, 8)
 assert.equal(real.classes.wizard.name, '法師')
 assert.equal(Object.keys(real.races).length, 9)
 assert.equal(Object.keys(real.classes).length, 12)
+const w13 = R.createCharacter({
+  name: '高階',
+  race: 'human',
+  class: 'wizard',
+  level: 13,
+  abilities: { str: 8, dex: 14, con: 13, int: 15, wis: 10, cha: 12 },
+  hpMax: 80
+}, real)
+assert.equal(w13.spellSlots['5'].max, 2)
+assert.equal(w13.spellSlots['6'].max, 1)
+assert.equal(w13.spellSlots['7'].max, 1)
+assert.ok(!w13.spellSlots['8'])
+const stale = Object.assign({}, w13, { spellSlots: { 1: { max: 4, used: 0 } } })
+const synced = R.syncSpellSlots(stale, real)
+assert.equal(synced.spellSlots['7'].max, 1)
+assert.ok(real.spells['finger-of-death'].level === 7)
 console.log('task5 ok')

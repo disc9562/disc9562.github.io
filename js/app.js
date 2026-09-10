@@ -114,9 +114,9 @@ function fieldVal(obj, k) {
 function combatHtml(c) {
   const cls = data.classes[c.class] || {}
   const pending = (c.pendingChoices || []).length
-  const freshSlots = Rules.slotsFor(Rules.casterOf(cls, c.subclass), c.level)
-  if (Object.keys(freshSlots).length && (!c.spellSlots || !Object.keys(c.spellSlots).length)) {
-    c.spellSlots = freshSlots
+  const synced = Rules.syncSpellSlots(c, data)
+  if (synced !== c) {
+    c.spellSlots = synced.spellSlots
     persist(true)
   }
   const skills = c.skills || {}
