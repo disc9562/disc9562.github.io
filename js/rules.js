@@ -114,12 +114,100 @@ function slotsFor(caster, level) {
   return {}
 }
 
+function casterOf(classDef, subclass) {
+  if (subclass === 'eldritch-knight' || subclass === 'arcane-trickster') return 'third'
+  return classDef.caster
+}
+
+function pendingFor(character, classDef) {
+  const pending = []
+  const level = character.level
+  if (classDef.subclassLevel && classDef.subclassLevel <= level && !character.subclass) {
+    pending.push({
+      id: 'subclass-' + classDef.subclassLevel,
+      type: 'subclass',
+      level: classDef.subclassLevel
+    })
+  }
+  const taken = character.asiTaken || []
+  for (const L of classDef.asiLevels || []) {
+    if (L <= level && !taken.includes(L)) {
+      pending.push({ id: 'asi-' + L, type: 'asi', level: L })
+    }
+  }
+  const picks = classDef.spellPicks
+  if (picks) {
+    let need = 0
+    if (level >= 1) need += picks[1] || 0
+    for (let L = 2; L <= level; L++) need += picks.later || 0
+    const have = (character.spells || []).length
+    const missing = need - have
+    if (missing > 0) pending.push({ id: 'spells', type: 'spells', count: missing })
+  }
+  return pending
+}
+
+function createCharacter(input, data) {
+  const race = data.races[input.race]
+  const cls = data.classes[input.class]
+  const abilities = Object.assign({}, input.abilities)
+  const bonuses = (race && race.bonuses) || {}
+  for (const k of Object.keys(bonuses)) abilities[k] = (abilities[k] || 0) + bonuses[k]
+  const conMod = abilityMod(abilities.con)
+  const extra = (race && race.extraHpPerLevel) || 0
+  const hp = maxHp({
+    hitDie: cls.hitDie,
+    conMod,
+    level: input.level,
+    extraPerLevel: extra
+  })
+  const prof = proficiencyBonus(input.level)
+  const dexMod = abilityMod(abilities.dex)
+  const strMod = abilityMod(abilities.str)
+  const caster = casterOf(cls, null)
+  const saves = { str: false, dex: false, con: false, int: false, wis: false, cha: false }
+  for (const s of cls.saves) saves[s] = true
+  const atk = cls.defaultAttack || { name: '徒手', damageDie: 1 }
+  const dmg =
+    strMod >= 0 ? '1d' + atk.damageDie + '+' + strMod : '1d' + atk.damageDie + strMod
+  const character = {
+    id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    name: input.name,
+    race: input.race,
+    class: input.class,
+    level: input.level,
+    abilities,
+    hp: { current: hp, max: hp },
+    ac: 10 + dexMod,
+    spellSlots: slotsFor(caster, input.level),
+    spells: [],
+    attacks: [{ name: atk.name, bonus: prof + strMod, damage: dmg }],
+    feats: [],
+    subclass: null,
+    pendingChoices: [],
+    proficiency: prof,
+    speed: race.speed,
+    initiative: dexMod,
+    saves,
+    skillProf: [],
+    resources: (cls.resources || []).map(r => ({ id: r.id, name: r.name, rest: r.rest, used: 0, max: r.max || 1 })),
+    conditions: [],
+    deathSaves: { success: 0, fail: 0 },
+    asiTaken: []
+  }
+  character.pendingChoices = pendingFor(character, cls)
+  return character
+}
+
 const Rules = {
   abilityMod,
   proficiencyBonus,
   hitDieAverage,
   maxHp,
-  slotsFor
+  slotsFor,
+  pendingFor,
+  createCharacter,
+  casterOf
 }
 
 if (typeof module !== 'undefined') module.exports = Rules
