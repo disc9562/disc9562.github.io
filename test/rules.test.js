@@ -17,8 +17,9 @@ assert.equal(R.hitDieAverage(8), 5)
 assert.equal(R.hitDieAverage(10), 6)
 assert.equal(R.hitDieAverage(12), 7)
 
-assert.equal(R.maxHp({ hitDie: 6, conMod: 1, level: 1, extraPerLevel: 0 }), 7)
-assert.equal(R.maxHp({ hitDie: 6, conMod: 1, level: 3, extraPerLevel: 0 }), 17)
+assert.equal(R.maxHp({ hitDie: 6, conMod: 1, extraPerLevel: 0, rolls: [] }), 7)
+assert.equal(R.maxHp({ hitDie: 6, conMod: 2, extraPerLevel: 0, rolls: [1] }), 11)
+assert.equal(R.maxHp({ hitDie: 6, conMod: 2, extraPerLevel: 0, rolls: [6, 1] }), 8 + 8 + 3)
 
 const w3 = R.slotsFor('full', 3)
 assert.deepEqual(w3, { 1: { max: 4, used: 0 }, 2: { max: 2, used: 0 } })
@@ -61,7 +62,8 @@ const c3 = R.createCharacter({
   race: 'human',
   class: 'wizard',
   level: 3,
-  abilities: { str: 8, dex: 14, con: 13, int: 15, wis: 10, cha: 12 }
+  abilities: { str: 8, dex: 14, con: 13, int: 15, wis: 10, cha: 12 },
+  hpRolls: [4, 4]
 }, data)
 assert.equal(c3.level, 3)
 assert.equal(c3.hp.max, 20)
@@ -75,14 +77,16 @@ assert.ok(list.some(x => x.type === 'hp'))
 assert.ok(list.some(x => x.type === 'asi'))
 assert.ok(!list.find(x => x.type === 'missing'))
 
-const blocked = R.applyLevelUp(c3, [], data)
+const blocked = R.applyLevelUp(c3, [], data, { hpRoll: 4 })
 assert.equal(blocked.ok, false)
 
 const ids = list.map(x => x.id)
-const applied = R.applyLevelUp(c3, ids, data)
+assert.equal(R.applyLevelUp(c3, ids, data).ok, false)
+const applied = R.applyLevelUp(c3, ids, data, { hpRoll: 4 })
 assert.equal(applied.ok, true)
 assert.equal(applied.character.level, 4)
 assert.equal(applied.character.hp.max, 26)
+assert.deepEqual(applied.character.hpRolls, [4, 4, 4])
 assert.equal(applied.character.spellSlots['2'].max, 3)
 
 let hp = R.changeHp(c3, -100)

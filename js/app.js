@@ -33,6 +33,7 @@ let pickSpells = []
 let pickFeat = ''
 let pickAsi = ['str', 'str']
 let openSpell = ''
+let hpRoll = ''
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
@@ -64,16 +65,12 @@ function className(id) {
 }
 
 function render() {
+  const opened = [...el.querySelectorAll('details')].map(d => d.open)
   const c = current()
-  if (view === 'create' || !c) {
-    el.innerHTML = createHtml()
-    return
-  }
-  if (view === 'levelup' || view === 'pending') {
-    el.innerHTML = levelHtml(c)
-    return
-  }
-  el.innerHTML = combatHtml(c)
+  if (view === 'create' || !c) el.innerHTML = createHtml()
+  else if (view === 'levelup' || view === 'pending') el.innerHTML = levelHtml(c)
+  else el.innerHTML = combatHtml(c)
+  ;[...el.querySelectorAll('details')].forEach((d, i) => { if (opened[i]) d.open = true })
 }
 
 function createHtml() {
@@ -94,6 +91,7 @@ function createHtml() {
     <label class="field">等級 <input id="f-level" type="number" min="1" max="20" value="1"></label>
     <p class="muted">六項是加種族前的數字</p>
     <div class="abi">${abis}</div>
+    <label class="field">最大生命（1 級留空＝骰面最大＋體質） <input id="f-hpmax" type="number" min="1" placeholder="1 級可留空"></label>
     <button class="big primary" data-act="create">建立</button>
     ${state.characters.length ? `<button class="big" data-act="back">取消</button>` : ''}
   `
@@ -129,11 +127,19 @@ function combatHtml(c) {
         <button class="icon grow" data-act="ds-reset">重設</button>
       </div>
     </div>` : ''
-  const skillRows = SKILLS.map(s => {
+  const abiLine = Object.keys(ABI_NAME).map(k => {
+    const m = Rules.abilityMod(c.abilities[k])
+    return esc(ABI_NAME[k]) + ' ' + c.abilities[k] + ' (' + (m >= 0 ? '+' : '') + m + ')'
+  }).join('　')
+  const skillRows = `<p class="muted">${abiLine}</p>` + SKILLS.map(s => {
     const on = (c.skillProf || []).indexOf(s.id) >= 0
     const bonus = Rules.abilityMod(c.abilities[s.abi]) + (on ? c.proficiency : 0)
     const sign = bonus >= 0 ? '+' : ''
-    return `<label class="chk"><input type="checkbox" data-act="skill" data-id="${s.id}" ${on ? 'checked' : ''}>${esc(s.name)}（${esc(ABI_NAME[s.abi])}）${sign}${bonus}</label>`
+    return `<div class="row" style="margin:6px 0">
+      <div class="grow">${esc(s.name)} <span class="muted">${esc(ABI_NAME[s.abi])}</span></div>
+      <strong>${sign}${bonus}</strong>
+      <button class="icon" data-act="skill" data-id="${s.id}">${on ? '熟練' : '未練'}</button>
+    </div>`
   }).join('')
   const saveRows = Object.keys(ABI_NAME).map(k => {
     const on = c.saves && c.saves[k]
@@ -222,20 +228,23 @@ function levelHtml(c) {
         return `<label class="chk"><input type="checkbox" data-act="picksp" data-id="${esc(id)}" ${onS ? 'checked' : ''}>${esc(s.name)}（${s.level === 0 ? '戲法' : s.level + '環'}）</label>`
       }).join('')
     }
+    if (it.type === 'hp') {
+      extra = `<input type="number" min="1" max="${it.hitDie}" data-act="hproll" value="${esc(hpRoll)}" placeholder="這次骰到 1–${it.hitDie}">`
+    }
     if (it.type === 'asi') {
-      const ab = Object.keys(ABI_NAME).map(k => `<option value="${k}">${ABI_NAME[k]}</option>`).join('')
+      const opts = sel => Object.keys(ABI_NAME).map(k =>
+        `<option value="${k}" ${sel === k ? 'selected' : ''}>${ABI_NAME[k]}</option>`).join('')
       extra = `
         <p class="muted">兩項 +1，或選一個專長</p>
-        <select data-act="asi0">${ab}</select>
-        <select data-act="asi1">${ab}</select>
+        <select data-act="asi0">${opts(pickAsi[0])}</select>
+        <select data-act="asi1">${opts(pickAsi[1])}</select>
         <select data-act="feat"><option value="">（不用專長）</option>${Object.keys(data.feats).map(id =>
-          `<option value="${esc(id)}">${esc(data.feats[id].name)}</option>`).join('')}</select>`
+          `<option value="${esc(id)}" ${pickFeat === id ? 'selected' : ''}>${esc(data.feats[id].name)}</option>`).join('')}</select>`
     }
     if (it.type === 'missing') extra = `<p>${esc(it.label)}</p>`
     const label = it.label || ({ hp: '生命值', subclass: '子職', asi: '能力值／專長', spells: '法術 ×' + (it.count || '') }[it.type] || it.type)
     return `<label class="chk"><input type="checkbox" data-act="check" data-id="${esc(it.id)}" ${on ? 'checked' : ''}>${esc(label)}</label>${extra}`
   }).join('')
-  const allOn = items.length && items.every(it => checkedIds.indexOf(it.id) >= 0)
   return `
     <div class="top">
       <button class="icon" data-act="back">返回</button>
@@ -243,7 +252,7 @@ function levelHtml(c) {
     </div>
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
     ${boxes || '<p class="muted">沒有要選的</p>'}
-    <button class="big primary" data-act="apply" ${(!allOn || missing) ? 'disabled' : ''}>套用</button>
+    <button class="big primary" data-act="apply" ${missing ? 'disabled' : ''}>套用</button>
   `
 }
 
@@ -266,7 +275,13 @@ el.addEventListener('click', e => {
     const abilities = {}
     el.querySelectorAll('[data-act="abi"]').forEach(inp => { abilities[inp.dataset.k] = Number(inp.value) })
     if (!name.trim()) { banner = '缺名字'; render(); return }
-    const ch = Rules.createCharacter({ name: name.trim(), race, class: classId, level, abilities }, data)
+    const hpMaxRaw = (document.getElementById('f-hpmax') || {}).value
+    const hpMax = hpMaxRaw === '' || hpMaxRaw == null ? null : Number(hpMaxRaw)
+    if (level > 1 && hpMax == null) { banner = '等級大於 1 請填最大生命（骰＋體質加總）'; render(); return }
+    const ch = Rules.createCharacter({
+      name: name.trim(), race, class: classId, level, abilities,
+      hpMax: hpMax == null ? undefined : hpMax
+    }, data)
     state.characters.push(ch)
     state.currentId = ch.id
     view = 'combat'
@@ -281,16 +296,14 @@ el.addEventListener('click', e => {
     else { banner = '法術位用完了'; render() }
     return
   }
-  if (act === 'levelup') { view = 'levelup'; checkedIds = []; pickSpells = []; pickSubclass = ((data.classes[c.class] || {}).subclasses || [])[0] && data.classes[c.class].subclasses[0].id || ''; menuOpen = false; render(); return }
+  if (act === 'levelup') { view = 'levelup'; checkedIds = []; pickSpells = []; hpRoll = ''; pickSubclass = ((data.classes[c.class] || {}).subclasses || [])[0] && data.classes[c.class].subclasses[0].id || ''; menuOpen = false; render(); return }
   if (act === 'pending') { view = 'pending'; checkedIds = (c.pendingChoices || []).map(x => x.id); pickSpells = []; pickSubclass = ((data.classes[c.class] || {}).subclasses || [])[0] && data.classes[c.class].subclasses[0].id || ''; render(); return }
   if (act === 'check') {
     const id = btn.dataset.id
     const i = checkedIds.indexOf(id)
-    if (t.type === 'checkbox') {
-      if (t.checked && i < 0) checkedIds.push(id)
-      if (!t.checked && i >= 0) checkedIds.splice(i, 1)
-    }
-    render()
+    const checked = t.type === 'checkbox' ? t.checked : i < 0
+    if (checked && i < 0) checkedIds.push(id)
+    if (!checked && i >= 0) checkedIds.splice(i, 1)
     return
   }
   if (act === 'togglespell') { openSpell = openSpell === btn.dataset.id ? '' : btn.dataset.id; render(); return }
@@ -309,8 +322,8 @@ el.addEventListener('click', e => {
     const next = JSON.parse(JSON.stringify(c))
     next.skillProf = next.skillProf || []
     const i = next.skillProf.indexOf(id)
-    if (t.checked && i < 0) next.skillProf.push(id)
-    if (!t.checked && i >= 0) next.skillProf.splice(i, 1)
+    if (i < 0) next.skillProf.push(id)
+    else next.skillProf.splice(i, 1)
     replace(next)
     return
   }
@@ -367,8 +380,8 @@ el.addEventListener('click', e => {
       replace(next)
       return
     }
-    const applied = Rules.applyLevelUp(next, checkedIds, data)
-    if (!applied.ok) { banner = '還沒勾完'; render(); return }
+    const applied = Rules.applyLevelUp(next, checkedIds, data, { hpRoll: Number(hpRoll) })
+    if (!applied.ok) { banner = applied.missing && applied.missing[0] === 'hpRoll' ? '請填這次生命骰點數' : '還沒勾完'; render(); return }
     view = 'combat'
     replace(applied.character)
     return
@@ -404,13 +417,12 @@ el.addEventListener('change', e => {
   if (act === 'asi0') pickAsi[0] = t.value
   if (act === 'asi1') pickAsi[1] = t.value
   if (act === 'feat') pickFeat = t.value
-  if (act === 'abi') { /* live, read on submit */ }
+  if (act === 'hproll') hpRoll = t.value
   if (act === 'check') {
     const id = t.dataset.id
     const i = checkedIds.indexOf(id)
     if (t.checked && i < 0) checkedIds.push(id)
     if (!t.checked && i >= 0) checkedIds.splice(i, 1)
-    render()
   }
   if (act === 'skill') {
     /* handled in click too; change fires as well */

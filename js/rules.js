@@ -10,11 +10,14 @@ function hitDieAverage(die) {
   return Math.floor(die / 2) + 1
 }
 
-function maxHp({ hitDie, conMod, level, extraPerLevel }) {
+function hpGain(roll, conMod, extraPerLevel) {
+  return Math.max(1, roll + conMod) + (extraPerLevel || 0)
+}
+
+function maxHp({ hitDie, conMod, extraPerLevel, rolls }) {
   const extra = extraPerLevel || 0
   let hp = hitDie + conMod + extra
-  const later = hitDieAverage(hitDie) + conMod + extra
-  for (let i = 2; i <= level; i++) hp += later
+  for (const roll of rolls || []) hp += hpGain(roll, conMod, extra)
   return hp
 }
 
@@ -155,12 +158,10 @@ function createCharacter(input, data) {
   for (const k of Object.keys(bonuses)) abilities[k] = (abilities[k] || 0) + bonuses[k]
   const conMod = abilityMod(abilities.con)
   const extra = (race && race.extraHpPerLevel) || 0
-  const hp = maxHp({
-    hitDie: cls.hitDie,
-    conMod,
-    level: input.level,
-    extraPerLevel: extra
-  })
+  const hpRolls = (input.hpRolls || []).slice()
+  const hp = input.hpMax != null
+    ? input.hpMax
+    : maxHp({ hitDie: cls.hitDie, conMod, extraPerLevel: extra, rolls: hpRolls })
   const prof = proficiencyBonus(input.level)
   const dexMod = abilityMod(abilities.dex)
   const strMod = abilityMod(abilities.str)
@@ -178,6 +179,7 @@ function createCharacter(input, data) {
     level: input.level,
     abilities,
     hp: { current: hp, max: hp },
+    hpRolls,
     ac: 10 + dexMod,
     spellSlots: slotsFor(caster, input.level),
     spells: [],
@@ -215,8 +217,15 @@ function checklistFor(character, data) {
     return [{ id: 'missing', type: 'missing', label: '這筆資料還沒做' }]
   }
   const conMod = abilityMod(character.abilities.con)
-  const gained = hitDieAverage(cls.hitDie) + conMod + extraHp(character, data)
-  const items = [{ id: 'hp', type: 'hp', label: 'HP +' + gained + '（平均）' }]
+  const extra = extraHp(character, data)
+  const items = [{
+    id: 'hp',
+    type: 'hp',
+    hitDie: cls.hitDie,
+    conMod,
+    extra,
+    label: '生命骰 d' + cls.hitDie + ' ＋體質 ' + (conMod >= 0 ? '+' : '') + conMod
+  }]
   if (cls.subclassLevel === next && !character.subclass) {
     items.push({ id: 'subclass-' + next, type: 'subclass', level: next })
   }
@@ -229,25 +238,22 @@ function checklistFor(character, data) {
   return items
 }
 
-function applyLevelUp(character, checkedIds, data) {
+function applyLevelUp(character, checkedIds, data, opts) {
   const list = checklistFor(character, data)
   if (list.some(x => x.type === 'missing')) return { ok: false }
   const missing = list.filter(x => checkedIds.indexOf(x.id) === -1).map(x => x.id)
   if (missing.length) return { ok: false, missing }
+  const cls = data.classes[character.class]
+  const roll = opts && Number(opts.hpRoll)
+  if (!roll || roll < 1 || roll > cls.hitDie) return { ok: false, missing: ['hpRoll'] }
   const next = clone(character)
-  const cls = data.classes[next.class]
   const newLevel = next.level + 1
   next.level = newLevel
   const conMod = abilityMod(next.abilities.con)
-  const newMax = maxHp({
-    hitDie: cls.hitDie,
-    conMod,
-    level: newLevel,
-    extraPerLevel: extraHp(next, data)
-  })
-  const delta = newMax - next.hp.max
-  next.hp.max = newMax
-  next.hp.current = Math.min(newMax, next.hp.current + delta)
+  const gained = hpGain(roll, conMod, extraHp(next, data))
+  next.hp.max += gained
+  next.hp.current = Math.min(next.hp.max, next.hp.current + gained)
+  next.hpRolls = (next.hpRolls || []).concat([roll])
   next.proficiency = proficiencyBonus(newLevel)
   const fresh = slotsFor(casterOf(cls, next.subclass), newLevel)
   const merged = {}
@@ -301,6 +307,7 @@ const Rules = {
   abilityMod,
   proficiencyBonus,
   hitDieAverage,
+  hpGain,
   maxHp,
   slotsFor,
   pendingFor,
