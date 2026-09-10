@@ -1,0 +1,9 @@
+{
+  "name": "角色卡",
+  "short_name": "角色卡",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
+  "lang": "zh-Hant"
+}
