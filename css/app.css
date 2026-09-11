@@ -415,7 +415,22 @@ input, select {
   border-radius: var(--r);
   font-size: 16px;
 }
-input:hover, select:hover { border-color: var(--gold); }
+input:hover, select:hover, textarea:hover { border-color: var(--gold); }
+textarea.notes {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  padding: 12px 14px;
+  background: rgba(255, 250, 238, .7);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--r);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink);
+  resize: vertical;
+}
+.is-locked textarea.notes { pointer-events: auto; opacity: 1; }
 label.field input, label.field select, .abi input { width: 100%; }
 label.field {
   display: block;

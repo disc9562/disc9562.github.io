@@ -283,7 +283,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v23</p>
+    <p class="mast">冒險者紀錄 · v24</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -374,6 +374,8 @@ function combatHtml(c) {
         <button class="big lockable" data-act="addgear"${lock}>＋物品</button>
         <h3>狀態</h3>
         <div class="slots">${condPick}</div>
+        <h3>備忘錄</h3>
+        <textarea class="notes" data-act="notes" rows="6" placeholder="NPC 名字、線索、欠誰錢……離開欄位就自動存">${esc(c.notes || '')}</textarea>
       </div>
     </div>
   `
@@ -708,6 +710,7 @@ el.addEventListener('change', e => {
     persist(true)
   }
   if (act === 'name') { const c = current(); if (c) { c.name = t.value; persist(true) } }
+  if (act === 'notes') { const c = current(); if (c) { c.notes = t.value; persist(true) } }
   if (act === 'ruleset') { ruleset = t.value; render(); return }
   if (act === 'subclass') { const c = current(); if (c) replace(Rules.setSubclass(c, t.value, packFor(c.ruleset))) }
   if (act === 'addspell') { const c = current(); if (c && t.value) replace(Rules.addSpell(c, t.value, packFor(c.ruleset))) }
