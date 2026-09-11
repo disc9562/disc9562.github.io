@@ -864,7 +864,7 @@ textarea.notes-big { min-height: 60vh; margin: 10px 0 12px; }
 .note-read {
   padding: 16px 18px;
   margin: 10px 0 12px;
-  min-height: 40vh;
+  min-height: 120px;
   background: rgba(255, 250, 238, .55);
   border: 1px solid var(--gold-dim);
   border-radius: var(--r);
@@ -887,3 +887,6 @@ textarea.notes-big { min-height: 60vh; margin: 10px 0 12px; }
 }
 .term:hover, .term.on { background: rgba(122, 26, 31, .1); border-bottom-style: solid; }
 .term-pop { margin: 6px 0 12px; box-shadow: 0 6px 16px rgba(35, 21, 14, .18); }
+.notes-actions .big { flex: 1; margin: 0; text-align: center; }
+.notes-gl { margin-top: 12px; }
+.notes-gl .gl-q { margin-top: 0; }

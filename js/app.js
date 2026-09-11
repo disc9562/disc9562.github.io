@@ -33,6 +33,7 @@ let glQ = ''
 let glCat = ''
 let glOpen = {}
 let notesEdit = false
+let notesGl = false
 let termOpen = ''
 let glProg = Number(localStorage.getItem('dnd5e-script-progress')) || 1
 let checkedIds = []
@@ -294,7 +295,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v26</p>
+    <p class="mast">冒險者紀錄 · v27</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -451,7 +452,18 @@ function notesHtml(c) {
         const html = markTerms(line) || '&nbsp;'
         return `<p>${html}</p>${html.indexOf('term on') >= 0 ? termCard(termOpen) : ''}`
       }).join('')}</div>
-       <button class="big" data-act="notes-edit">編輯</button>`
+       <div class="row notes-actions">
+         <button class="big" data-act="notes-edit">編輯</button>
+         <button class="big${notesGl ? ' cond-on' : ''}" data-act="notes-gl">${notesGl ? '收起對照表 ▴' : '打開對照表 ▾'}</button>
+       </div>
+       ${notesGl && script ? `<section class="form-card notes-gl">
+         <input class="gl-q" data-act="gl-q" type="search" placeholder="搜人名、地名、怪物（中英皆可）" value="${esc(glQ)}">
+         <div class="slots gl-cats">
+           <button class="slot${glCat === '' ? ' cond-on' : ''}" data-act="gl-cat" data-c="">全部</button>
+           ${['NPC', '反派', '地點', '組織', '神祇', '怪物', '物品', '名詞'].map(k => `<button class="slot${glCat === k ? ' cond-on' : ''}" data-act="gl-cat" data-c="${k}">${k}</button>`).join('')}
+         </div>
+         <div id="gl-list">${glListHtml()}</div>
+       </section>` : ''}`
   return `
     <p class="mast">冒險者紀錄</p>
     <div class="top">
@@ -603,6 +615,7 @@ el.addEventListener('click', e => {
     loadScript(() => view === 'notes')
     return
   }
+  if (act === 'notes-gl') { notesGl = !notesGl; render(); return }
   if (act === 'notes-edit') { notesEdit = true; termOpen = ''; render(); const ta = el.querySelector('textarea.notes'); if (ta) ta.focus(); return }
   if (act === 'notes-done') {
     const ta = el.querySelector('textarea.notes')
