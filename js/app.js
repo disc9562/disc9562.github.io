@@ -27,6 +27,7 @@ let state = { characters: [], currentId: null }
 let view = 'combat'
 let banner = ''
 let menuOpen = false
+let confirmDel = false
 let checkedIds = []
 let pickSubclass = ''
 let pickSpells = []
@@ -272,10 +273,17 @@ function combatHtml(c) {
       <button class="big" data-act="long">長休</button>
       <button class="big" data-act="export">匯出</button>
       <label class="big" style="display:block">匯入<input id="import" type="file" accept="application/json" class="hidden"></label>
+      ${confirmDel ? `<div class="warn del-confirm">
+        <p>確定要刪除「${esc(c.name)}」？刪掉就救不回來，建議先匯出備份。</p>
+        <div class="row">
+          <button class="big danger" data-act="del-yes">確定刪除</button>
+          <button class="big" data-act="del-no">取消</button>
+        </div>
+      </div>` : `<button class="big del" data-act="del">刪除這個角色</button>`}
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v22</p>
+    <p class="mast">冒險者紀錄 · v23</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -430,7 +438,18 @@ el.addEventListener('click', e => {
   const act = btn.dataset.act
   const c = current()
   banner = ''
-  if (act === 'menu') { menuOpen = !menuOpen; render(); return }
+  if (act === 'menu') { menuOpen = !menuOpen; confirmDel = false; render(); return }
+  if (act === 'del') { confirmDel = true; render(); return }
+  if (act === 'del-no') { confirmDel = false; render(); return }
+  if (act === 'del-yes') {
+    state.characters = state.characters.filter(x => x.id !== c.id)
+    state.currentId = state.characters.length ? state.characters[0].id : null
+    confirmDel = false
+    menuOpen = false
+    view = state.currentId ? 'combat' : 'create'
+    persist()
+    return
+  }
   if (act === 'lock') {
     const next = JSON.parse(JSON.stringify(c))
     next.locked = !c.locked

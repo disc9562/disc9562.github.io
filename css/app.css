@@ -638,6 +638,18 @@ select.lockable { margin: 6px 0; }
 }
 .menu .big { margin: 2px 0; border-color: transparent; background: transparent; }
 .menu .big:hover { background: var(--paper); border-color: var(--gold-dim); }
+.menu .del { color: var(--rubric); margin-top: 8px; border-top: 1px dotted var(--gold-dim); border-radius: 0; }
+.del-confirm { margin: 8px 0 0; }
+.del-confirm p { margin: 0 0 8px; }
+.del-confirm .row .big { margin: 0; }
+.big.danger {
+  background: var(--rubric);
+  color: var(--paper-lit);
+  border-color: var(--rubric-deep);
+  font-weight: 700;
+  text-align: center;
+}
+.big.danger:hover { background: #93242b; border-color: var(--rubric-deep); }
 
 /* ---------- 錢幣 ---------- */
 .money { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 8px 0; }
