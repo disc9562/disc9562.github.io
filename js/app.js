@@ -306,10 +306,10 @@ function combatHtml(c) {
     </div>` : ''}
     <button class="slot${c.concentrating ? ' cond-on' : ''}" data-act="conc">專注${c.concentrating ? '中' : ''}</button>
     ${death}
+    </div>
     <h3>法術環</h3>
     ${slotRows || '<p class="muted">還沒有法術環</p>'}
     <button class="big lockable" data-act="addcircle"${lock}>＋法術環</button>
-    </div>
     <div class="sheet-grid">
       <div>
         <h3>能力</h3>

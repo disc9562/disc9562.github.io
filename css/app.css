@@ -72,6 +72,8 @@ button, select, [data-act], .slot, .pip, .icon, .big { cursor: pointer; }
   align-items: flex-start;
   gap: 12px;
 }
+.top > div:first-child { flex: 1; min-width: 0; }
+.top .row { flex-shrink: 0; }
 
 .name, .name-edit {
   font-family: var(--display);
@@ -120,13 +122,9 @@ h3::after {
 }
 
 .vitals {
-  position: sticky;
-  top: 0;
-  z-index: 8;
-  background: color-mix(in srgb, var(--paper) 88%, #fff);
-  backdrop-filter: blur(10px);
-  margin: -16px -16px 12px;
-  padding: 16px 16px 12px;
+  background: var(--paper);
+  margin: 0 0 16px;
+  padding: 0 0 12px;
   border-bottom: 2px solid var(--rubric);
 }
 
@@ -160,6 +158,7 @@ h3::after {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 4px;
 }
@@ -388,11 +387,15 @@ input.val-sm {
   opacity: 1;
   color: inherit;
   cursor: default;
-  background: transparent;
-  border-color: transparent;
+  background: var(--fill);
+  border-color: var(--line);
 }
 .is-locked .lockable { display: none; }
-.is-locked .name-edit:disabled { border-bottom-color: transparent; }
+.is-locked .name-edit:disabled {
+  background: transparent;
+  border-color: transparent;
+  border-bottom-color: transparent;
+}
 
 .slot-row {
   display: grid;
@@ -448,8 +451,8 @@ input.val-sm {
     box-shadow: var(--shadow);
   }
   .vitals {
-    margin: -24px -32px 16px;
-    padding: 24px 32px 14px;
+    margin: 0 0 16px;
+    padding: 0 0 14px;
   }
   .sheet-grid {
     display: grid;
