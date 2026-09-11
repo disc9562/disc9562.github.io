@@ -113,29 +113,48 @@ function createHtml() {
   const classes = Object.keys(pack.classes).map(id =>
     `<option value="${esc(id)}">${esc(pack.classes[id].name)}</option>`).join('')
   const abis = Object.keys(ABI_NAME).map(k =>
-    `<label class="field">${esc(ABI_NAME[k])}
-      <input data-act="abi" data-k="${k}" type="number" min="1" max="20" value="10">
+    `<label class="abi-in"><span>${esc(ABI_NAME[k])}</span>
+      <input data-act="abi" data-k="${k}" type="number" min="1" max="20" value="10" inputmode="numeric">
     </label>`).join('')
+  const bad = banner ? ' aria-invalid="true"' : ''
   return `
     <p class="mast">冒險者紀錄</p>
-    <h2>建角</h2>
-    ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
+    <h2>建立新角色</h2>
+    <p class="lede">填好名字與出身，六項屬性可以之後再改。</p>
+    <section class="form-card">
+    <h3>身分</h3>
     <label class="field">規則
       <select data-act="ruleset">
         <option value="2014" ${ruleset === '2014' ? 'selected' : ''}>2014 PHB</option>
         <option value="2024" ${ruleset === '2024' ? 'selected' : ''}>2024 PHB</option>
       </select>
     </label>
-    <label class="field">名字 <input id="f-name" placeholder="角色名"></label>
+    <label class="field">名字 <input id="f-name" placeholder="角色名" autocomplete="off"${banner === '缺名字' ? bad : ''}></label>
     <label class="field">${ruleset === '2024' ? '物種' : '種族'} <select id="f-race">${races}</select></label>
     <label class="field">職業 <select id="f-class">${classes}</select></label>
-    <label class="field">等級 <input id="f-level" type="number" min="1" max="20" value="1"></label>
-    <p class="muted">${ruleset === '2024' ? '六項填最終分數（2024 種族不加點）' : '六項是加種族前的數字'}</p>
+    <label class="field">等級 <input id="f-level" type="number" min="1" max="20" value="1" inputmode="numeric"></label>
+    </section>
+    <section class="form-card">
+    <h3>屬性</h3>
+    <p class="hint">${ruleset === '2024' ? '填最終分數，2024 版種族不加點。' : '填加種族加值前的數字，系統會自動加。'}</p>
     <div class="abi">${abis}</div>
-    <label class="field">最大生命（1 級留空＝骰面最大＋體質） <input id="f-hpmax" type="number" min="1" placeholder="1 級可留空"></label>
-    <button class="big primary" data-act="create">建立</button>
+    </section>
+    <section class="form-card">
+    <h3>生命</h3>
+    <label class="field">最大生命 <input id="f-hpmax" type="number" min="1" placeholder="1 級可留空，自動算" inputmode="numeric"${banner && banner !== '缺名字' ? bad : ''}></label>
+    <p class="hint">1 級留空會用骰面最大值加體質調整值。2 級以上請填骰出的總和。</p>
+    </section>
+    ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
+    <button class="big primary" data-act="create">建立角色</button>
     ${state.characters.length ? `<button class="big" data-act="back">取消</button>` : ''}
   `
+}
+
+function focusField(id) {
+  const f = document.getElementById(id)
+  if (!f) return
+  f.scrollIntoView({ block: 'center' })
+  f.focus()
 }
 
 function fieldVal(obj, k) {
@@ -256,7 +275,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v21</p>
+    <p class="mast">冒險者紀錄 · v22</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -427,10 +446,10 @@ el.addEventListener('click', e => {
     const level = Number((document.getElementById('f-level') || {}).value || 1)
     const abilities = {}
     el.querySelectorAll('[data-act="abi"]').forEach(inp => { abilities[inp.dataset.k] = Number(inp.value) })
-    if (!name.trim()) { banner = '缺名字'; render(); return }
+    if (!name.trim()) { banner = '缺名字'; render(); focusField('f-name'); return }
     const hpMaxRaw = (document.getElementById('f-hpmax') || {}).value
     const hpMax = hpMaxRaw === '' || hpMaxRaw == null ? null : Number(hpMaxRaw)
-    if (level > 1 && hpMax == null) { banner = '等級大於 1 請填最大生命（骰＋體質加總）'; render(); return }
+    if (level > 1 && hpMax == null) { banner = '等級大於 1 請填最大生命（骰＋體質加總）'; render(); focusField('f-hpmax'); return }
     const ch = Rules.createCharacter({
       name: name.trim(), race, class: classId, level, abilities,
       hpMax: hpMax == null ? undefined : hpMax,

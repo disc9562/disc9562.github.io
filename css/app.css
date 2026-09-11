@@ -659,7 +659,58 @@ select.lockable { margin: 6px 0; }
 .money input { width: 100%; border-bottom: 0; font-size: 22px; min-height: 36px; color: var(--ink); }
 
 /* ---------- 建角／升級 ---------- */
-.abi { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.lede {
+  text-align: center;
+  color: var(--ink-soft);
+  margin: -8px 0 18px;
+  font-size: 15px;
+}
+.form-card {
+  position: relative;
+  margin: 14px 0;
+  padding: 4px 18px 18px;
+  background: var(--fibers), rgba(255, 250, 238, .45);
+  background-blend-mode: multiply, normal;
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--r);
+  box-shadow: inset 0 0 0 3px rgba(255, 250, 238, .5), inset 0 0 0 4px var(--gold-dim);
+}
+.form-card h3 { margin: 14px 0 6px; }
+.form-card label.field { margin: 10px 0 0; }
+.abi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.abi-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px 8px;
+  background: var(--paper-lit);
+  border: 1px solid var(--gold);
+  border-radius: var(--r);
+  box-shadow: inset 0 0 0 3px var(--paper-lit), inset 0 0 0 4px var(--gold-dim);
+}
+.abi-in span {
+  font-family: var(--display);
+  font-size: 14px;
+  letter-spacing: .14em;
+  color: var(--rubric);
+}
+.abi-in input {
+  width: 72px;
+  min-height: 48px;
+  text-align: center;
+  font-family: var(--num);
+  font-size: 26px;
+  font-weight: 700;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--gold-dim);
+  border-radius: 0;
+  padding: 0;
+}
+.abi-in input:focus { outline: none; border-bottom-color: var(--rubric); }
+[aria-invalid="true"] { border-color: var(--rubric) !important; box-shadow: 0 0 0 3px rgba(122, 26, 31, .18); }
+@media (max-width: 420px) { .abi { grid-template-columns: repeat(2, 1fr); } }
 .chk {
   display: flex;
   gap: 10px;
