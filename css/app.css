@@ -65,7 +65,8 @@ button, select, [data-act], .slot, .pip, .icon, .big { cursor: pointer; }
   color: #fff8ea;
   background: var(--rubric);
   margin: 0 0 16px;
-  padding: 10px 12px;
+  padding: 12px 16px;
+  border-radius: 0 0 22px 22px;
 }
 
 .top {
@@ -124,10 +125,10 @@ h3::after {
 }
 
 .vitals {
-  background: var(--paper);
+  background: transparent;
   margin: 0 0 16px;
-  padding: 0 0 12px;
-  border-bottom: 2px solid var(--rubric);
+  padding: 0 0 4px;
+  border-bottom: 0;
 }
 
 .stats {
@@ -139,10 +140,11 @@ h3::after {
 
 .box {
   background: var(--fill);
-  border: 2px solid var(--ink);
-  box-shadow: inset 0 0 0 1px var(--brass);
+  border: 0;
+  border-radius: 22px;
+  box-shadow: 0 8px 24px rgba(28, 20, 14, .08);
   text-align: center;
-  padding: 10px 8px;
+  padding: 14px 12px 16px;
 }
 .box .lbl {
   font-size: 12px;
@@ -176,7 +178,7 @@ h3::after {
   width: 56px;
   min-height: 44px;
   border: 0;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 1px dashed var(--brass);
   border-radius: 0;
   background: transparent;
   text-align: center;
@@ -196,10 +198,11 @@ h3::after {
 }
 .abi-card {
   background: var(--fill);
-  border: 2px solid var(--ink);
-  box-shadow: inset 0 0 0 1px var(--brass);
+  border: 0;
+  border-radius: 28px;
+  box-shadow: 0 8px 24px rgba(28, 20, 14, .08);
   text-align: center;
-  padding: 10px 6px 8px;
+  padding: 14px 8px 12px;
 }
 .abi-card .lbl {
   font-family: var(--display);
@@ -207,10 +210,10 @@ h3::after {
   color: var(--rubric);
 }
 .mod-ring {
-  width: 56px;
-  height: 56px;
-  margin: 6px auto 4px;
-  border: 2px solid var(--ink);
+  width: 58px;
+  height: 58px;
+  margin: 8px auto 6px;
+  border: 0;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -218,7 +221,9 @@ h3::after {
   font-size: 22px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  background: var(--paper);
+  background: var(--rubric);
+  color: #fff8ea;
+  box-shadow: 0 4px 0 rgba(139, 26, 26, .25);
 }
 .abi-card input.val-sm {
   width: 56px;
@@ -237,8 +242,8 @@ h3::after {
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 6px 4px;
+  border-bottom: 1px dashed var(--line);
 }
 .skill-row span, .save-row span { font-size: 15px; }
 
@@ -253,17 +258,18 @@ h3::after {
 
 .big, .icon, .slot, .menu, .atk input, .skill-row input, .save-row input, label.field input, label.field select {
   background: var(--fill);
-  border: 1.5px solid var(--ink);
+  border: 1px solid var(--line);
 }
 
 .big {
   width: 100%;
   min-height: 48px;
   margin: 6px 0;
-  border-radius: 2px;
+  border-radius: 16px;
   text-align: left;
-  padding: 10px 12px;
-  transition: transform .18s ease, background .18s ease;
+  padding: 10px 14px;
+  transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+  box-shadow: 0 6px 16px rgba(28, 20, 14, .06);
 }
 .big:hover { background: color-mix(in srgb, var(--fill) 80%, var(--brass)); }
 .big:active { transform: translateY(1px); }
@@ -271,12 +277,13 @@ h3::after {
 .icon {
   min-height: 44px;
   min-width: 44px;
-  border-radius: 2px;
+  border-radius: 999px;
   background: var(--fill);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: background .18s ease, color .18s ease;
+  box-shadow: 0 4px 12px rgba(28, 20, 14, .08);
 }
 .icon:active { transform: translateY(1px); }
 
@@ -294,15 +301,16 @@ h3::after {
 .warn {
   background: var(--warn-bg);
   color: var(--rubric);
-  padding: 10px 12px;
+  padding: 10px 14px;
   margin: 8px 0;
-  border: 1.5px solid var(--rubric);
+  border: 0;
+  border-radius: 16px;
 }
 
 .slots { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
 .slot {
-  border-radius: 2px;
-  padding: 8px 12px;
+  border-radius: 999px;
+  padding: 8px 14px;
   min-height: 44px;
 }
 .row { display: flex; gap: 8px; align-items: center; }
@@ -311,10 +319,10 @@ h3::after {
 label.field { display: block; margin: 10px 0 4px; color: var(--muted); font-size: 14px; }
 input, select {
   min-height: 44px;
-  padding: 8px;
+  padding: 8px 12px;
   background: var(--fill);
-  border: 1.5px solid var(--ink);
-  border-radius: 2px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
 }
 label.field input, label.field select, .abi input { width: 100%; }
 
@@ -332,7 +340,7 @@ input.val {
   font-variant-numeric: tabular-nums;
   background: transparent;
   border: 0;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 1px dashed var(--brass);
   border-radius: 0;
   padding: 2px;
 }
@@ -344,7 +352,7 @@ input.val-sm {
   font-size: 18px;
   font-variant-numeric: tabular-nums;
   border: 0;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 1px dashed var(--brass);
   border-radius: 0;
   background: transparent;
   padding: 2px;
@@ -359,12 +367,14 @@ input.val-sm {
   align-items: center;
   gap: 6px;
   background: var(--fill);
-  border: 1.5px solid var(--ink);
-  padding: 4px 6px 4px 10px;
+  border: 0;
+  border-radius: 999px;
+  padding: 4px 6px 4px 12px;
+  box-shadow: 0 4px 12px rgba(28, 20, 14, .08);
 }
 .chip .icon { min-height: 44px; min-width: 44px; }
 
-.menu { padding: 8px; margin-top: 8px; background: var(--fill); }
+.menu { padding: 8px; margin-top: 8px; background: var(--fill); border-radius: 18px; border: 0; box-shadow: 0 10px 28px rgba(28, 20, 14, .1); }
 .menu button { width: 100%; text-align: left; }
 .abi { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .chk { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0; }
@@ -415,11 +425,15 @@ input.val-sm {
   min-width: 28px;
   min-height: 28px;
   padding: 0;
-  border: 2px solid var(--ink);
+  border: 0;
   border-radius: 50%;
-  background: var(--fill);
+  background: #ead9b8;
+  box-shadow: inset 0 1px 2px rgba(28, 20, 14, .2);
 }
-.pip.spent { background: var(--ink); }
+.pip.spent {
+  background: var(--rubric);
+  box-shadow: 0 3px 0 rgba(139, 26, 26, .28);
+}
 
 .gear {
   display: grid;
