@@ -32,6 +32,8 @@ let script = null
 let glQ = ''
 let glCat = ''
 let glOpen = {}
+let notesEdit = false
+let termOpen = ''
 let glProg = Number(localStorage.getItem('dnd5e-script-progress')) || 1
 let checkedIds = []
 let pickSubclass = ''
@@ -108,6 +110,7 @@ function render() {
   if (view === 'create' || !c) el.innerHTML = createHtml()
   else if (view === 'levelup' || view === 'pending') el.innerHTML = levelHtml(c)
   else if (view === 'script') el.innerHTML = scriptHtml()
+  else if (view === 'notes') el.innerHTML = notesHtml(c)
   else el.innerHTML = combatHtml(c)
   ;[...el.querySelectorAll('details')].forEach((d, i) => { if (opened[i]) d.open = true })
   el.classList.toggle('is-locked', !!(c && c.locked && view === 'combat'))
@@ -277,6 +280,7 @@ function combatHtml(c) {
       <button class="big" data-act="new">新增角色</button>
       <button class="big" data-act="short">短休</button>
       <button class="big" data-act="long">長休</button>
+      <button class="big" data-act="notes-open">備忘錄</button>
       <button class="big" data-act="script">劇本對照表</button>
       <button class="big" data-act="export">匯出</button>
       <label class="big" style="display:block">匯入<input id="import" type="file" accept="application/json" class="hidden"></label>
@@ -290,7 +294,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v25</p>
+    <p class="mast">冒險者紀錄 · v26</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -382,9 +386,79 @@ function combatHtml(c) {
         <h3>狀態</h3>
         <div class="slots">${condPick}</div>
         <h3>備忘錄</h3>
-        <textarea class="notes" data-act="notes" rows="6" placeholder="NPC 名字、線索、欠誰錢……離開欄位就自動存">${esc(c.notes || '')}</textarea>
+        <button class="big note-peek" data-act="notes-open">${(c.notes || '').trim() ? `<span class="note-snip">${esc((c.notes || '').trim().slice(0, 90))}${(c.notes || '').trim().length > 90 ? '…' : ''}</span>` : '<span class="muted">還沒寫東西，點開來記</span>'}<span class="muted">打開備忘錄 ›</span></button>
       </div>
     </div>
+  `
+}
+
+function loadScript(after) {
+  if (script) return
+  fetch('data/scripts/avernus.json').then(r => r.json()).then(j => { script = j; if (after()) render() })
+    .catch(() => { banner = '劇本資料載入失敗'; render() })
+}
+
+function termRegex() {
+  if (!script) return null
+  const pats = []
+  const seen = script.entries.filter(e => e.ch <= glProg)
+  const wordCount = {}
+  seen.forEach(e => e.en.split(/\W+/).forEach(w => { if (w.length >= 5) wordCount[w] = (wordCount[w] || 0) + 1 }))
+  seen.forEach(e => {
+    const extra = (e.cat === 'NPC' || e.cat === '反派') ? e.en.split(/\W+/).filter(w => wordCount[w] === 1 && !/^(Captain|Cruel)$/.test(w)) : []
+    ;[e.zh, e.en].concat(e.alias || [], extra).forEach(t => pats.push({ t, k: e.en }))
+  })
+  pats.sort((a, b) => b.t.length - a.t.length)
+  const rx = new RegExp(pats.map(p => p.t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi')
+  const lookup = {}
+  pats.forEach(p => { lookup[p.t.toLowerCase()] = p.k })
+  return { rx, lookup }
+}
+
+function markTerms(text) {
+  const tr = termRegex()
+  if (!tr) return esc(text)
+  let out = '', last = 0, m
+  tr.rx.lastIndex = 0
+  while ((m = tr.rx.exec(text))) {
+    const k = tr.lookup[m[0].toLowerCase()]
+    out += esc(text.slice(last, m.index)) + `<button class="term${termOpen === k ? ' on' : ''}" data-act="term" data-k="${esc(k)}">${esc(m[0])}</button>`
+    last = m.index + m[0].length
+  }
+  return out + esc(text.slice(last))
+}
+
+function termCard(k) {
+  const e = script && script.entries.find(x => x.en === k)
+  if (!e) return ''
+  const open = !!glOpen[k]
+  return `<div class="gl term-pop">
+    <div class="gl-head"><span class="gl-zh">${esc(e.zh)}</span><span class="gl-en">${esc(e.en)}</span><span class="gl-cat">${esc(e.cat)}</span></div>
+    <p class="gl-note">${esc(e.note || '')}</p>
+    ${e.spoiler ? (open
+      ? `<p class="gl-spoiler">${esc(e.spoiler)} <button class="gl-hide" data-act="gl-toggle" data-k="${esc(k)}">收起</button></p>`
+      : `<button class="gl-reveal" data-act="gl-toggle" data-k="${esc(k)}">⚠ 顯示劇透</button>`) : ''}
+  </div>`
+}
+
+function notesHtml(c) {
+  const text = c.notes || ''
+  const body = notesEdit
+    ? `<textarea class="notes notes-big" data-act="notes" placeholder="NPC 名字、線索、欠誰錢……
+寫完按「完成」，文中出現對照表裡的名字會自動加底線。">${esc(text)}</textarea>
+       <button class="big primary" data-act="notes-done">完成</button>`
+    : `<div class="note-read">${text.split(/\n/).map(line => {
+        const html = markTerms(line) || '&nbsp;'
+        return `<p>${html}</p>${html.indexOf('term on') >= 0 ? termCard(termOpen) : ''}`
+      }).join('')}</div>
+       <button class="big" data-act="notes-edit">編輯</button>`
+  return `
+    <p class="mast">冒險者紀錄</p>
+    <div class="top">
+      <button class="icon" data-act="back">返回</button>
+      <div><div class="gl-title">${esc(c.name)} 的備忘錄</div><div class="kicker">${script ? '有底線的字點一下看說明' : '對照表載入中…'}</div></div>
+    </div>
+    ${body}
   `
 }
 
@@ -519,10 +593,23 @@ el.addEventListener('click', e => {
   }
   if (act === 'script') {
     view = 'script'; menuOpen = false; render()
-    if (!script) fetch('data/scripts/avernus.json').then(r => r.json()).then(j => { script = j; if (view === 'script') render() })
-      .catch(() => { banner = '劇本資料載入失敗'; view = 'combat'; render() })
+    loadScript(() => view === 'script')
     return
   }
+  if (act === 'notes-open') {
+    view = 'notes'; menuOpen = false; termOpen = ''
+    notesEdit = !((c && c.notes) || '').trim()
+    render()
+    loadScript(() => view === 'notes')
+    return
+  }
+  if (act === 'notes-edit') { notesEdit = true; termOpen = ''; render(); const ta = el.querySelector('textarea.notes'); if (ta) ta.focus(); return }
+  if (act === 'notes-done') {
+    const ta = el.querySelector('textarea.notes')
+    if (ta && c) { c.notes = ta.value; persist(true) }
+    notesEdit = false; render(); return
+  }
+  if (act === 'term') { const k = t.dataset.k; termOpen = termOpen === k ? '' : k; render(); return }
   if (act === 'gl-cat') { glCat = t.dataset.c || ''; render(); return }
   if (act === 'gl-toggle') { const k = t.dataset.k; glOpen[k] = !glOpen[k]; render(); return }
   if (act === 'new') { view = 'create'; menuOpen = false; render(); return }
