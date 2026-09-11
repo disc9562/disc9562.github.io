@@ -28,6 +28,11 @@ let view = 'combat'
 let banner = ''
 let menuOpen = false
 let confirmDel = false
+let script = null
+let glQ = ''
+let glCat = ''
+let glOpen = {}
+let glProg = Number(localStorage.getItem('dnd5e-script-progress')) || 1
 let checkedIds = []
 let pickSubclass = ''
 let pickSpells = []
@@ -102,6 +107,7 @@ function render() {
   const c = current()
   if (view === 'create' || !c) el.innerHTML = createHtml()
   else if (view === 'levelup' || view === 'pending') el.innerHTML = levelHtml(c)
+  else if (view === 'script') el.innerHTML = scriptHtml()
   else el.innerHTML = combatHtml(c)
   ;[...el.querySelectorAll('details')].forEach((d, i) => { if (opened[i]) d.open = true })
   el.classList.toggle('is-locked', !!(c && c.locked && view === 'combat'))
@@ -271,6 +277,7 @@ function combatHtml(c) {
       <button class="big" data-act="new">新增角色</button>
       <button class="big" data-act="short">短休</button>
       <button class="big" data-act="long">長休</button>
+      <button class="big" data-act="script">劇本對照表</button>
       <button class="big" data-act="export">匯出</button>
       <label class="big" style="display:block">匯入<input id="import" type="file" accept="application/json" class="hidden"></label>
       ${confirmDel ? `<div class="warn del-confirm">
@@ -283,7 +290,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v24</p>
+    <p class="mast">冒險者紀錄 · v25</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -381,6 +388,58 @@ function combatHtml(c) {
   `
 }
 
+function glListHtml() {
+  const q = glQ.trim().toLowerCase()
+  const all = script.entries
+  const seen = all.filter(e => e.ch <= glProg)
+  const hidden = all.length - seen.length
+  const list = seen.filter(e => (!glCat || e.cat === glCat) &&
+    (!q || e.zh.toLowerCase().includes(q) || e.en.toLowerCase().includes(q) || (e.note || '').toLowerCase().includes(q)))
+  const rows = list.map((e, i) => {
+    const key = e.en
+    const open = !!glOpen[key]
+    return `<div class="gl">
+      <div class="gl-head">
+        <span class="gl-zh">${esc(e.zh)}</span>
+        <span class="gl-en">${esc(e.en)}</span>
+        <span class="gl-cat">${esc(e.cat)}</span>
+        <span class="gl-ch">第${e.ch}章</span>
+      </div>
+      <p class="gl-note">${esc(e.note || '')}</p>
+      ${e.spoiler ? (open
+        ? `<p class="gl-spoiler">${esc(e.spoiler)} <button class="gl-hide" data-act="gl-toggle" data-k="${esc(key)}">收起</button></p>`
+        : `<button class="gl-reveal" data-act="gl-toggle" data-k="${esc(key)}">⚠ 顯示劇透</button>`) : ''}
+    </div>`
+  }).join('')
+  return (rows || '<p class="muted">找不到符合的條目</p>') +
+    (hidden ? `<p class="muted gl-hidden">還有 ${hidden} 筆屬於後面章節，等進度推進再解鎖。</p>` : '')
+}
+
+function scriptHtml() {
+  if (!script) return `<p class="mast">冒險者紀錄</p><div class="top"><button class="icon" data-act="back">返回</button><div>劇本對照表</div></div><p class="muted">載入中…</p>`
+  const cats = ['NPC', '反派', '地點', '組織', '神祇', '怪物', '物品', '名詞']
+  return `
+    <p class="mast">冒險者紀錄</p>
+    <div class="top">
+      <button class="icon" data-act="back">返回</button>
+      <div><div class="gl-title">${esc(script.title)}</div><div class="kicker">${esc(script.en)}</div></div>
+    </div>
+    <section class="form-card">
+      <label class="field">目前進度（打到哪就選到哪，之後的條目全部隱藏）
+        <select data-act="gl-prog">${script.chapters.map((n, i) =>
+          `<option value="${i + 1}" ${glProg === i + 1 ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>
+      </label>
+      <input class="gl-q" data-act="gl-q" type="search" placeholder="搜人名、地名、怪物（中英皆可）" value="${esc(glQ)}">
+      <div class="slots gl-cats">
+        <button class="slot${glCat === '' ? ' cond-on' : ''}" data-act="gl-cat" data-c="">全部</button>
+        ${cats.map(k => `<button class="slot${glCat === k ? ' cond-on' : ''}" data-act="gl-cat" data-c="${k}">${k}</button>`).join('')}
+      </div>
+      <p class="hint">譯名為本表自譯，無官方繁中版。「顯示劇透」會露出關鍵反轉，DM 沒講到之前先別點。</p>
+    </section>
+    <div id="gl-list">${glListHtml()}</div>
+  `
+}
+
 function levelHtml(c) {
   const pack = packFor(c.ruleset || '2014')
   const items = view === 'pending' ? (c.pendingChoices || []) : Rules.checklistFor(c, pack)
@@ -458,6 +517,14 @@ el.addEventListener('click', e => {
     replace(next)
     return
   }
+  if (act === 'script') {
+    view = 'script'; menuOpen = false; render()
+    if (!script) fetch('data/scripts/avernus.json').then(r => r.json()).then(j => { script = j; if (view === 'script') render() })
+      .catch(() => { banner = '劇本資料載入失敗'; view = 'combat'; render() })
+    return
+  }
+  if (act === 'gl-cat') { glCat = t.dataset.c || ''; render(); return }
+  if (act === 'gl-toggle') { const k = t.dataset.k; glOpen[k] = !glOpen[k]; render(); return }
   if (act === 'new') { view = 'create'; menuOpen = false; render(); return }
   if (act === 'back') { view = current() ? 'combat' : 'create'; render(); return }
   if (act === 'create') {
@@ -634,6 +701,13 @@ el.addEventListener('click', e => {
   if (act === 'noop') return
 })
 
+el.addEventListener('input', e => {
+  if (e.target.dataset.act !== 'gl-q' || !script) return
+  glQ = e.target.value
+  const list = document.getElementById('gl-list')
+  if (list) list.innerHTML = glListHtml()
+})
+
 el.addEventListener('change', e => {
   const t = e.target
   if (t.id === 'import') {
@@ -710,6 +784,7 @@ el.addEventListener('change', e => {
     persist(true)
   }
   if (act === 'name') { const c = current(); if (c) { c.name = t.value; persist(true) } }
+  if (act === 'gl-prog') { glProg = Number(t.value) || 1; localStorage.setItem('dnd5e-script-progress', glProg); glOpen = {}; render(); return }
   if (act === 'notes') { const c = current(); if (c) { c.notes = t.value; persist(true) } }
   if (act === 'ruleset') { ruleset = t.value; render(); return }
   if (act === 'subclass') { const c = current(); if (c) replace(Rules.setSubclass(c, t.value, packFor(c.ruleset))) }

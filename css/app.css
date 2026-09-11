@@ -807,3 +807,52 @@ select.lockable { margin: 6px 0; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+/* ---------- 劇本對照表 ---------- */
+.gl-title { font-family: var(--display); font-size: 20px; color: var(--rubric); font-weight: 700; }
+.gl-q { width: 100%; margin: 10px 0 8px; }
+.gl-cats { margin-bottom: 6px; }
+.gl {
+  padding: 12px 14px;
+  margin: 8px 0;
+  background: rgba(255, 250, 238, .55);
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--r);
+}
+.gl-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.gl-zh { font-family: var(--display); font-size: 18px; font-weight: 700; color: var(--ink); }
+.gl-en { font-family: var(--num); font-size: 13px; color: var(--ink-soft); letter-spacing: .04em; }
+.gl-cat, .gl-ch {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--rubric);
+  border: 1px solid var(--gold-dim);
+  border-radius: 999px;
+  padding: 1px 8px;
+  background: var(--paper-lit);
+}
+.gl-ch { margin-left: 0; color: var(--ink-soft); }
+.gl-note { margin: 6px 0 0; line-height: 1.7; }
+.gl-reveal {
+  margin-top: 8px;
+  min-height: 36px;
+  padding: 4px 12px;
+  font-size: 14px;
+  color: var(--rubric);
+  background: transparent;
+  border: 1px dashed var(--rubric);
+  border-radius: var(--r);
+}
+.gl-reveal:hover { background: rgba(122, 26, 31, .08); }
+.gl-spoiler {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  line-height: 1.7;
+  color: var(--rubric-deep);
+  background: rgba(122, 26, 31, .08);
+  border-left: 3px solid var(--rubric);
+  border-radius: var(--r);
+}
+.gl-hide { margin-left: 6px; font-size: 13px; color: var(--ink-soft); background: transparent; border: 0; text-decoration: underline; min-height: 0; padding: 0; }
+.gl-hidden { text-align: center; margin: 18px 0; }
