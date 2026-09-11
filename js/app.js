@@ -255,6 +255,7 @@ function combatHtml(c) {
       <label class="big" style="display:block">匯入<input id="import" type="file" accept="application/json" class="hidden"></label>
     </div>` : ''
   return `
+    <div class="vitals">
     <p class="mast">冒險者紀錄</p>
     <div class="top">
       <div>
@@ -263,8 +264,8 @@ function combatHtml(c) {
       </div>
       <div class="row">
         <button class="icon${c.locked ? ' is-lock' : ''}" data-act="lock" aria-label="${c.locked ? '解鎖' : '鎖定'}">${lockIcon(!!c.locked)}</button>
-        <button class="icon" data-act="levelup">升級</button>
-        <button class="icon" data-act="menu">⋯</button>
+        <button class="icon" data-act="levelup" aria-label="升級">升級</button>
+        <button class="icon" data-act="menu" aria-label="選單">選單</button>
       </div>
     </div>
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
@@ -308,6 +309,7 @@ function combatHtml(c) {
     <h3>法術環</h3>
     ${slotRows || '<p class="muted">還沒有法術環</p>'}
     <button class="big lockable" data-act="addcircle"${lock}>＋法術環</button>
+    </div>
     <div class="sheet-grid">
       <div>
         <h3>能力</h3>
@@ -315,7 +317,7 @@ function combatHtml(c) {
         <h3>豁免</h3>
         ${saveRows}
         <h3>技能</h3>
-        ${skillRows}
+        <div class="skill-grid">${skillRows}</div>
         <h3>職業特性</h3>
         ${(pack.features[c.class] || []).filter(f => f.level <= c.level).map(f => {
           const id = f.level + '-' + f.name
