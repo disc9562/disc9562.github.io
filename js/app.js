@@ -317,7 +317,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v28</p>
+    <p class="mast">冒險者紀錄 · v29</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -628,7 +628,7 @@ el.addEventListener('click', e => {
   if (act === 'script') { openScript(); return }
   if (act === 'notes-open') { openNotes(c); return }
   if (act === 'tab') {
-    const v = t.dataset.v
+    const v = btn.dataset.v
     if (v === view) return
     if (v === 'notes') openNotes(c)
     else if (v === 'script') openScript()
