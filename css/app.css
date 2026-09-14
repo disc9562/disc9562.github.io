@@ -623,8 +623,8 @@ input::placeholder { color: rgba(91, 70, 52, .5); }
 .is-locked .slot-row { grid-template-columns: 3em 1fr; }
 .slot-lbl { font-family: var(--display); color: var(--rubric); font-size: 15px; letter-spacing: .1em; }
 :root {
-  --dragon-d: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><path fill=%22%235a3e16%22 fill-rule=%22evenodd%22 d=%22M63 24 L55 20 L54 14 L50 8 L49 19 C46 23 42 27 37 30 L31 13 C27 8 17 6 8 12 C13 12 17 14 19 18 L12 18 C16 20 19 23 20 27 L13 28 C18 29 21 31 24 34 C16 37 10 44 8 52 L2 58 L5 63 L11 57 L13 51 C15 45 19 41 26 40 L25 50 L30 50 L31 42 L37 42 L38 50 L43 50 L43 41 C48 39 52 35 53 30 L47 32 L51 27 L58 29 L56 26 Z M55.5 23 a1.7 1.7 0 1 0 0.01 0 Z%22/></svg> ");
-  --dragon-l: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><path fill=%22%23fff3d0%22 fill-rule=%22evenodd%22 d=%22M63 24 L55 20 L54 14 L50 8 L49 19 C46 23 42 27 37 30 L31 13 C27 8 17 6 8 12 C13 12 17 14 19 18 L12 18 C16 20 19 23 20 27 L13 28 C18 29 21 31 24 34 C16 37 10 44 8 52 L2 58 L5 63 L11 57 L13 51 C15 45 19 41 26 40 L25 50 L30 50 L31 42 L37 42 L38 50 L43 50 L43 41 C48 39 52 35 53 30 L47 32 L51 27 L58 29 L56 26 Z M55.5 23 a1.7 1.7 0 1 0 0.01 0 Z%22/></svg> ");
+  --dragon-d: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><path fill=%22%234a0a0f%22 fill-rule=%22evenodd%22 d=%22M63 24 L55 20 L54 14 L50 8 L49 19 C46 23 42 27 37 30 L31 13 C27 8 17 6 8 12 C13 12 17 14 19 18 L12 18 C16 20 19 23 20 27 L13 28 C18 29 21 31 24 34 C16 37 10 44 8 52 L2 58 L5 63 L11 57 L13 51 C15 45 19 41 26 40 L25 50 L30 50 L31 42 L37 42 L38 50 L43 50 L43 41 C48 39 52 35 53 30 L47 32 L51 27 L58 29 L56 26 Z M55.5 23 a1.7 1.7 0 1 0 0.01 0 Z%22/></svg> ");
+  --dragon-l: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><path fill=%22%23e88a8a%22 fill-rule=%22evenodd%22 d=%22M63 24 L55 20 L54 14 L50 8 L49 19 C46 23 42 27 37 30 L31 13 C27 8 17 6 8 12 C13 12 17 14 19 18 L12 18 C16 20 19 23 20 27 L13 28 C18 29 21 31 24 34 C16 37 10 44 8 52 L2 58 L5 63 L11 57 L13 51 C15 45 19 41 26 40 L25 50 L30 50 L31 42 L37 42 L38 50 L43 50 L43 41 C48 39 52 35 53 30 L47 32 L51 27 L58 29 L56 26 Z M55.5 23 a1.7 1.7 0 1 0 0.01 0 Z%22/></svg> ");
   --wax1: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='w' x='-30%25' y='-30%25' width='160%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='3'/><feDisplacementMap in='SourceGraphic' scale='16' xChannelSelector='R' yChannelSelector='G'/></filter><circle cx='50%25' cy='50%25' r='38%25' filter='url(%23w)'/></svg>");
   --wax2: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='w' x='-30%25' y='-30%25' width='160%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='.05' numOctaves='2' seed='9'/><feDisplacementMap in='SourceGraphic' scale='15' xChannelSelector='R' yChannelSelector='G'/></filter><circle cx='50%25' cy='50%25' r='38%25' filter='url(%23w)'/></svg>");
   --wax3: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='w' x='-30%25' y='-30%25' width='160%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='.04' numOctaves='2' seed='14'/><feDisplacementMap in='SourceGraphic' scale='18' xChannelSelector='R' yChannelSelector='G'/></filter><circle cx='50%25' cy='50%25' r='38%25' filter='url(%23w)'/></svg>");
@@ -648,9 +648,9 @@ input::placeholder { color: rgba(91, 70, 52, .5); }
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 34% 28%, rgba(255, 244, 210, .38), transparent 36%),
-    radial-gradient(circle at 68% 80%, rgba(100, 68, 20, .5), transparent 50%),
-    radial-gradient(circle at 50% 50%, #d9b872 0 46%, #b08a44 58%, #d6b66f 70%, #b9944d 84%, #93702f 100%);
+    radial-gradient(circle at 34% 28%, rgba(255, 200, 200, .42), transparent 36%),
+    radial-gradient(circle at 68% 80%, rgba(60, 5, 10, .55), transparent 50%),
+    radial-gradient(circle at 50% 50%, #b8343c 0 46%, #8a1c23 58%, #b5303a 70%, #8f1f26 84%, #5a0d12 100%);
   -webkit-mask: var(--wax1) center / 100% 100% no-repeat;
   mask: var(--wax1) center / 100% 100% no-repeat;
 }
@@ -675,7 +675,7 @@ input::placeholder { color: rgba(91, 70, 52, .5); }
 .pip:active { filter: drop-shadow(0 1px 1px rgba(35, 21, 14, .4)) brightness(.94); }
 .pip.spent { filter: none; }
 .pip.spent::before {
-  background: radial-gradient(circle at 50% 50%, rgba(140, 105, 50, .12), rgba(140, 105, 50, .2) 72%, rgba(140, 105, 50, .3) 100%);
+  background: radial-gradient(circle at 50% 50%, rgba(140, 40, 45, .10), rgba(140, 40, 45, .18) 72%, rgba(140, 40, 45, .28) 100%);
 }
 .pip.spent::after { background: var(--dragon-d) center / contain no-repeat; opacity: .28; }
 
