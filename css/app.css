@@ -964,80 +964,56 @@ textarea.notes-big { min-height: 60vh; margin: 10px 0 12px; }
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
-  gap: 16px;
-  margin: 0 10px 14px 0;
+  gap: 6px;
+  margin: 0 14px 6px 0;
   position: relative;
   z-index: 2;
 }
 .ribbon {
   position: relative;
+  width: 64px;
+  height: 100px;
   padding: 0;
-  margin-top: -1px;
-  color: var(--paper-lit);
-  font-family: var(--display);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-align: center;
+  margin-top: -2px;
   border: 0;
   border-radius: 0;
+  background: none;
+  color: var(--paper-lit);
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .08em;
   transform-origin: 50% 0;
-  transition: height .15s ease, filter .15s ease;
-  filter: saturate(.55) brightness(.85);
+  filter: saturate(.5) brightness(.82) drop-shadow(0 2px 2px rgba(35, 21, 14, .35));
+  transition: filter .2s ease, height .2s ease;
+  animation: sway 4.2s ease-in-out infinite alternate;
 }
-.ribbon i { display: block; font-style: normal; font-size: 15px; line-height: 1; margin: 8px 0 3px; opacity: .9; }
-.ribbon span { position: relative; display: block; text-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
-.ribbon.on { filter: none; }
-.ribbon:hover { filter: saturate(.9) brightness(.95); }
-.ribbon.on:hover { filter: brightness(1.05); }
-
-/* 角色卡：寬絲帶，燕尾，左側一道緞光 */
-.r-red {
-  width: 92px;
-  height: 66px;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, .22) 0 6px, transparent 6px),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, .05) 0 2px, transparent 2px 7px),
-    linear-gradient(90deg, #7d1a20, #a52a32 40%, #8a1f26);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%);
-  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .25);
-}
-.r-red.on { height: 84px; }
-
-/* 備忘錄：窄皮革書籤，尖端，車縫線與銅釦 */
-.r-blue {
-  width: 60px;
-  height: 78px;
-  transform: rotate(2.5deg);
-  background:
-    radial-gradient(circle at 50% 9px, #d9b56a 0 3px, #8a6a2c 3.5px, transparent 5px),
-    linear-gradient(90deg, #1f4358, #2f6f92 45%, #22506b);
-  clip-path: polygon(0 0, 100% 0, 100% 84%, 50% 100%, 0 84%);
-}
-.r-blue::after {
-  content: "";
+.ribbon:nth-child(2) { animation-duration: 5.1s; animation-delay: -1.7s; }
+.ribbon:nth-child(3) { animation-duration: 3.6s; animation-delay: -.8s; }
+@keyframes sway { from { transform: rotate(-1.6deg); } to { transform: rotate(1.6deg); } }
+@media (prefers-reduced-motion: reduce) { .ribbon { animation: none; } }
+.ribbon svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ribbon .body { fill: var(--rb); }
+.ribbon .shade { fill: rgba(0, 0, 0, .22); }
+.ribbon .fold { fill: var(--rb-lit); }
+.ribbon span {
   position: absolute;
-  inset: 5px 5px 14px;
-  border: 1px dashed rgba(255, 255, 255, .35);
-  border-bottom: 0;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: .18em;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .5);
   pointer-events: none;
 }
-.r-blue i { margin-top: 14px; }
-.r-blue span { margin-top: -1px; }
-.r-blue.on { height: 96px; }
-
-/* 對照表：粗布標籤，毛邊，微歪 */
-.r-green {
-  width: 74px;
-  height: 58px;
-  transform: rotate(-2deg);
-  background:
-    repeating-linear-gradient(0deg, rgba(0, 0, 0, .06) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, .06) 0 1px, transparent 1px 4px),
-    linear-gradient(90deg, #5e6a1c, #7f8d2a 40%, #67741e);
-  clip-path: polygon(0 0, 100% 0, 100% 92%, 92% 100%, 84% 93%, 76% 100%, 68% 94%, 60% 100%, 52% 93%, 44% 100%, 36% 94%, 28% 100%, 20% 93%, 12% 100%, 4% 94%, 0 100%);
-}
-.r-green.on { height: 74px; }
+.ribbon.on { height: 116px; filter: drop-shadow(0 3px 3px rgba(35, 21, 14, .45)); }
+.ribbon:hover { filter: saturate(.85) brightness(.95) drop-shadow(0 2px 2px rgba(35, 21, 14, .35)); }
+.ribbon.on:hover { filter: brightness(1.05) drop-shadow(0 3px 3px rgba(35, 21, 14, .45)); }
+.r-red { --rb: #9e2630; --rb-lit: #c9505a; }
+.r-blue { --rb: #2b6688; --rb-lit: #5b93b4; }
+.r-green { --rb: #737f27; --rb-lit: #a3b04a; }
 
 /* ---------- 蠟封選單 ---------- */
 .icon.seal {

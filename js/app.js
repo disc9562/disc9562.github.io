@@ -122,9 +122,19 @@ function render() {
 }
 
 function ribbonsHtml() {
-  const tabs = [['combat', '角色卡', 'r-red', '⚔'], ['notes', '備忘錄', 'r-blue', '✒'], ['script', '對照表', 'r-green', '❖']]
-  return `<nav class="ribbons" aria-label="分頁">${tabs.map(([v, l, k, ic]) =>
-    `<button class="ribbon ${k}${view === v ? ' on' : ''}" data-act="tab" data-v="${v}"><i aria-hidden="true">${ic}</i><span>${l}</span></button>`).join('')}</nav>`
+  // 三條飄動絲帶：形狀各異（body 主體、fold 捲翹處的亮面、shade 陰影）
+  const shapes = {
+    a: ['M6 0H58C60 22 66 40 54 58C46 70 58 84 56 104L44 96 34 110 26 96C12 86 24 70 16 56C2 40 4 20 6 0Z', 'M56 104 44 96 34 110C40 100 48 100 56 104Z', 'M54 58C46 70 58 84 56 104C50 90 40 76 46 62C50 54 54 50 54 58Z'],
+    b: ['M4 0H56C52 20 44 34 50 52C56 70 40 84 44 108L34 98 24 112 18 98C6 86 18 70 12 54C6 36 8 18 4 0Z', 'M44 108 34 98 24 112C28 102 36 100 44 108Z', 'M50 52C56 70 40 84 44 108C36 94 30 80 38 66C42 58 46 50 50 52Z'],
+    c: ['M8 0H54C58 18 50 30 58 46C66 62 48 78 52 96L40 90 32 104 22 90C10 78 26 66 18 50C8 36 6 18 8 0Z', 'M52 96 40 90 32 104C36 94 44 90 52 96Z', 'M58 46C66 62 48 78 52 96C46 84 36 74 44 60C48 52 54 44 58 46Z']
+  }
+  const tabs = [['combat', '角色卡', 'r-red', 'a'], ['notes', '備忘錄', 'r-blue', 'b'], ['script', '對照表', 'r-green', 'c']]
+  return `<nav class="ribbons" aria-label="分頁">${tabs.map(([v, l, k, sh]) => {
+    const [body, fold, shade] = shapes[sh]
+    return `<button class="ribbon ${k}${view === v ? ' on' : ''}" data-act="tab" data-v="${v}">
+      <svg viewBox="0 0 64 112" aria-hidden="true"><path class="body" d="${body}"/><path class="shade" d="${shade}"/><path class="fold" d="${fold}"/></svg>
+      <span>${l}</span></button>`
+  }).join('')}</nav>`
 }
 
 function openNotes(c) {
@@ -327,7 +337,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v34</p>
+    <p class="mast">冒險者紀錄 · v35</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
