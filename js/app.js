@@ -122,9 +122,9 @@ function render() {
 }
 
 function ribbonsHtml() {
-  const tabs = [['combat', '角色卡', 'r-red'], ['notes', '備忘錄', 'r-blue'], ['script', '對照表', 'r-green']]
-  return `<nav class="ribbons" aria-label="分頁">${tabs.map(([v, l, k]) =>
-    `<button class="ribbon ${k}${view === v ? ' on' : ''}" data-act="tab" data-v="${v}"><span>${l}</span></button>`).join('')}</nav>`
+  const tabs = [['combat', '角色卡', 'r-red', '⚔'], ['notes', '備忘錄', 'r-blue', '✒'], ['script', '對照表', 'r-green', '❖']]
+  return `<nav class="ribbons" aria-label="分頁">${tabs.map(([v, l, k, ic]) =>
+    `<button class="ribbon ${k}${view === v ? ' on' : ''}" data-act="tab" data-v="${v}"><i aria-hidden="true">${ic}</i><span>${l}</span></button>`).join('')}</nav>`
 }
 
 function openNotes(c) {
@@ -327,7 +327,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v33</p>
+    <p class="mast">冒險者紀錄 · v34</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -581,7 +581,7 @@ function levelHtml(c) {
       }).join('')
     }
     if (it.type === 'hp') {
-      extra = `<input type="number" min="1" max="${it.hitDie}" data-act="hproll" value="${esc(hpRoll)}" placeholder="這次骰到 1–${it.hitDie}">`
+      extra = `<input type="number" min="1" max="${it.hitDie}" data-act="hproll" value="${esc(hpRoll)}" placeholder="骰到幾點（1–${it.hitDie}）">`
     }
     if (it.type === 'asi') {
       const opts = sel => Object.keys(ABI_NAME).map(k =>

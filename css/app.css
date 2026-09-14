@@ -811,6 +811,7 @@ select.lockable { margin: 6px 0; }
   background: rgba(255, 250, 238, .4);
 }
 .chk:has(:checked) { border-color: var(--gold); background: var(--paper-lit); }
+input[data-act="hproll"] { display: block; width: 100%; box-sizing: border-box; margin: 6px 0 10px; }
 .chk input { width: 20px; height: 20px; min-height: 20px; margin-top: 2px; accent-color: var(--rubric); }
 .hidden { display: none; }
 
@@ -962,44 +963,81 @@ textarea.notes-big { min-height: 60vh; margin: 10px 0 12px; }
 .ribbons {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin: 0 6px 14px 0;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 10px 14px 0;
   position: relative;
   z-index: 2;
 }
 .ribbon {
   position: relative;
-  width: 78px;
-  height: 52px;
-  padding: 6px 0 0;
+  padding: 0;
   margin-top: -1px;
   color: var(--paper-lit);
   font-family: var(--display);
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: .12em;
+  letter-spacing: .1em;
   text-align: center;
   border: 0;
   border-radius: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
-  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .25);
+  transform-origin: 50% 0;
   transition: height .15s ease, filter .15s ease;
   filter: saturate(.55) brightness(.85);
 }
-.ribbon::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 5px;
-  background: rgba(255, 255, 255, .22);
-}
+.ribbon i { display: block; font-style: normal; font-size: 15px; line-height: 1; margin: 8px 0 3px; opacity: .9; }
 .ribbon span { position: relative; display: block; text-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
-.ribbon.on { height: 68px; filter: none; }
+.ribbon.on { filter: none; }
 .ribbon:hover { filter: saturate(.9) brightness(.95); }
 .ribbon.on:hover { filter: brightness(1.05); }
-.r-red { background: linear-gradient(90deg, #7d1a20, #a52a32 40%, #8a1f26); }
-.r-blue { background: linear-gradient(90deg, #22506b, #2f6f92 40%, #275a78); }
-.r-green { background: linear-gradient(90deg, #5e6a1c, #7f8d2a 40%, #67741e); }
+
+/* 角色卡：寬絲帶，燕尾，左側一道緞光 */
+.r-red {
+  width: 92px;
+  height: 66px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, .22) 0 6px, transparent 6px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, .05) 0 2px, transparent 2px 7px),
+    linear-gradient(90deg, #7d1a20, #a52a32 40%, #8a1f26);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .25);
+}
+.r-red.on { height: 84px; }
+
+/* 備忘錄：窄皮革書籤，尖端，車縫線與銅釦 */
+.r-blue {
+  width: 60px;
+  height: 78px;
+  transform: rotate(2.5deg);
+  background:
+    radial-gradient(circle at 50% 9px, #d9b56a 0 3px, #8a6a2c 3.5px, transparent 5px),
+    linear-gradient(90deg, #1f4358, #2f6f92 45%, #22506b);
+  clip-path: polygon(0 0, 100% 0, 100% 84%, 50% 100%, 0 84%);
+}
+.r-blue::after {
+  content: "";
+  position: absolute;
+  inset: 5px 5px 14px;
+  border: 1px dashed rgba(255, 255, 255, .35);
+  border-bottom: 0;
+  pointer-events: none;
+}
+.r-blue i { margin-top: 14px; }
+.r-blue span { margin-top: -1px; }
+.r-blue.on { height: 96px; }
+
+/* 對照表：粗布標籤，毛邊，微歪 */
+.r-green {
+  width: 74px;
+  height: 58px;
+  transform: rotate(-2deg);
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, .06) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, .06) 0 1px, transparent 1px 4px),
+    linear-gradient(90deg, #5e6a1c, #7f8d2a 40%, #67741e);
+  clip-path: polygon(0 0, 100% 0, 100% 92%, 92% 100%, 84% 93%, 76% 100%, 68% 94%, 60% 100%, 52% 93%, 44% 100%, 36% 94%, 28% 100%, 20% 93%, 12% 100%, 4% 94%, 0 100%);
+}
+.r-green.on { height: 74px; }
 
 /* ---------- 蠟封選單 ---------- */
 .icon.seal {
