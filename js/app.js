@@ -317,7 +317,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v30</p>
+    <p class="mast">冒險者紀錄 · v31</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -682,7 +682,8 @@ el.addEventListener('click', e => {
     const i = Number(btn.dataset.i)
     const sl = c.spellSlots && c.spellSlots[k]
     if (!sl) return
-    const used = i < sl.used ? i : i + 1
+    // ponytail: 一次只動一格，點已用的還回一格、點未用的扣一格
+    const used = i < sl.used ? sl.used - 1 : sl.used + 1
     const r = Rules.setSlotUsed(c, k, used)
     if (r.ok) replace(r.character)
     return
