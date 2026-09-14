@@ -623,27 +623,29 @@ input::placeholder { color: rgba(91, 70, 52, .5); }
 .is-locked .slot-row { grid-template-columns: 3em 1fr; }
 .slot-lbl { font-family: var(--display); color: var(--rubric); font-size: 15px; letter-spacing: .1em; }
 .pips { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; padding: 6px 0; }
+/* 法術環：紅蠟封章。未用＝完整蠟印，用掉＝只剩壓過的蠟漬 */
 .pip {
   position: relative;
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  min-height: 34px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   padding: 0;
   border: 0;
-  border-radius: 50%;
-  color: var(--gold-lit);
+  color: rgba(255, 205, 200, .85);
   background:
-    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, .55), transparent 28%),
-    radial-gradient(circle at 50% 55%, #3f7fc4, #1d4b88 55%, #0d2246 100%);
+    radial-gradient(circle at 38% 30%, rgba(255, 190, 190, .55), transparent 36%),
+    radial-gradient(circle at 50% 50%, #b3323b, #8a1c23 60%, #5a0d12);
+  border-radius: 47% 53% 50% 46% / 52% 46% 54% 48%;
   box-shadow:
-    inset 0 0 0 2px rgba(255, 255, 255, .08),
-    inset 0 -4px 6px rgba(0, 0, 0, .35),
-    0 0 0 2px var(--gold),
-    0 0 0 3px rgba(247, 236, 214, .7),
+    inset 0 0 0 3px rgba(90, 13, 18, .6),
+    inset 0 0 0 4px rgba(228, 200, 119, .3),
+    inset 0 2px 4px rgba(255, 220, 220, .3),
     0 2px 4px rgba(35, 21, 14, .45);
   transition: transform .12s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
 }
+.pip:nth-child(2n) { border-radius: 52% 48% 46% 54% / 47% 55% 45% 53%; transform: rotate(9deg); }
+.pip:nth-child(3n) { border-radius: 49% 51% 55% 45% / 54% 48% 52% 46%; transform: rotate(-7deg); }
 .pip::after {
   content: "✦";
   position: absolute;
@@ -652,23 +654,20 @@ input::placeholder { color: rgba(91, 70, 52, .5); }
   place-items: center;
   font-size: 15px;
   line-height: 1;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, .6);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .7), 0 1px 0 rgba(255, 200, 200, .3);
   pointer-events: none;
 }
-.pip:hover { transform: translateY(-1px); }
-.pip:active { transform: translateY(1px); }
-/* 用掉：凹下去的空槽 */
+.pip:hover { filter: brightness(1.08); }
+.pip:active { filter: brightness(.92); }
 .pip.spent {
-  color: transparent;
+  color: rgba(120, 40, 40, .28);
   background:
-    radial-gradient(circle at 50% 60%, #b39a68, #9c8253 60%, #85693f);
+    radial-gradient(circle at 50% 50%, rgba(150, 60, 60, .16), rgba(150, 60, 60, .22) 60%, rgba(120, 40, 40, .12) 78%, transparent 82%);
   box-shadow:
-    inset 0 3px 6px rgba(35, 21, 14, .55),
-    inset 0 -1px 0 rgba(255, 250, 238, .5),
-    0 0 0 2px var(--gold-dim),
-    0 0 0 3px rgba(247, 236, 214, .4);
+    inset 0 0 0 3px rgba(120, 40, 40, .12),
+    inset 0 1px 2px rgba(35, 21, 14, .18);
 }
-.pip.spent::after { color: rgba(35, 21, 14, .3); text-shadow: none; font-size: 12px; }
+.pip.spent::after { text-shadow: none; font-size: 13px; }
 
 /* ---------- 法術／專長列 ---------- */
 .spell-line { display: flex; gap: 8px; align-items: flex-start; }
