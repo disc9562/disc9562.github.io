@@ -622,54 +622,62 @@ input::placeholder { color: rgba(91, 70, 52, .5); }
 .slot-row .val { font-size: 16px; color: var(--ink-soft); border-bottom: 0; }
 .is-locked .slot-row { grid-template-columns: 3em 1fr; }
 .slot-lbl { font-family: var(--display); color: var(--rubric); font-size: 15px; letter-spacing: .1em; }
-:root { --dragon: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><path fill=%22white%22 fill-rule=%22evenodd%22 d=%22M63 24 L55 20 L54 14 L50 8 L49 19 C46 23 42 27 37 30 L31 13 C27 8 17 6 8 12 C13 12 17 14 19 18 L12 18 C16 20 19 23 20 27 L13 28 C18 29 21 31 24 34 C16 37 10 44 8 52 L2 58 L5 63 L11 57 L13 51 C15 45 19 41 26 40 L25 50 L30 50 L31 42 L37 42 L38 50 L43 50 L43 41 C48 39 52 35 53 30 L47 32 L51 27 L58 29 L56 26 Z M55.5 23 a1.7 1.7 0 1 0 0.01 0 Z%22/></svg> "); }
-.pips { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; padding: 6px 0; }
-/* 法術環：金蠟龍印。未用＝完整蠟封，用掉＝紙上只剩淺淺壓痕 */
+:root {
+  --dragon-d: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><path fill=%22%235a3e16%22 fill-rule=%22evenodd%22 d=%22M63 24 L55 20 L54 14 L50 8 L49 19 C46 23 42 27 37 30 L31 13 C27 8 17 6 8 12 C13 12 17 14 19 18 L12 18 C16 20 19 23 20 27 L13 28 C18 29 21 31 24 34 C16 37 10 44 8 52 L2 58 L5 63 L11 57 L13 51 C15 45 19 41 26 40 L25 50 L30 50 L31 42 L37 42 L38 50 L43 50 L43 41 C48 39 52 35 53 30 L47 32 L51 27 L58 29 L56 26 Z M55.5 23 a1.7 1.7 0 1 0 0.01 0 Z%22/></svg> ");
+  --dragon-l: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><path fill=%22%23fff3d0%22 fill-rule=%22evenodd%22 d=%22M63 24 L55 20 L54 14 L50 8 L49 19 C46 23 42 27 37 30 L31 13 C27 8 17 6 8 12 C13 12 17 14 19 18 L12 18 C16 20 19 23 20 27 L13 28 C18 29 21 31 24 34 C16 37 10 44 8 52 L2 58 L5 63 L11 57 L13 51 C15 45 19 41 26 40 L25 50 L30 50 L31 42 L37 42 L38 50 L43 50 L43 41 C48 39 52 35 53 30 L47 32 L51 27 L58 29 L56 26 Z M55.5 23 a1.7 1.7 0 1 0 0.01 0 Z%22/></svg> ");
+  --wax1: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='w' x='-30%25' y='-30%25' width='160%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='2' seed='3'/><feDisplacementMap in='SourceGraphic' scale='16' xChannelSelector='R' yChannelSelector='G'/></filter><circle cx='50%25' cy='50%25' r='38%25' filter='url(%23w)'/></svg>");
+  --wax2: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='w' x='-30%25' y='-30%25' width='160%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='.05' numOctaves='2' seed='9'/><feDisplacementMap in='SourceGraphic' scale='15' xChannelSelector='R' yChannelSelector='G'/></filter><circle cx='50%25' cy='50%25' r='38%25' filter='url(%23w)'/></svg>");
+  --wax3: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='w' x='-30%25' y='-30%25' width='160%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='.04' numOctaves='2' seed='14'/><feDisplacementMap in='SourceGraphic' scale='18' xChannelSelector='R' yChannelSelector='G'/></filter><circle cx='50%25' cy='50%25' r='38%25' filter='url(%23w)'/></svg>");
+}
+.pips { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; padding: 6px 0; }
+/* 法術環：金蠟龍印。蠟體是 ::before（亂流位移做不規則邊），龍紋是 ::after；用掉＝紙上只剩壓痕 */
 .pip {
   position: relative;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
   padding: 0;
   border: 0;
-  background:
-    radial-gradient(circle at 32% 26%, rgba(255, 246, 214, .75), transparent 38%),
-    radial-gradient(circle at 70% 78%, rgba(120, 84, 30, .45), transparent 45%),
-    radial-gradient(circle at 50% 50%, #dcbd7a, #c39d55 62%, #a37d3a 100%);
-  border-radius: 46% 54% 49% 51% / 53% 45% 55% 47%;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 240, 200, .5),
-    inset 0 -3px 5px rgba(90, 60, 20, .35),
-    inset 0 3px 4px rgba(255, 246, 220, .45),
-    0 2px 3px rgba(35, 21, 14, .4),
-    0 0 0 1px rgba(120, 90, 40, .25);
-  transition: filter .15s ease, opacity .2s ease;
+  background: none;
+  filter: drop-shadow(0 2px 2px rgba(35, 21, 14, .45));
+  transition: filter .15s ease;
 }
-.pip:nth-child(2n) { border-radius: 53% 47% 45% 55% / 46% 56% 44% 54%; transform: rotate(14deg); }
-.pip:nth-child(3n) { border-radius: 50% 50% 56% 44% / 55% 47% 53% 45%; transform: rotate(-11deg); }
-.pip:nth-child(5n) { transform: rotate(31deg); }
-/* 龍紋：暗色壓痕 + 錯位 1px 亮邊，做出浮雕 */
-.pip::before, .pip::after {
+.pip::before {
   content: "";
   position: absolute;
-  inset: 8px;
-  -webkit-mask: var(--dragon) center / contain no-repeat;
-  mask: var(--dragon) center / contain no-repeat;
+  inset: 0;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 244, 210, .38), transparent 36%),
+    radial-gradient(circle at 68% 80%, rgba(100, 68, 20, .5), transparent 50%),
+    radial-gradient(circle at 50% 50%, #d9b872 0 46%, #b08a44 58%, #d6b66f 70%, #b9944d 84%, #93702f 100%);
+  -webkit-mask: var(--wax1) center / 100% 100% no-repeat;
+  mask: var(--wax1) center / 100% 100% no-repeat;
+}
+.pip:nth-child(2n)::before { -webkit-mask-image: var(--wax2); mask-image: var(--wax2); }
+.pip:nth-child(3n)::before { -webkit-mask-image: var(--wax3); mask-image: var(--wax3); }
+.pip:nth-child(2n) { transform: rotate(80deg); }
+.pip:nth-child(3n) { transform: rotate(-130deg); }
+.pip:nth-child(5n) { transform: rotate(200deg); }
+.pip:nth-child(2n)::after { transform: rotate(-80deg); }
+.pip:nth-child(3n)::after { transform: rotate(130deg); }
+.pip:nth-child(5n)::after { transform: rotate(-200deg); }
+.pip::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  background:
+    var(--dragon-d) center / contain no-repeat,
+    var(--dragon-l) 50% calc(50% + 1.5px) / contain no-repeat;
   pointer-events: none;
 }
-.pip::before { background: rgba(255, 244, 210, .75); transform: translate(0, 1px); }
-.pip::after { background: linear-gradient(160deg, #7a5a22, #5e4218); }
-.pip:hover { filter: brightness(1.06); }
-.pip:active { filter: brightness(.94); }
-.pip.spent {
-  background: radial-gradient(circle at 50% 50%, rgba(150, 115, 60, .10), rgba(150, 115, 60, .16) 70%, transparent 82%);
-  box-shadow:
-    inset 0 0 0 1px rgba(120, 90, 40, .22),
-    inset 0 1px 2px rgba(35, 21, 14, .18);
+.pip:hover { filter: drop-shadow(0 2px 2px rgba(35, 21, 14, .45)) brightness(1.06); }
+.pip:active { filter: drop-shadow(0 1px 1px rgba(35, 21, 14, .4)) brightness(.94); }
+.pip.spent { filter: none; }
+.pip.spent::before {
+  background: radial-gradient(circle at 50% 50%, rgba(140, 105, 50, .12), rgba(140, 105, 50, .2) 72%, rgba(140, 105, 50, .3) 100%);
 }
-.pip.spent::before { display: none; }
-.pip.spent::after { background: rgba(120, 90, 40, .28); }
+.pip.spent::after { background: var(--dragon-d) center / contain no-repeat; opacity: .28; }
 
 /* ---------- 法術／專長列 ---------- */
 .spell-line { display: flex; gap: 8px; align-items: flex-start; }

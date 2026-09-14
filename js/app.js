@@ -194,6 +194,15 @@ function fieldVal(obj, k) {
   return obj && obj[k] != null && obj[k] !== '' ? obj[k] : ''
 }
 
+// 每格獨立記錄；spent 陣列與 used 數量不合（休息歸零、升級改格數）時，退回「前 used 格算已用」
+function slotSpent(sl) {
+  const n = sl.max || 0
+  const a = Array.isArray(sl.spent) ? sl.spent.slice(0, n) : []
+  while (a.length < n) a.push(false)
+  if (a.filter(Boolean).length !== (sl.used || 0)) return Array.from({ length: n }, (_, i) => i < (sl.used || 0))
+  return a
+}
+
 function combatHtml(c) {
   const pack = packFor(c.ruleset || '2014')
   const cls = pack.classes[c.class] || {}
@@ -261,8 +270,9 @@ function combatHtml(c) {
     `<option value="${esc(s.id)}" ${c.subclass === s.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('')
   const slotRows = Object.keys(c.spellSlots || {}).sort((a, b) => Number(a) - Number(b)).map(k => {
     const sl = c.spellSlots[k]
+    const sp = slotSpent(sl)
     const pips = Array.from({ length: sl.max }, (_, i) => {
-      const spent = i < sl.used
+      const spent = sp[i]
       return `<button class="pip${spent ? ' spent' : ''}" data-act="pip" data-k="${esc(k)}" data-i="${i}" aria-label="${k}環"></button>`
     }).join('')
     return `<div class="slot-row">
@@ -317,7 +327,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v31</p>
+    <p class="mast">冒險者紀錄 · v32</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -682,10 +692,12 @@ el.addEventListener('click', e => {
     const i = Number(btn.dataset.i)
     const sl = c.spellSlots && c.spellSlots[k]
     if (!sl) return
-    // ponytail: 一次只動一格，點已用的還回一格、點未用的扣一格
-    const used = i < sl.used ? sl.used - 1 : sl.used + 1
-    const r = Rules.setSlotUsed(c, k, used)
-    if (r.ok) replace(r.character)
+    const sp = slotSpent(sl)
+    sp[i] = !sp[i]
+    const next = JSON.parse(JSON.stringify(c))
+    next.spellSlots[k].spent = sp
+    next.spellSlots[k].used = sp.filter(Boolean).length
+    replace(next)
     return
   }
   if (act === 'levelup') { view = 'levelup'; checkedIds = []; pickSpells = []; hpRoll = ''; pickSubclass = ((packFor(c.ruleset).classes[c.class] || {}).subclasses || [])[0] && packFor(c.ruleset).classes[c.class].subclasses[0].id || ''; menuOpen = false; render(); return }
