@@ -113,8 +113,30 @@ function render() {
   else if (view === 'script') el.innerHTML = scriptHtml()
   else if (view === 'notes') el.innerHTML = notesHtml(c)
   else el.innerHTML = combatHtml(c)
+  if (c && (view === 'combat' || view === 'notes' || view === 'script')) {
+    const m = el.querySelector('.mast')
+    if (m) m.insertAdjacentHTML('afterend', ribbonsHtml())
+  }
   ;[...el.querySelectorAll('details')].forEach((d, i) => { if (opened[i]) d.open = true })
   el.classList.toggle('is-locked', !!(c && c.locked && view === 'combat'))
+}
+
+function ribbonsHtml() {
+  const tabs = [['combat', '角色卡', 'r-red'], ['notes', '備忘錄', 'r-blue'], ['script', '對照表', 'r-green']]
+  return `<nav class="ribbons" aria-label="分頁">${tabs.map(([v, l, k]) =>
+    `<button class="ribbon ${k}${view === v ? ' on' : ''}" data-act="tab" data-v="${v}"><span>${l}</span></button>`).join('')}</nav>`
+}
+
+function openNotes(c) {
+  view = 'notes'; menuOpen = false; termOpen = ''
+  notesEdit = !((c && c.notes) || '').trim()
+  render()
+  loadScript(() => view === 'notes')
+}
+
+function openScript() {
+  view = 'script'; menuOpen = false; render()
+  loadScript(() => view === 'script')
 }
 
 function createHtml() {
@@ -295,7 +317,7 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v27</p>
+    <p class="mast">冒險者紀錄 · v28</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
@@ -304,7 +326,7 @@ function combatHtml(c) {
       <div class="row">
         <button class="icon${c.locked ? ' is-lock' : ''}" data-act="lock" aria-label="${c.locked ? '解鎖' : '鎖定'}">${lockIcon(!!c.locked)}</button>
         <button class="icon" data-act="levelup" aria-label="升級">升級</button>
-        <button class="icon" data-act="menu" aria-label="選單">選單</button>
+        <button class="icon seal" data-act="menu" aria-label="選單"><span>選單</span></button>
       </div>
     </div>
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
@@ -316,7 +338,7 @@ function combatHtml(c) {
       </label>
     </div>
     <div class="stats">
-      <div class="box"><div class="lbl">AC</div>
+      <div class="box ic ic-ac"><div class="lbl">AC</div>
         <input class="val-sm" data-act="ac" type="number" value="${c.ac}"${lock}></div>
       <div class="box">
         <div class="lbl">生命　目前 / 上限</div>
@@ -331,17 +353,17 @@ function combatHtml(c) {
         </div>
         <div class="hint">骰錯上限可直接改右邊數字</div>
       </div>
-      <div class="box"><div class="lbl">速度</div>
+      <div class="box ic ic-speed"><div class="lbl">速度</div>
         <input class="val-sm" data-act="speed" type="number" value="${c.speed}"${lock}></div>
     </div>
     <div class="mini">
-      <div class="box"><div class="lbl">先攻</div>
+      <div class="box ic ic-init"><div class="lbl">先攻</div>
         <input class="val-sm" data-act="init" type="number" value="${c.initiative}"${lock}></div>
-      <div class="box"><div class="lbl">熟練</div><div class="num">+${c.proficiency}</div></div>
+      <div class="box ic ic-prof"><div class="lbl">熟練</div><div class="num">+${c.proficiency}</div></div>
     </div>
     ${cls.caster && cls.caster !== 'none' ? `<div class="mini">
-      <div class="box"><div class="lbl">法術DC</div><div class="num">${Rules.spellSaveDC(c, cls)}</div></div>
-      <div class="box"><div class="lbl">法術攻擊</div><div class="num">${Rules.spellAttack(c, cls) >= 0 ? '+' : ''}${Rules.spellAttack(c, cls)}</div></div>
+      <div class="box ic ic-dc"><div class="lbl">法術DC</div><div class="num">${Rules.spellSaveDC(c, cls)}</div></div>
+      <div class="box ic ic-satk"><div class="lbl">法術攻擊</div><div class="num">${Rules.spellAttack(c, cls) >= 0 ? '+' : ''}${Rules.spellAttack(c, cls)}</div></div>
     </div>` : ''}
     <button class="slot${c.concentrating ? ' cond-on' : ''}" data-act="conc">專注${c.concentrating ? '中' : ''}</button>
     ${death}
@@ -603,16 +625,14 @@ el.addEventListener('click', e => {
     replace(next)
     return
   }
-  if (act === 'script') {
-    view = 'script'; menuOpen = false; render()
-    loadScript(() => view === 'script')
-    return
-  }
-  if (act === 'notes-open') {
-    view = 'notes'; menuOpen = false; termOpen = ''
-    notesEdit = !((c && c.notes) || '').trim()
-    render()
-    loadScript(() => view === 'notes')
+  if (act === 'script') { openScript(); return }
+  if (act === 'notes-open') { openNotes(c); return }
+  if (act === 'tab') {
+    const v = t.dataset.v
+    if (v === view) return
+    if (v === 'notes') openNotes(c)
+    else if (v === 'script') openScript()
+    else { view = 'combat'; menuOpen = false; render() }
     return
   }
   if (act === 'notes-gl') { notesGl = !notesGl; render(); return }
