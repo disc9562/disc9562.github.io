@@ -21,6 +21,50 @@ const SKILLS = [
 const ABI_NAME = { str: '力量', dex: '敏捷', con: '體質', int: '智力', wis: '感知', cha: '魅力' }
 const CONDITIONS = ['中毒', '倒地', '受擒', '麻痺', '昏迷', '受魅惑', '恐懼', '隱形', '石化']
 
+// 標題後的符文帶：把標題的英文術語逐字母轉寫成古弗薩克符文（Elder Futhark）。
+// TH→ᚦ、NG→ᛜ；C/K/Q→ᚲ、X→ᚲᛊ、V/W→ᚹ、Y→ᛃ。單字之間 ᛫，每次重複之後 ᛬。
+const TITLE_EN = {
+  '身分': 'IDENTITY', '屬性': 'ABILITY SCORES', '生命': 'HIT POINTS',
+  '法術資源': 'SPELL SLOTS', '攻擊': 'ATTACKS', '職業技能': 'CLASS OPTIONS', '資源': 'RESOURCES',
+  '今日準備': 'PREPARED SPELLS', '法術': 'SPELLS', '狀態': 'CONDITIONS', '豁免': 'SAVING THROWS', '技能': 'SKILLS'
+}
+const RUNE_OF = {
+  A: 'ᚨ', B: 'ᛒ', C: 'ᚲ', D: 'ᛞ', E: 'ᛖ', F: 'ᚠ', G: 'ᚷ', H: 'ᚺ', I: 'ᛁ', J: 'ᛃ', K: 'ᚲ', L: 'ᛚ', M: 'ᛗ',
+  N: 'ᚾ', O: 'ᛟ', P: 'ᛈ', Q: 'ᚲ', R: 'ᚱ', S: 'ᛊ', T: 'ᛏ', U: 'ᚢ', V: 'ᚹ', W: 'ᚹ', X: 'ᚲᛊ', Y: 'ᛃ', Z: 'ᛉ', ' ': '᛫'
+}
+// 每個符文畫在 12×12 格內
+const RUNE_PATH = {
+  'ᚠ': 'M4 11V1M4 4L9 1M4 7.5L9 4.5', 'ᚢ': 'M3 11V1L9 4V11', 'ᚦ': 'M4 1V11M4 3.5L8.5 6L4 8.5',
+  'ᚨ': 'M4 11V1L9 4M4 4.5L9 7.5', 'ᚱ': 'M4 11V1L8.5 3.5L4 6L9 11', 'ᚲ': 'M8.5 2.5L4 6L8.5 9.5',
+  'ᚷ': 'M3 1L9 11M9 1L3 11', 'ᚹ': 'M4 11V1L8.5 3.5L4 6', 'ᚺ': 'M3 1V11M9 1V11M3 4L9 8',
+  'ᚾ': 'M6 1V11M3.5 4.5L8.5 7.5', 'ᛁ': 'M6 1V11', 'ᛃ': 'M5.5 1.5L2.5 4.5L5.5 7.5M6.5 4.5L9.5 7.5L6.5 10.5',
+  'ᛈ': 'M4 1V11M4 1L8 4L9.5 2M4 11L8 8L9.5 10', 'ᛉ': 'M6 11V1M2.5 2L6 5.5L9.5 2', 'ᛊ': 'M8.5 1L4 4.5L8 7.5L3.5 11',
+  'ᛏ': 'M6 11V1M2.5 4.5L6 1L9.5 4.5', 'ᛒ': 'M4 1V11L8.5 8.5L4 6L8.5 3.5L4 1', 'ᛖ': 'M3 11V1L6 4.5L9 1V11',
+  'ᛗ': 'M3 11V1L9 5M9 11V1L3 5', 'ᛚ': 'M4 11V1L9 4.5', 'ᛜ': 'M6 2L9.5 6L6 10L2.5 6Z',
+  'ᛞ': 'M3 1V11L9 1V11L3 1', 'ᛟ': 'M6 1L9 4.5L3.5 11M6 1L3 4.5L8.5 11'
+}
+
+function runify(en) {
+  return en.toUpperCase().replace(/TH|NG|[A-Z ]/g, m => m === 'TH' ? 'ᚦ' : m === 'NG' ? 'ᛜ' : RUNE_OF[m])
+}
+
+// 回傳 CSS url()，給 mask 用；repeat 為真時尾端加 ᛬，讓重複的符文帶讀起來是「詞᛬詞᛬」
+function runeBand(en, repeat) {
+  let x = 0
+  const parts = [...runify(en) + (repeat ? '᛬' : '')].map(r => {
+    const at = x
+    x += RUNE_PATH[r] ? 12 : 6
+    if (r === '᛫') return `<circle cx='${at + 3}' cy='6' r='1.1'/>`
+    if (r === '᛬') return `<circle cx='${at + 3}' cy='4' r='1.1'/><circle cx='${at + 3}' cy='8' r='1.1'/>`
+    return `<path transform='translate(${at})' d='${RUNE_PATH[r]}' fill='none' stroke='black' stroke-width='1.3'/>`
+  }).join('')
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${x}' height='12' viewBox='0 0 ${x} 12'>${parts}</svg>`
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`
+}
+
+const RUNE_BANDS = Object.fromEntries(Object.entries(TITLE_EN).map(([zh, en]) => [zh, runeBand(en, true)]))
+const MAST_RUNES = runeBand('CHARACTER JOURNAL')
+
 const el = document.getElementById('app')
 let data = { races: {}, classes: {}, spells: {}, feats: {} }
 let state = { characters: [], currentId: null }
@@ -125,6 +169,11 @@ function className(id, year) {
 
 function render() {
   const opened = [...el.querySelectorAll('details')].map(d => d.open)
+  const active = document.activeElement
+  const focus = active && el.contains(active) ? { id: active.id, data: { ...active.dataset } } : null
+  const draft = [...el.querySelectorAll('.create-form input, .create-form select')].map(input => ({
+    id: input.id, key: input.dataset.k, value: input.value
+  }))
   const c = current()
   if (view === 'create' || !c) el.innerHTML = createHtml()
   else if (view === 'levelup' || view === 'pending') el.innerHTML = levelHtml(c)
@@ -136,23 +185,25 @@ function render() {
     if (m) m.insertAdjacentHTML('afterend', ribbonsHtml())
   }
   ;[...el.querySelectorAll('details')].forEach((d, i) => { if (opened[i]) d.open = true })
+  for (const h of el.querySelectorAll('h3')) if (RUNE_BANDS[h.textContent]) h.style.setProperty('--title-runes', RUNE_BANDS[h.textContent])
+  for (const m of el.querySelectorAll('.mast')) m.style.setProperty('--title-runes', MAST_RUNES)
   el.classList.toggle('is-locked', !!(c && c.locked && view === 'combat'))
+  for (const input of el.querySelectorAll('.create-form input, .create-form select')) {
+    const previous = draft.find(d => input.id ? d.id === input.id : input.dataset.k && d.key === input.dataset.k)
+    if (previous && (input.tagName !== 'SELECT' || [...input.options].some(o => o.value === previous.value))) input.value = previous.value
+  }
+  if (focus && (focus.id || focus.data.act)) {
+    const next = [...el.querySelectorAll('input, select, textarea, button')].find(node =>
+      focus.id ? node.id === focus.id : Object.entries(focus.data).every(([k, v]) => node.dataset[k] === v))
+    if (next && !next.disabled && next.getClientRects().length) next.focus({ preventScroll: true })
+  }
 }
 
 function ribbonsHtml() {
-  // 三條飄動絲帶：形狀各異（body 主體、fold 捲翹處的亮面、shade 陰影）
-  const shapes = {
-    a: ['M6 0H58C60 22 66 40 54 58C46 70 58 84 56 104L44 96 34 110 26 96C12 86 24 70 16 56C2 40 4 20 6 0Z', 'M56 104 44 96 34 110C40 100 48 100 56 104Z', 'M54 58C46 70 58 84 56 104C50 90 40 76 46 62C50 54 54 50 54 58Z'],
-    b: ['M4 0H56C52 20 44 34 50 52C56 70 40 84 44 108L34 98 24 112 18 98C6 86 18 70 12 54C6 36 8 18 4 0Z', 'M44 108 34 98 24 112C28 102 36 100 44 108Z', 'M50 52C56 70 40 84 44 108C36 94 30 80 38 66C42 58 46 50 50 52Z'],
-    c: ['M8 0H54C58 18 50 30 58 46C66 62 48 78 52 96L40 90 32 104 22 90C10 78 26 66 18 50C8 36 6 18 8 0Z', 'M52 96 40 90 32 104C36 94 44 90 52 96Z', 'M58 46C66 62 48 78 52 96C46 84 36 74 44 60C48 52 54 44 58 46Z']
-  }
-  const tabs = [['combat', '角色卡', 'r-red', 'a'], ['notes', '備忘錄', 'r-blue', 'b'], ['script', '對照表', 'r-green', 'c']]
-  return `<nav class="ribbons" aria-label="分頁">${tabs.map(([v, l, k, sh]) => {
-    const [body, fold, shade] = shapes[sh]
-    return `<button class="ribbon ${k}${view === v ? ' on' : ''}" data-act="tab" data-v="${v}">
-      <svg viewBox="0 0 64 112" aria-hidden="true"><path class="body" d="${body}"/><path class="shade" d="${shade}"/><path class="fold" d="${fold}"/></svg>
-      <span>${l}</span></button>`
-  }).join('')}</nav>`
+  const tabs = [['combat', '角色卡'], ['notes', '備忘錄'], ['script', '對照表']]
+  return `<nav class="ribbons" aria-label="冒險紀錄分頁">${tabs.map(([v, label]) =>
+    `<button class="ribbon${view === v ? ' on' : ''}" data-act="tab" data-v="${v}"${view === v ? ' aria-current="page"' : ''}>${label}</button>`
+  ).join('')}</nav>`
 }
 
 function openNotes(c) {
@@ -180,8 +231,9 @@ function createHtml() {
   const bad = banner ? ' aria-invalid="true"' : ''
   return `
     <p class="mast">冒險者紀錄</p>
-    <h2>建立新角色</h2>
-    <p class="lede">填好名字與出身，六項屬性可以之後再改。</p>
+    <h2>你的冒險，從這裡開始</h2>
+    <p class="lede">建立角色卡，跑團時輕鬆記錄生命與法術。<br>資料儲存在這台裝置，記得定期匯出備份。</p>
+    <form class="create-form">
     <section class="form-card">
     <h3>身分</h3>
     <label class="field">規則
@@ -190,7 +242,7 @@ function createHtml() {
         <option value="2024" ${ruleset === '2024' ? 'selected' : ''}>2024 PHB</option>
       </select>
     </label>
-    <label class="field">名字 <input id="f-name" placeholder="角色名" autocomplete="off"${banner === '缺名字' ? bad : ''}></label>
+    <label class="field">角色名字 <span class="muted">（必填）</span><input id="f-name" placeholder="你的冒險者叫什麼名字？" autocomplete="off" aria-required="true"${banner === '缺名字' ? bad : ''}></label>
     <label class="field">${ruleset === '2024' ? '物種' : '種族'} <select id="f-race">${races}</select></label>
     <label class="field">職業 <select id="f-class">${classes}</select></label>
     ${ruleset === '2024' ? `<label class="field">背景 <select id="f-background">${Object.keys(pack.backgrounds || {}).map(id => `<option value="${esc(id)}">${esc(pack.backgrounds[id].name)}</option>`).join('')}</select></label>` : ''}
@@ -211,9 +263,10 @@ function createHtml() {
     <label class="field">最大生命 <input id="f-hpmax" type="number" min="1" placeholder="1 級可留空，自動算" inputmode="numeric"${banner && banner !== '缺名字' ? bad : ''}></label>
     <p class="hint">1 級留空會用骰面最大值加體質調整值。2 級以上請填骰出的總和。</p>
     </section>
-    ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
-    <button class="big primary" data-act="create">建立角色</button>
-    ${state.characters.length ? `<button class="big" data-act="back">取消</button>` : ''}
+    ${banner ? `<div class="warn" role="alert">${esc(banner)}</div>` : ''}
+    <button type="submit" class="big primary" data-act="create">建立角色，開始冒險</button>
+    ${state.characters.length ? `<button type="button" class="big" data-act="back">取消</button>` : ''}
+    </form>
   `
 }
 
@@ -235,6 +288,29 @@ function slotSpent(sl) {
   while (a.length < n) a.push(false)
   if (a.filter(Boolean).length !== (sl.used || 0)) return Array.from({ length: n }, (_, i) => i < (sl.used || 0))
   return a
+}
+
+function deathSavesHtml(c) {
+  return c.hp.current === 0 ? `<div class="box death-saves" role="status">
+    <strong>死亡豁免</strong><p>成功 ${c.deathSaves.success}/3 · 失敗 ${c.deathSaves.fail}/3</p>
+    <div class="row">
+      <button class="icon grow" data-act="ds" data-k="success">成功</button>
+      <button class="icon grow" data-act="ds" data-k="fail">失敗</button>
+      <button class="icon grow" data-act="ds-reset">重設</button>
+    </div>
+  </div>` : ''
+}
+
+function refreshHp(c) {
+  // Keep inputs mounted: replacing the page on blur would swallow the next +/- click.
+  const meter = el.querySelector('.hp-meter')
+  if (meter) { meter.max = c.hp.max; meter.value = c.hp.current; meter.textContent = `${c.hp.current} / ${c.hp.max}` }
+  const cur = el.querySelector('[data-act="hpcur"]')
+  if (cur) { cur.value = c.hp.current; cur.max = c.hp.max }
+  const max = el.querySelector('[data-act="hpmax"]')
+  if (max) max.value = c.hp.max
+  const death = el.querySelector('#death-saves')
+  if (death) death.innerHTML = deathSavesHtml(c)
 }
 
 function combatHtml(c) {
@@ -259,24 +335,24 @@ function combatHtml(c) {
     return `<div class="abi-card">
       <div class="lbl">${esc(ABI_NAME[k])}</div>
       <div class="mod-ring" data-mod="${k}">${m >= 0 ? '+' : ''}${m}</div>
-      <input class="val-sm" data-act="abival" data-k="${k}" type="number" value="${c.abilities[k]}"${lock}>
+      <input class="val-sm" data-act="abival" data-k="${k}" aria-label="${esc(ABI_NAME[k])}分數" type="number" value="${c.abilities[k]}"${lock}>
     </div>`
   }).join('')
   const saveRows = Object.keys(ABI_NAME).map(k =>
     `<div class="save-row"><span>${esc(ABI_NAME[k])}</span>
-      <input class="val" data-act="saveval" data-k="${k}" type="number" value="${esc(fieldVal(saveBonus, k))}" placeholder="—"${lock}></div>`
+      <input class="val" data-act="saveval" data-k="${k}" aria-label="${esc(ABI_NAME[k])}豁免" type="number" value="${esc(fieldVal(saveBonus, k))}" placeholder="—"${lock}></div>`
   ).join('')
   const skillRows = SKILLS.map(s =>
     `<div class="skill-row"><span>${esc(s.name)} <span class="muted">${esc(ABI_NAME[s.abi])}</span></span>
-      <input class="val" data-act="skillval" data-id="${s.id}" type="number" value="${esc(fieldVal(skills, s.id))}" placeholder="—"${lock}></div>`
+      <input class="val" data-act="skillval" data-id="${s.id}" aria-label="${esc(s.name)}加值" type="number" value="${esc(fieldVal(skills, s.id))}" placeholder="—"${lock}></div>`
   ).join('')
   const attacks = `<div class="atk muted"><span>名稱</span><span>命中</span><span>傷害</span><span></span></div>` +
     (c.attacks || []).map((a, i) =>
       `<div class="atk">
-        <input data-act="atkname" data-i="${i}" value="${esc(a.name)}"${lock}>
-        <input class="val" data-act="atkbonus" data-i="${i}" type="number" value="${a.bonus}"${lock}>
-        <input data-act="atkdmg" data-i="${i}" value="${esc(a.damage)}"${lock}>
-        <button class="icon lockable" data-act="delatk" data-i="${i}"${lock}>×</button>
+        <input data-act="atkname" data-i="${i}" aria-label="攻擊 ${i + 1} 名稱" value="${esc(a.name)}"${lock}>
+        <input class="val" data-act="atkbonus" data-i="${i}" aria-label="${esc(a.name)}命中加值" type="number" value="${a.bonus}"${lock}>
+        <input data-act="atkdmg" data-i="${i}" aria-label="${esc(a.name)}傷害" value="${esc(a.damage)}"${lock}>
+        <button class="icon lockable" data-act="delatk" data-i="${i}" aria-label="刪除攻擊 ${esc(a.name)}"${lock}>×</button>
       </div>`
     ).join('') +
     `<button class="big lockable" data-act="addatk"${lock}>＋攻擊</button>`
@@ -287,7 +363,7 @@ function combatHtml(c) {
     const reset = !c.locked && !seenCat[p.catalog]
     seenCat[p.catalog] = true
     return `<div class="spell-line">
-      <button class="big grow" data-act="togglepower" data-cat="${esc(p.catalog)}" data-id="${esc(p.id)}">${esc(p.name)} <span class="muted">${esc(p.catalogName)}</span>
+      <button class="big grow" data-act="togglepower" data-cat="${esc(p.catalog)}" data-id="${esc(p.id)}" aria-expanded="${open}">${esc(p.name)} <span class="muted">${esc(p.catalogName)}</span>
         ${open ? `<p class="spell-text">${esc(p.text)}</p>` : ''}</button>
       ${reset ? `<button class="icon lockable" data-act="resetchoice" data-cat="${esc(p.catalog)}">重選</button>` : ''}
     </div>`
@@ -299,9 +375,9 @@ function combatHtml(c) {
     const open = openSpell === id
     const domain = autoPrep.indexOf(id) >= 0
     return `<div class="spell-line">
-      <button class="big grow" data-act="togglespell" data-id="${esc(id)}">${esc(s.name)} <span class="muted">${s.level === 0 ? '戲法' : s.level + '環'}${domain ? ' · 領域' : ''}</span>
+      <button class="big grow" data-act="togglespell" data-id="${esc(id)}" aria-expanded="${open}">${esc(s.name)} <span class="muted">${s.level === 0 ? '戲法' : s.level + '環'}${domain ? ' · 領域' : ''}</span>
         ${open ? `<p class="spell-text">${esc(s.text)}</p>` : ''}</button>
-      ${domain ? '' : `<button class="icon lockable" data-act="delspell" data-id="${esc(id)}"${lock}>×</button>`}
+      ${domain ? '' : `<button class="icon lockable" data-act="delspell" data-id="${esc(id)}" aria-label="移除法術 ${esc(s.name)}"${lock}>×</button>`}
     </div>`
   }).join('')
   const maxRing = Rules.maxSlotLevel(Rules.casterOf(cls, c.subclass), c.level, c.ruleset)
@@ -310,9 +386,9 @@ function combatHtml(c) {
     const f = data.feats[id]
     const open = openFeat === id
     return `<div class="spell-line">
-      <button class="big grow" data-act="togglefeat" data-id="${esc(id)}">${esc(f ? f.name : id)}
+      <button class="big grow" data-act="togglefeat" data-id="${esc(id)}" aria-expanded="${open}">${esc(f ? f.name : id)}
         ${open && f && f.text ? `<p class="spell-text">${esc(f.text)}</p>` : ''}</button>
-      <button class="icon lockable" data-act="delfeat" data-id="${esc(id)}"${lock}>×</button>
+      <button class="icon lockable" data-act="delfeat" data-id="${esc(id)}" aria-label="移除專長 ${esc(f ? f.name : id)}"${lock}>×</button>
     </div>`
   }).join('')
   const featItems = Object.keys(data.feats || {}).filter(id => (c.feats || []).indexOf(id) < 0).map(id => {
@@ -331,50 +407,40 @@ function combatHtml(c) {
     const sp = slotSpent(sl)
     const pips = Array.from({ length: sl.max }, (_, i) => {
       const spent = sp[i]
-      return `<button class="pip${spent ? ' spent' : ''}" data-act="pip" data-k="${esc(k)}" data-i="${i}" aria-label="${k}環"></button>`
+      return `<button class="pip${spent ? ' spent' : ''}" data-act="pip" data-k="${esc(k)}" data-i="${i}" aria-pressed="${spent}" aria-label="${k} 環第 ${i + 1} 格：${spent ? '已使用，點擊恢復' : '可用，點擊消耗'}"><span aria-hidden="true">${spent ? '−' : '✦'}</span></button>`
     }).join('')
     return `<div class="slot-row">
-      <span class="slot-lbl">${k}環</span>
+      <div class="slot-label"><span class="slot-lbl">${k} 環</span><span class="slot-count">剩餘 ${sp.filter(used => !used).length} / ${sl.max}</span></div>
       <div class="pips">${pips}</div>
-      <input class="val lockable" data-act="slotmax" data-k="${esc(k)}" type="number" min="0" value="${sl.max}"${lock}>
+      <input class="val lockable" data-act="slotmax" data-k="${esc(k)}" aria-label="${k} 環格數上限" type="number" min="0" value="${sl.max}"${lock}>
     </div>`
   }).join('')
   const gear = c.gear || []
   const gearRows = gear.map((g, i) =>
     `<div class="gear">
-      <input data-act="gearname" data-i="${i}" value="${esc(g.name)}"${lock}>
-      <input class="val" data-act="gearqty" data-i="${i}" type="number" min="0" value="${g.qty == null ? 1 : g.qty}">
-      <button class="icon lockable" data-act="delgear" data-i="${i}"${lock}>×</button>
+      <input data-act="gearname" data-i="${i}" aria-label="物品 ${i + 1} 名稱" value="${esc(g.name)}"${lock}>
+      <input class="val" data-act="gearqty" data-i="${i}" aria-label="${esc(g.name)}數量" type="number" min="0" value="${g.qty == null ? 1 : g.qty}">
+      <button class="icon lockable" data-act="delgear" data-i="${i}" aria-label="移除物品 ${esc(g.name)}"${lock}>×</button>
     </div>`
   ).join('')
   const cond = (c.conditions || [])
-  const death = c.hp.current === 0 ? `
-    <div class="box" style="margin:8px 0">死亡豁免　成功 ${c.deathSaves.success}/3　失敗 ${c.deathSaves.fail}/3
-      <div class="row">
-        <button class="icon grow" data-act="ds" data-k="success">成功</button>
-        <button class="icon grow" data-act="ds" data-k="fail">失敗</button>
-        <button class="icon grow" data-act="ds-reset">重設</button>
-      </div>
-    </div>` : ''
   const res = (c.resources || []).map((r, i) =>
     `<button class="slot" data-act="res" data-i="${i}">${esc(r.name)} ${r.max - r.used}/${r.max}</button>`
   ).join('')
   const condPick = CONDITIONS.map(n => {
     const on = cond.indexOf(n) >= 0
-    return `<button class="slot${on ? ' cond-on' : ''}" data-act="cond" data-n="${esc(n)}">${esc(n)}</button>`
+    return `<button class="slot${on ? ' cond-on' : ''}" data-act="cond" data-n="${esc(n)}" aria-pressed="${on}">${esc(n)}</button>`
   }).join('')
   const menu = menuOpen ? `
-    <div class="menu">
+    <div class="menu" id="character-menu" aria-label="角色管理">
       ${(state.characters).map(x =>
         `<button class="big" data-act="switch" data-id="${esc(x.id)}">${esc(x.name)}　${esc(className(x.class, x.ruleset))} ${x.level}${x.id === c.id ? ' ←' : ''}</button>`
       ).join('')}
       <button class="big" data-act="new">新增角色</button>
-      <button class="big" data-act="short">短休</button>
-      <button class="big" data-act="long">長休</button>
       <button class="big" data-act="notes-open">備忘錄</button>
       <button class="big" data-act="script">劇本對照表</button>
       <button class="big" data-act="export">匯出</button>
-      <label class="big" style="display:block">匯入<input id="import" type="file" accept="application/json" class="hidden"></label>
+      <label class="big import-label">匯入角色<input id="import" type="file" accept="application/json"></label>
       ${confirmDel ? `<div class="warn del-confirm">
         <p>確定要刪除「${esc(c.name)}」？刪掉就救不回來，建議先匯出備份。</p>
         <div class="row">
@@ -385,60 +451,70 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 · v62</p>
+    <p class="mast">冒險者紀錄 <span class="edition">CHARACTER JOURNAL</span></p>
     <div class="top">
       <div>
-        <input class="name-edit" data-act="name" value="${esc(c.name)}"${lock}>
-        <div class="kicker">${esc(raceName(c.race, c.ruleset))}　${esc(className(c.class, c.ruleset))} ${c.level}　${c.ruleset === '2024' ? '2024' : '2014'}${c.background && pack.backgrounds && pack.backgrounds[c.background] ? '　' + esc(pack.backgrounds[c.background].name) : ''}${c.locked ? '　已鎖定' : ''}</div>
+        <input class="name-edit" data-act="name" aria-label="角色名字" value="${esc(c.name)}"${lock}>
+        <div class="kicker">${esc(raceName(c.race, c.ruleset))} · ${esc(className(c.class, c.ruleset))} ${c.level} 級 · ${c.ruleset === '2024' ? '2024' : '2014'}${c.background && pack.backgrounds && pack.backgrounds[c.background] ? ' · ' + esc(pack.backgrounds[c.background].name) : ''}${c.subclass ? ' · ' + esc(((cls.subclasses || []).find(s => s.id === c.subclass) || {}).name || c.subclass) : ''}</div>
       </div>
       <div class="row">
-        <button class="icon${c.locked ? ' is-lock' : ''}" data-act="lock" aria-label="${c.locked ? '解鎖' : '鎖定'}">${lockIcon(!!c.locked)}</button>
-        <button class="icon" data-act="levelup" aria-label="升級">升級</button>
-        <button class="icon seal" data-act="menu" aria-label="選單"><span>選單</span></button>
+        <button class="icon" data-act="menu" aria-expanded="${menuOpen}"${menuOpen ? ' aria-controls="character-menu"' : ''}>角色選單</button>
       </div>
     </div>
-    ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
-    ${pending ? `<button class="big warn" data-act="pending">還有未選項目（${pending}）</button>` : ''}
+    <div class="mode-bar">
+      <span class="mode-label">${c.locked ? '遊玩中 · 資料已鎖定' : '編輯中 · 變更自動儲存'}</span>
+      <div class="row"><button class="icon lockable" data-act="levelup">升級</button>
+      <button class="icon mode-toggle${c.locked ? '' : ' is-lock'}" data-act="lock">${lockIcon(!!c.locked)}<span>${c.locked ? '編輯資料' : '完成編輯'}</span></button></div>
+    </div>
+    ${banner ? `<div class="warn" role="status">${esc(banner)}</div>` : ''}
+    ${pending ? `<button class="big warn" data-act="pending">完成角色設定 · 尚有 ${pending} 個未選項目 →</button>` : ''}
     ${menu}
-    <div class="ident">
+    <div class="ident lockable">
       <label class="field">副職業
         ${subCombo}
       </label>
     </div>
-    <div class="stats">
-      <div class="box ic ic-ac"><div class="lbl">AC</div>
-        <input class="val-sm" data-act="ac" type="number" value="${c.ac}"${lock}></div>
-      <div class="box">
-        <div class="lbl">生命　目前 / 上限</div>
+    <div class="combat-overview">
+      <section class="hp-card" aria-label="生命值">
+        <div class="hp-heading"><span>生命值 <small>HIT POINTS</small></span><span>目前 / 上限</span></div>
         <div class="hp-ctrl">
-          <button class="icon" data-act="hp" data-d="-1">−</button>
+          <button class="icon" data-act="hp" data-d="-1" aria-label="生命減少 1">−</button>
           <div class="hp-pair">
-            <input data-act="hpcur" type="number" value="${c.hp.current}">
+            <input data-act="hpcur" aria-label="目前生命" type="number" inputmode="numeric" min="0" max="${c.hp.max}" value="${c.hp.current}">
             <span>/</span>
-            <input data-act="hpmax" type="number" value="${c.hp.max}"${lock}>
+            <input data-act="hpmax" aria-label="生命上限" type="number" inputmode="numeric" min="1" value="${c.hp.max}"${lock}>
           </div>
-          <button class="icon" data-act="hp" data-d="1">＋</button>
+          <button class="icon" data-act="hp" data-d="1" aria-label="生命增加 1">＋</button>
         </div>
-        <div class="hint">骰錯上限可直接改右邊數字</div>
+        <progress class="hp-meter" aria-label="生命值" value="${c.hp.current}" max="${c.hp.max}">${c.hp.current} / ${c.hp.max}</progress>
+        <p class="hint">點數字可直接修改生命${c.locked ? '' : ' · 右側可調整上限'}</p>
+      </section>
+      <div class="combat-numbers">
+        <div class="stats">
+          <div class="box"><label class="lbl" for="stat-ac">護甲 AC</label>
+            <input id="stat-ac" class="val-sm" data-act="ac" type="number" value="${c.ac}"${lock}></div>
+          <div class="box"><label class="lbl" for="stat-init">先攻</label>
+            <input id="stat-init" class="val-sm" data-act="init" type="number" value="${c.initiative}"${lock}></div>
+          <div class="box"><label class="lbl" for="stat-speed">速度 · 呎</label>
+            <input id="stat-speed" class="val-sm" data-act="speed" type="number" value="${c.speed}"${lock}></div>
+        </div>
+        <div class="secondary-stats">
+          <div><span>熟練加值</span><strong>+${c.proficiency}</strong></div>
+          ${cls.caster && cls.caster !== 'none' ? `<div><span>法術 DC</span><strong>${Rules.spellSaveDC(c, cls)}</strong></div>
+          <div><span>法術攻擊</span><strong>${Rules.spellAttack(c, cls) >= 0 ? '+' : ''}${Rules.spellAttack(c, cls)}</strong></div>` : ''}
+        </div>
+        <div class="quick-actions" aria-label="戰鬥常用操作">
+          <button class="slot" data-act="short">短休</button>
+          <button class="slot" data-act="long">長休</button>
+          <button class="slot${c.concentrating ? ' cond-on' : ''}" data-act="conc" aria-pressed="${!!c.concentrating}">${c.concentrating ? '專注中' : '開始專注'}</button>
+        </div>
       </div>
-      <div class="box ic ic-speed"><div class="lbl">速度</div>
-        <input class="val-sm" data-act="speed" type="number" value="${c.speed}"${lock}></div>
     </div>
-    <div class="mini">
-      <div class="box ic ic-init"><div class="lbl">先攻</div>
-        <input class="val-sm" data-act="init" type="number" value="${c.initiative}"${lock}></div>
-      <div class="box ic ic-prof"><div class="lbl">熟練</div><div class="num">+${c.proficiency}</div></div>
+    <div id="death-saves">${deathSavesHtml(c)}</div>
     </div>
-    ${cls.caster && cls.caster !== 'none' ? `<div class="mini">
-      <div class="box ic ic-dc"><div class="lbl">法術DC</div><div class="num">${Rules.spellSaveDC(c, cls)}</div></div>
-      <div class="box ic ic-satk"><div class="lbl">法術攻擊</div><div class="num">${Rules.spellAttack(c, cls) >= 0 ? '+' : ''}${Rules.spellAttack(c, cls)}</div></div>
-    </div>` : ''}
-    <button class="slot${c.concentrating ? ' cond-on' : ''}" data-act="conc">專注${c.concentrating ? '中' : ''}</button>
-    ${death}
-    </div>
-    ${Object.keys(c.spellSlots || {}).length || (cls.caster && cls.caster !== 'none') ? `<h3>法術環</h3>${slotRows || '<p class="muted">還沒有法術環</p>'}<button class="big lockable" data-act="addcircle"${lock}>＋法術環</button>` : ''}
     <div class="sheet-grid">
       <div>
+        ${Object.keys(c.spellSlots || {}).length || (cls.caster && cls.caster !== 'none') ? `<h3>法術資源</h3><p class="hint">實心為可用，點一下消耗；再點一次恢復。</p>${slotRows || '<p class="muted">還沒有法術環</p>'}<button class="big lockable" data-act="addcircle"${lock}>＋法術環</button>` : ''}
         <h3>攻擊</h3>
         ${attacks}
         ${powerRows ? `<h3>職業技能</h3>${powerRows}` : ''}
@@ -461,7 +537,7 @@ function combatHtml(c) {
           ${((pack.features[c.class] || []).concat(((pack.subclassFeatures || {})[c.subclass] || [])).filter(f => f.level <= c.level).map(f => {
             const id = (f.sub ? 's' : 'c') + f.level + '-' + f.name
             const open = openClassFeat === id
-            return `<button class="big" data-act="toggleclassfeat" data-id="${esc(id)}">${esc(f.name)} <span class="muted">${f.level}級${c.subclass && ((pack.subclassFeatures || {})[c.subclass] || []).indexOf(f) >= 0 ? ' · 子職' : ''}</span>
+            return `<button class="big" data-act="toggleclassfeat" data-id="${esc(id)}" aria-expanded="${open}">${esc(f.name)} <span class="muted">${f.level}級${c.subclass && ((pack.subclassFeatures || {})[c.subclass] || []).indexOf(f) >= 0 ? ' · 子職' : ''}</span>
               ${open ? `<p class="spell-text">${esc(f.text)}</p>` : ''}</button>`
           }).join('') || '<p class="muted">沒有特性資料</p>')}
         </details>
@@ -480,7 +556,7 @@ function combatHtml(c) {
           ${c.locked ? '' : comboHtml('magic', Object.keys(pack.magicItems || {}).map(id => ({ id, name: pack.magicItems[id].name, text: pack.magicItems[id].text })), [], '加入魔法物品…')}
           ${((c.magicItems || []).map((id, i) => {
             const it = (pack.magicItems || {})[id]
-            return `<div class="spell-line"><button class="big grow">${esc(it ? it.name : id)}${it && it.text ? `<p class="spell-text">${esc(it.text)}</p>` : ''}</button><button class="icon lockable" data-act="delmagic" data-i="${i}"${lock}>×</button></div>`
+            return `<div class="spell-line"><button class="big grow">${esc(it ? it.name : id)}${it && it.text ? `<p class="spell-text">${esc(it.text)}</p>` : ''}</button><button class="icon lockable" data-act="delmagic" data-i="${i}" aria-label="移除魔法物品 ${esc(it ? it.name : id)}"${lock}>×</button></div>`
           }).join(''))}
         </details>
         <details class="fold" data-fold="pack"${foldOpen.pack ? ' open' : ''}>
@@ -551,7 +627,7 @@ function termCard(k) {
 function notesHtml(c) {
   const text = c.notes || ''
   const body = notesEdit
-    ? `<textarea class="notes notes-big" data-act="notes" placeholder="NPC 名字、線索、欠誰錢……
+    ? `<textarea class="notes notes-big" data-act="notes" aria-label="冒險備忘錄" placeholder="NPC 名字、線索、欠誰錢……
 寫完按「完成」，文中出現對照表裡的名字會自動加底線。">${esc(text)}</textarea>
        <button class="big primary" data-act="notes-done">完成</button>`
     : `<div class="note-read">${text.split(/\n/).map(line => {
@@ -750,7 +826,7 @@ function comboHtml(key, items, selected, placeholder) {
         <div class="pick-head">
           <span class="pick-name">${esc(it.name)}</span>
           ${comboChip(it.hint)}${comboChip(it.school)}${comboChip(it.dmg)}
-          <button type="button" class="icon" data-act="combodel" data-key="${esc(key)}" data-id="${esc(id)}">×</button>
+          <button type="button" class="icon" data-act="combodel" data-key="${esc(key)}" data-id="${esc(id)}" aria-label="移除 ${esc(it.name)}">×</button>
         </div>
         ${it.text ? `<p class="pick-body">${esc(it.text)}</p>` : ''}
       </div>`
@@ -761,7 +837,7 @@ function comboHtml(key, items, selected, placeholder) {
   return `<div class="combo" data-combo="${esc(key)}">
     <div class="chips">${chips}</div>
     ${comboTagHtml(key, items)}
-    <input class="combo-q" data-act="comboq" data-key="${esc(key)}" placeholder="${esc(placeholder || '輸入名稱搜尋…')}" value="${esc(comboQ[key] || '')}" autocomplete="off">
+    <input class="combo-q" data-act="comboq" data-key="${esc(key)}" aria-label="${esc(placeholder || '輸入名稱搜尋')}" placeholder="${esc(placeholder || '輸入名稱搜尋…')}" value="${esc(comboQ[key] || '')}" autocomplete="off">
     ${open ? comboListHtml(key, items, comboQ[key], comboExclude(key)) : ''}
   </div>`
 }
@@ -933,6 +1009,12 @@ function levelHtml(c) {
   `
 }
 
+el.addEventListener('submit', e => {
+  if (!e.target.matches('.create-form')) return
+  e.preventDefault()
+  el.querySelector('[data-act="create"]').click()
+})
+
 el.addEventListener('click', e => {
   const t = e.target
   if (comboOpen && !t.closest('.combo')) {
@@ -989,6 +1071,7 @@ el.addEventListener('click', e => {
   if (act === 'new') { view = 'create'; menuOpen = false; render(); return }
   if (act === 'back') { view = current() ? 'combat' : 'create'; render(); return }
   if (act === 'create') {
+    e.preventDefault()
     const name = (document.getElementById('f-name') || {}).value || ''
     const race = (document.getElementById('f-race') || {}).value
     const classId = (document.getElementById('f-class') || {}).value
@@ -1164,8 +1247,20 @@ el.addEventListener('click', e => {
     replace(next)
     return
   }
-  if (act === 'long') { menuOpen = false; replace(Rules.longRest(c)); return }
-  if (act === 'short') { menuOpen = false; replace(Rules.shortRest(c)); return }
+  if (act === 'long') {
+    if (!window.confirm('長休會恢復全部生命、法術環與資源，並重設死亡豁免。確定長休？')) return
+    menuOpen = false
+    banner = '長休完成：生命、法術環與資源已恢復。'
+    replace(Rules.longRest(c))
+    return
+  }
+  if (act === 'short') {
+    if (!window.confirm('短休會恢復短休資源與契術師法術環；生命請依生命骰結果手動調整。確定短休？')) return
+    menuOpen = false
+    banner = '短休完成：短休資源已恢復，生命請依生命骰結果調整。'
+    replace(Rules.shortRest(c))
+    return
+  }
   if (act === 'export') {
     const blob = new Blob([JSON.stringify(c, null, 2)], { type: 'application/json' })
     const a = document.createElement('a')
@@ -1425,6 +1520,7 @@ el.addEventListener('change', e => {
     const c = current(); if (!c) return
     const n = Number(t.value)
     c.hp.current = Math.max(0, Math.min(c.hp.max, Number.isNaN(n) ? 0 : n))
+    refreshHp(c)
     persist(true)
   }
   if (act === 'hpmax') {
@@ -1432,8 +1528,7 @@ el.addEventListener('change', e => {
     const n = Number(t.value)
     c.hp.max = Number.isNaN(n) || n < 1 ? c.hp.max : n
     if (c.hp.current > c.hp.max) c.hp.current = c.hp.max
-    const cur = el.querySelector('[data-act="hpcur"]')
-    if (cur) cur.value = c.hp.current
+    refreshHp(c)
     persist(true)
   }
   if (act === 'gp' || act === 'sp' || act === 'cp') {

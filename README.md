@@ -23,4 +23,5 @@ Safari／Chrome：分享 → 加入主畫面。
 ```bash
 node test/rules.test.js
 node test/store.test.js
+node test/ui.test.js
 ```
