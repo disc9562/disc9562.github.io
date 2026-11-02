@@ -255,7 +255,7 @@ function createHtml() {
       const b = r.bonuses || {}
       const parts = Object.keys(b).map(k => ABI_NAME[k] + '+' + b[k])
       return r.name + (parts.length ? ' ' + parts.join(' ') : '')
-    }).join(' · ')}</p>
+    }).join('；')}</p>
     <div class="abi">${abis}</div>
     </section>
     <section class="form-card">
@@ -292,7 +292,7 @@ function slotSpent(sl) {
 
 function deathSavesHtml(c) {
   return c.hp.current === 0 ? `<div class="box death-saves" role="status">
-    <strong>死亡豁免</strong><p>成功 ${c.deathSaves.success}/3 · 失敗 ${c.deathSaves.fail}/3</p>
+    <strong>死亡豁免</strong><p><span>成功 ${c.deathSaves.success}/3</span><span>失敗 ${c.deathSaves.fail}/3</span></p>
     <div class="row">
       <button class="icon grow" data-act="ds" data-k="success">成功</button>
       <button class="icon grow" data-act="ds" data-k="fail">失敗</button>
@@ -375,7 +375,7 @@ function combatHtml(c) {
     const open = openSpell === id
     const domain = autoPrep.indexOf(id) >= 0
     return `<div class="spell-line">
-      <button class="big grow" data-act="togglespell" data-id="${esc(id)}" aria-expanded="${open}">${esc(s.name)} <span class="muted">${s.level === 0 ? '戲法' : s.level + '環'}${domain ? ' · 領域' : ''}</span>
+      <button class="big grow" data-act="togglespell" data-id="${esc(id)}" aria-expanded="${open}">${esc(s.name)} <span class="muted">${s.level === 0 ? '戲法' : s.level + '環'}${domain ? '、領域' : ''}</span>
         ${open ? `<p class="spell-text">${esc(s.text)}</p>` : ''}</button>
       ${domain ? '' : `<button class="icon lockable" data-act="delspell" data-id="${esc(id)}" aria-label="移除法術 ${esc(s.name)}"${lock}>×</button>`}
     </div>`
@@ -434,7 +434,7 @@ function combatHtml(c) {
   const menu = menuOpen ? `
     <div class="menu" id="character-menu" aria-label="角色管理">
       ${(state.characters).map(x =>
-        `<button class="big" data-act="switch" data-id="${esc(x.id)}">${esc(x.name)}　${esc(className(x.class, x.ruleset))} ${x.level}${x.id === c.id ? ' ←' : ''}</button>`
+        `<button class="big" data-act="switch" data-id="${esc(x.id)}">${esc(x.name)}　${esc(className(x.class, x.ruleset))} ${x.level}${x.id === c.id ? ' <span class="muted">目前</span>' : ''}</button>`
       ).join('')}
       <button class="big" data-act="new">新增角色</button>
       <button class="big" data-act="notes-open">備忘錄</button>
@@ -451,23 +451,23 @@ function combatHtml(c) {
     </div>` : ''
   return `
     <div class="vitals">
-    <p class="mast">冒險者紀錄 <span class="edition">CHARACTER JOURNAL</span></p>
+    <p class="mast">冒險者紀錄</p>
     <div class="top">
       <div>
         <input class="name-edit" data-act="name" aria-label="角色名字" value="${esc(c.name)}"${lock}>
-        <div class="kicker">${esc(raceName(c.race, c.ruleset))} · ${esc(className(c.class, c.ruleset))} ${c.level} 級 · ${c.ruleset === '2024' ? '2024' : '2014'}${c.background && pack.backgrounds && pack.backgrounds[c.background] ? ' · ' + esc(pack.backgrounds[c.background].name) : ''}${c.subclass ? ' · ' + esc(((cls.subclasses || []).find(s => s.id === c.subclass) || {}).name || c.subclass) : ''}</div>
+        <div class="kicker"><span>${esc(raceName(c.race, c.ruleset))}</span><span>${esc(className(c.class, c.ruleset))} ${c.level} 級</span><span>${c.ruleset === '2024' ? '2024' : '2014'}</span>${c.background && pack.backgrounds && pack.backgrounds[c.background] ? '<span>' + esc(pack.backgrounds[c.background].name) + '</span>' : ''}${c.subclass ? '<span>' + esc(((cls.subclasses || []).find(s => s.id === c.subclass) || {}).name || c.subclass) + '</span>' : ''}</div>
       </div>
       <div class="row">
         <button class="icon" data-act="menu" aria-expanded="${menuOpen}"${menuOpen ? ' aria-controls="character-menu"' : ''}>角色選單</button>
       </div>
     </div>
     <div class="mode-bar">
-      <span class="mode-label">${c.locked ? '遊玩中 · 資料已鎖定' : '編輯中 · 變更自動儲存'}</span>
+      <span class="mode-label">${c.locked ? '<b>遊玩中</b><span>資料已鎖定</span>' : '<b>編輯中</b><span>變更自動儲存</span>'}</span>
       <div class="row"><button class="icon lockable" data-act="levelup">升級</button>
       <button class="icon mode-toggle${c.locked ? '' : ' is-lock'}" data-act="lock">${lockIcon(!!c.locked)}<span>${c.locked ? '編輯資料' : '完成編輯'}</span></button></div>
     </div>
     ${banner ? `<div class="warn" role="status">${esc(banner)}</div>` : ''}
-    ${pending ? `<button class="big warn" data-act="pending">完成角色設定 · 尚有 ${pending} 個未選項目 →</button>` : ''}
+    ${pending ? `<button class="big warn" data-act="pending"><span>完成角色設定</span><span class="muted">尚有 ${pending} 個未選項目</span></button>` : ''}
     ${menu}
     <div class="ident lockable">
       <label class="field">副職業
@@ -476,7 +476,7 @@ function combatHtml(c) {
     </div>
     <div class="combat-overview">
       <section class="hp-card" aria-label="生命值">
-        <div class="hp-heading"><span>生命值 <small>HIT POINTS</small></span><span>目前 / 上限</span></div>
+        <div class="hp-heading"><span>生命值</span><span>目前 / 上限</span></div>
         <div class="hp-ctrl">
           <button class="icon" data-act="hp" data-d="-1" aria-label="生命減少 1">−</button>
           <div class="hp-pair">
@@ -487,7 +487,7 @@ function combatHtml(c) {
           <button class="icon" data-act="hp" data-d="1" aria-label="生命增加 1">＋</button>
         </div>
         <progress class="hp-meter" aria-label="生命值" value="${c.hp.current}" max="${c.hp.max}">${c.hp.current} / ${c.hp.max}</progress>
-        <p class="hint">點數字可直接修改生命${c.locked ? '' : ' · 右側可調整上限'}</p>
+        <p class="hint">點數字可直接修改生命${c.locked ? '' : '，右側可調整上限'}</p>
       </section>
       <div class="combat-numbers">
         <div class="stats">
@@ -495,7 +495,7 @@ function combatHtml(c) {
             <input id="stat-ac" class="val-sm" data-act="ac" type="number" value="${c.ac}"${lock}></div>
           <div class="box"><label class="lbl" for="stat-init">先攻</label>
             <input id="stat-init" class="val-sm" data-act="init" type="number" value="${c.initiative}"${lock}></div>
-          <div class="box"><label class="lbl" for="stat-speed">速度 · 呎</label>
+          <div class="box"><label class="lbl" for="stat-speed">速度（呎）</label>
             <input id="stat-speed" class="val-sm" data-act="speed" type="number" value="${c.speed}"${lock}></div>
         </div>
         <div class="secondary-stats">
@@ -513,17 +513,17 @@ function combatHtml(c) {
     <div id="death-saves">${deathSavesHtml(c)}</div>
     </div>
     <div class="sheet-grid">
-      <div>
-        ${Object.keys(c.spellSlots || {}).length || (cls.caster && cls.caster !== 'none') ? `<h3>法術資源</h3><p class="hint">實心為可用，點一下消耗；再點一次恢復。</p>${slotRows || '<p class="muted">還沒有法術環</p>'}<button class="big lockable" data-act="addcircle"${lock}>＋法術環</button>` : ''}
-        <h3>攻擊</h3>
-        ${attacks}
-        ${powerRows ? `<h3>職業技能</h3>${powerRows}` : ''}
-        ${res ? `<h3>資源</h3><div class="slots">${res}</div>` : ''}
-        ${Rules.isPreparedCaster(c.class, c.ruleset) || (c.spells || []).length || !c.locked ? `<h3>${Rules.isPreparedCaster(c.class, c.ruleset) ? '今日準備' : '法術'}</h3>${Rules.isPreparedCaster(c.class, c.ruleset) ? `<p class="muted">${(c.spells || []).length}／${Rules.preparedCap(c)}（領域不佔格）</p>` : ''}${spells}${spellAdd}` : ''}
-        <h3>狀態</h3>
-        <div class="slots">${condPick}</div>
-      </div>
-      <div>
+        ${Object.keys(c.spellSlots || {}).length || (cls.caster && cls.caster !== 'none') ? `<section class="seals"><h3>法術資源</h3><p class="hint">實心為可用，點一下消耗；再點一次恢復。</p>${slotRows || '<p class="muted">還沒有法術環</p>'}<button class="big lockable" data-act="addcircle"${lock}>＋法術環</button></section>` : ''}
+        <div class="sheet-turn">
+        <div class="sheet-atk"><h3>攻擊</h3>
+        ${attacks}</div>
+        ${powerRows ? `<div class="sheet-pow"><h3>職業技能</h3>${powerRows}</div>` : ''}
+        ${res ? `<div class="sheet-res"><h3>資源</h3><div class="slots">${res}</div></div>` : ''}
+        </div>
+        ${Rules.isPreparedCaster(c.class, c.ruleset) || (c.spells || []).length || !c.locked ? `<div class="sheet-spells"><h3>${Rules.isPreparedCaster(c.class, c.ruleset) ? '今日準備' : '法術'}</h3>${Rules.isPreparedCaster(c.class, c.ruleset) ? `<p class="muted">${(c.spells || []).length}／${Rules.preparedCap(c)}（領域不佔格）</p>` : ''}${spells}${spellAdd}</div>` : ''}
+        <div class="sheet-cond"><h3>狀態</h3>
+        <div class="slots">${condPick}</div></div>
+      <div class="sheet-ref">
         <details class="fold" data-fold="stats"${foldOpen.stats ? ' open' : ''}>
           <summary>能力／豁免／技能</summary>
           <div class="abi-grid">${abiCards}</div>
@@ -537,7 +537,7 @@ function combatHtml(c) {
           ${((pack.features[c.class] || []).concat(((pack.subclassFeatures || {})[c.subclass] || [])).filter(f => f.level <= c.level).map(f => {
             const id = (f.sub ? 's' : 'c') + f.level + '-' + f.name
             const open = openClassFeat === id
-            return `<button class="big" data-act="toggleclassfeat" data-id="${esc(id)}" aria-expanded="${open}">${esc(f.name)} <span class="muted">${f.level}級${c.subclass && ((pack.subclassFeatures || {})[c.subclass] || []).indexOf(f) >= 0 ? ' · 子職' : ''}</span>
+            return `<button class="big" data-act="toggleclassfeat" data-id="${esc(id)}" aria-expanded="${open}">${esc(f.name)} <span class="muted">${f.level}級${c.subclass && ((pack.subclassFeatures || {})[c.subclass] || []).indexOf(f) >= 0 ? '、子職' : ''}</span>
               ${open ? `<p class="spell-text">${esc(f.text)}</p>` : ''}</button>`
           }).join('') || '<p class="muted">沒有特性資料</p>')}
         </details>
@@ -569,7 +569,7 @@ function combatHtml(c) {
           ${gearRows}
           <button class="big lockable" data-act="addgear"${lock}>＋物品</button>
         </details>
-        <button class="big note-peek" data-act="notes-open">${(c.notes || '').trim() ? `<span class="note-snip">${esc((c.notes || '').trim().slice(0, 90))}${(c.notes || '').trim().length > 90 ? '…' : ''}</span>` : '<span class="muted">還沒寫東西，點開來記</span>'}<span class="muted">打開備忘錄 ›</span></button>
+        <button class="big note-peek" data-act="notes-open">${(c.notes || '').trim() ? `<span class="note-snip">${esc((c.notes || '').trim().slice(0, 90))}${(c.notes || '').trim().length > 90 ? '…' : ''}</span>` : '<span class="muted">還沒寫東西，點開來記</span>'}<span class="note-go">打開備忘錄</span></button>
       </div>
     </div>
   `
@@ -620,7 +620,7 @@ function termCard(k) {
     <p class="gl-note">${esc(e.note || '')}</p>
     ${e.spoiler ? (open
       ? `<p class="gl-spoiler">${esc(e.spoiler)} <button class="gl-hide" data-act="gl-toggle" data-k="${esc(k)}">收起</button></p>`
-      : `<button class="gl-reveal" data-act="gl-toggle" data-k="${esc(k)}">⚠ 顯示劇透</button>`) : ''}
+      : `<button class="gl-reveal" data-act="gl-toggle" data-k="${esc(k)}">顯示劇透</button>`) : ''}
   </div>`
 }
 
@@ -636,7 +636,7 @@ function notesHtml(c) {
       }).join('')}</div>
        <div class="row notes-actions">
          <button class="big" data-act="notes-edit">編輯</button>
-         <button class="big${notesGl ? ' cond-on' : ''}" data-act="notes-gl">${notesGl ? '收起對照表 ▴' : '打開對照表 ▾'}</button>
+         <button class="big${notesGl ? ' cond-on' : ''}" data-act="notes-gl" aria-expanded="${notesGl}">${notesGl ? '收起對照表' : '打開對照表'}</button>
        </div>
        ${notesGl && script ? `<section class="form-card notes-gl">
          <input class="gl-q" data-act="gl-q" type="search" placeholder="搜人名、地名、怪物（中英皆可）" value="${esc(glQ)}">
@@ -676,7 +676,7 @@ function glListHtml() {
       <p class="gl-note">${esc(e.note || '')}</p>
       ${e.spoiler ? (open
         ? `<p class="gl-spoiler">${esc(e.spoiler)} <button class="gl-hide" data-act="gl-toggle" data-k="${esc(key)}">收起</button></p>`
-        : `<button class="gl-reveal" data-act="gl-toggle" data-k="${esc(key)}">⚠ 顯示劇透</button>`) : ''}
+        : `<button class="gl-reveal" data-act="gl-toggle" data-k="${esc(key)}">顯示劇透</button>`) : ''}
     </div>`
   }).join('')
   return (rows || '<p class="muted">找不到符合的條目</p>') +
@@ -964,7 +964,7 @@ function levelHtml(c) {
     if (it.type === 'spells') {
       const at = view === 'levelup' ? c.level + 1 : c.level
       const max = Rules.maxSlotLevel(Rules.casterOf(cls, c.subclass || pickSubclass), at, c.ruleset)
-      extra = `<p class="muted">選 ${it.count} 個 · 升到 ${at} 級可選到 ${max} 環</p>` +
+      extra = `<p class="muted">選 ${it.count} 個，升到 ${at} 級可選到 ${max} 環</p>` +
         comboHtml('pickspell', spellPickItems(c, { level: at }), pickSpells, '搜尋可學法術（' + at + '級最高' + max + '環）…')
     }
     if (it.type === 'hp') {
@@ -1000,7 +1000,7 @@ function levelHtml(c) {
     <p class="mast">冒險者紀錄</p>
     <div class="top">
       <button class="icon" data-act="back">返回</button>
-      <div>${esc(c.name)} · ${view === 'pending' ? '未選項目' : className(c.class, c.ruleset) + ' ' + c.level + ' → ' + (c.level + 1)}</div>
+      <div><div class="gl-title">${esc(c.name)}</div><div class="kicker">${view === 'pending' ? '未選項目' : esc(className(c.class, c.ruleset)) + ' ' + c.level + ' → ' + (c.level + 1)}</div></div>
     </div>
     ${banner ? `<div class="warn">${esc(banner)}</div>` : ''}
     ${boxes || '<p class="muted">沒有要選的</p>'}
