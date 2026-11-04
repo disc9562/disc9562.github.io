@@ -1,6 +1,6 @@
 /* Hallmark · shape: app screen · genre: editorial · theme: Atelier (deal 3/3, seed tabletop-role-playing-character-sheet-32f5·62aac325·2026-11-02·r0) · redesign: full
- * nav: kept shell as a top bar, the running head 冒險者紀錄 over its pencilled runes beside standard tabs (角色卡 備忘錄 對照表), the 角色選單 menu kept · signature: wax-seal spell slots pressed into cotton card stock, each heading's rune transliteration pencilled under its ink rule · states: locked (遊玩), unlocked (編輯), HP 0 death saves, menu open, delete confirm, combo open and empty, glossary loading, rest banner, create error
- * axes: light/roman-serif/warm · posture: full-palette · roles: field parchment (--color-paper, --color-card), signal PHB wine red (--color-rubric: heads, current tab, pressed state, selection, focus, primary, the HP card ground), seal sealing-wax vermilion (--color-wax, the slots only) and gold (--color-gold rules and frames, never text on parchment), ink (--color-ink) · contrast: pass · v2.0.0 */
+ * nav: kept shell as a top bar, the running head 冒險者紀錄 over its runes in gold on a leather cover band above standard tabs (角色卡 備忘錄 對照表), the 角色選單 menu kept · signature: wax-seal spell slots pressed into cotton card stock, each heading's rune transliteration pencilled under its ink rule · states: locked (遊玩), unlocked (編輯), HP 0 death saves, menu open, delete confirm, combo open and empty, glossary loading, rest banner, create error
+ * axes: light/roman-serif/warm · posture: full-palette · roles: field parchment (--color-paper, --color-card), signal PHB wine red (--color-rubric: heads, current tab, pressed state, selection, focus, primary, the HP card ground, the leather mast), seal sealing-wax vermilion (--color-wax, the slots only) and gold (--color-gold rules and frames, never text on parchment), ink (--color-ink) · contrast: pass · v2.0.0 */
 /* Hallmark · brand: kept at the owner's request · the owner's 5e grimoire is restored over the Atelier system as a kept brand: PHB wine red, gold rules and the sheet's concave-corner double frames, parchment paper, the AC shield, the hexagon modifiers, Cinzel numerals; Atelier's slate signal and its cool-accent and no-colour-filled-control do-nots yield to it, and Atelier keeps the faces, the type scale, the grid and the ruled tables */
 /* Hallmark · pre-emit critique: P4 H5 E4 S5 R4 V4 · weakest: R, a combat sheet carries many controls; folded them into one outlined recipe at 40px, one ruled-row recipe, and only two cotton cards (HP, seals) */
 /* Hallmark · dismissed F7 · on purpose the controls share one outlined recipe and the notices one paper-2 well: a sheet with forty controls reads calmer with one control and one well, and the two cotton cards stay the only raised surfaces */
@@ -8,6 +8,14 @@
 /* Hallmark · dismissed 66 · the rune lines under each ink rule are the owner's kept signature, a transliteration of each heading's English term set by app.js, not decoration the build added */
 /* Hallmark · dismissed 47c · each wax seal is the spell slot's own toggle button, and the shield, hexagon and concave frames hold the owner's own figures as the printed 5e sheet does; nothing pictures a product */
 /* Hallmark · finish-review: subagent · 7 findings · 7 resolved: columns rebalanced on grid areas (at 1440 left ends 1398, right 1316, from about 1700 against 905; the per-turn blocks travel as one .sheet-turn and only the left column's last row flexes, so an open fold never pushes the left column apart; 375 order kept); AC 40px over 28px; HP bar 8px; runes 11px in pencil at 4.7:1 on paper, 5.2:1 on card; the notes row was already one 611x48 button; locked tables ruled at 3.4:1 with no field lines, 命中 aligned to its value; the slot count was already 14px, now ink-2 */
+/* Hallmark · added at the owner's request: bloodied state on the HP card, wax-seal press motion (state only, reduced-motion off), ribbon bookmark and corner flourish restored */
+/* Hallmark · added at the owner's request (v70): the tabs hang three book-cloth ribbon markers (wine, forest, midnight) from a headband, since v72 the leather band's single gilt edge in place of the striped silk, the current one dropped long with its rune in gold and the others peeking, drop and rise once on a tab change; concentrating turns a ring of the runes of CONCENTRATION beside 專注中 at 20s a turn; the death saves light or snuff three candles per side, a flicker and one smoke wisp; every motion still under reduced motion */
+/* Hallmark · added at the owner's request (v71): the spell tags' colour coding restored, one hue per category through --tag-* tokens; damage types after Baldur's Gate 3 (the bg3.wiki damage colours), action, bonus action and reaction after BG3's resource icons, schools and levels as the owner's sheet had them; each tag a tint of its hue under a label in its ink at 5.3:1 or better, and a pressed tag sinks into a solid fill of its own hue under card-white text at 7.4:1 or better */
+/* Hallmark · restored from the owner's sheet at the owner's request (v71): the CJK heads back at 600 and the name and h2 at 700 (Noto Serif TC 600 and 700 loaded, 300 dropped); the gold star before each h3, a mask over --color-gold; 短休 長休 專注 and each fold's summary row in the concave gilt frame, focus ringed inside the gilt; a wine bar on the chosen option; the spoiler behind a dashed wine button and a wine bar; GP SP CP named in gold, silver and copper; the HP card's lit corner and round gold rings for its two buttons; terms underlined in dots; a gold rule down the gutter between the columns; saves and skills ruled in dots; no tracked labels, no warning glyph, no coin dots */
+/* Hallmark · restored at the owner's request (v72): the desk and the torn folio on wide screens (over 60rem), the book laid on dark oak with two torn under-sheets peeking out, their tears masks over --color-sheet-* and the top sheet a vignetted parchment, the corner flourishes moved to the folio's foot; the leather mast, a thin wine-leather cover band with a tooled gilt frame holding the running head 冒險者紀錄 in gold-lit at 4.9:1 and its runes at 3.7:1, edge to edge across the folio; the striped silk headband replaced by the band's single gilt edge, the three ribbon markers hanging from it in their own wine, forest and midnight */
+/* Hallmark · dropped (v73) the concave gilt frame on the create view's ability inputs · 11 names a card inside a card, the create form is already the framed card; the inputs keep their centred Cinzel figures */
+/* Hallmark · waive 3 · two bars only: the revealed spoiler's 3px wine bar on its accent wash and the chosen option's 4px wine inset, nowhere else · the owner asked for the spoiler's wine bar back, it marks the revealed text as a spoiler and the chosen option as chosen, a state and not decoration */
+/* Hallmark · waive 23 · posture: full-palette, the HP card ground named in the roles · the bloodied HP card is the wine ground the kept grimoire uses as its signal, and at 1280 it alone is the accent in the fold (437 by 218 in v69 and v70 alike); retreating it would undo the owner's card; since v72 the leather mast adds a thin wine band (about 55px) across the top, and it is the book's cover, the ground the folio is bound in, not an accent: it marks no action, selection or state */
 @import url("./tokens.css");
 @import url("./base.css");
 
@@ -27,6 +35,7 @@
   --color-rule: oklch(80% 0.055 86);
   --color-accent: var(--color-rubric); --color-accent-ink: var(--color-card); --color-focus: var(--color-rubric);
   --color-on-rubric: var(--color-card); --color-on-rubric-soft: oklch(87% 0.035 80);
+  --color-rubric-blood: oklch(30% 0.125 24); --color-blood-stain: oklch(21% 0.09 22);
   --color-wax: oklch(53% 0.17 36);
   --color-wax-lit: oklch(64% 0.16 40);
   --color-wax-deep: oklch(37% 0.13 32);
@@ -34,8 +43,90 @@
   --wax-shade: oklch(18% 0.06 20 / 0.5);
   --wax-drop: oklch(24% 0.04 40 / 0.42);
   --shade-in: oklch(30% 0.03 55 / 0.16);
+  /* the desk and the torn folio (v72, wide screens): dark oak, two torn under-sheets, the top sheet's vignette */
+  --color-desk: oklch(21.2% 0.027 47); --color-desk-lit: oklch(29.2% 0.041 45);
+  --desk-grain: oklch(0% 0 0 / 0.06);
+  --desk-shadow: oklch(8% 0.02 45 / 0.42);
+  --color-sheet-1: oklch(81.6% 0.061 83); --color-sheet-1-deep: oklch(75.2% 0.069 83);
+  --color-sheet-2: oklch(86% 0.058 86); --color-sheet-2-deep: oklch(78.5% 0.066 84);
+  --folio-lit: oklch(96.2% 0.022 86);
+  --folio-edge: oklch(67.4% 0.121 86 / 0.38);
+  --folio-vignette: oklch(52.5% 0.092 70 / 0.16);
+  --folio-cast: oklch(20% 0.04 45 / 0.3);
+  --radius-folio: 8px;
+  /* the tears: alpha masks only, a displaced rect, no colour; the sheets take theirs from the tokens above */
+  --tear: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='t' x='-3%25' y='-3%25' width='106%25' height='106%25'><feTurbulence type='fractalNoise' baseFrequency='.018 .03' numOctaves='4' seed='3'/><feDisplacementMap in='SourceGraphic' scale='22' xChannelSelector='R' yChannelSelector='G'/></filter><rect x='0' y='0' width='100%25' height='100%25' filter='url(%23t)'/></svg>");
+  --tear2: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='t' x='-3%25' y='-3%25' width='106%25' height='106%25'><feTurbulence type='fractalNoise' baseFrequency='.02 .026' numOctaves='4' seed='11'/><feDisplacementMap in='SourceGraphic' scale='26' xChannelSelector='R' yChannelSelector='G'/></filter><rect x='0' y='0' width='100%25' height='100%25' filter='url(%23t)'/></svg>");
+  /* the leather mast (v72): the cover's wine leather, its sheen, the tooled gilt line and the gilt edge the ribbons hang from */
+  --color-leather-lit: oklch(42.7% 0.14 22);
+  --leather-sheen: oklch(86% 0.07 40 / 0.06);
+  --gilt-line: oklch(83.9% 0.106 91 / 0.55);
+  --color-gold-rune: oklch(83.9% 0.106 91 / 0.8);
+  --gilt-edge: 4px;
+  /* book-cloth ribbon markers, one per tab, and the gilt headband they hang from */
+  --color-cloth-wine: var(--color-rubric); --color-cloth-wine-deep: var(--color-rubric-deep);
+  --color-cloth-forest: oklch(37% 0.072 158); --color-cloth-forest-deep: oklch(26% 0.052 160);
+  --color-cloth-midnight: oklch(33% 0.075 264); --color-cloth-midnight-deep: oklch(23% 0.058 266);
+  --cloth-rib: oklch(100% 0 0 / 0.08);
+  --cloth-edge: oklch(12% 0.03 40 / 0.34);
+  --ribbon-drop: oklch(24% 0.04 40 / 0.38);
+  --headband-lit: oklch(98% 0.03 90 / 0.5);
+  --headband-shade: oklch(18% 0.04 40 / 0.45);
+  /* the death-save candles */
+  --candle: oklch(93.5% 0.03 88); --candle-lit: oklch(98.5% 0.014 92); --candle-shade: oklch(78% 0.045 80);
+  --wick: var(--color-ink);
+  --flame-core: oklch(98% 0.05 98); --flame-mid: oklch(86% 0.15 82); --flame-outer: oklch(64% 0.19 44);
+  --flame-glow: oklch(86% 0.13 82 / 0.42);
+  --smoke: oklch(52% 0.012 60 / 0.6);
+  --flame: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 16'><path d='M5 0C6.2 3.4 9.6 6.4 9.6 10.6A4.6 4.6 0 0 1 0.4 10.6C0.4 7.6 2.6 6.2 3.4 3.6C4.4 4.6 4.6 5.4 4.6 6.6C5.6 4.8 5.6 2.4 5 0Z'/></svg>");
+  --wisp: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 18'><path d='M4 17C2 14.5 6 12.5 4 9.5S1.8 4.5 5 1' fill='none' stroke='currentColor' stroke-width='1.3' stroke-linecap='round'/></svg>");
   --color-rule-strong: oklch(60% 0.05 75);
   --accent-wash: color-mix(in oklab, var(--color-accent) 10%, var(--color-card));
+  /* the spell tags, one hue per category: the tone draws the edge, the icon and the tint; the ink the label and the pressed fill */
+  /* schools and levels as the owner's sheet had them; damage types after Baldur's Gate 3 (bg3.wiki damage colours); action, bonus, reaction after BG3's resource icons */
+  --tag-abj: oklch(60% 0.15 258); --tag-abj-ink: oklch(42% 0.13 258);
+  --tag-con: oklch(64% 0.134 76); --tag-con-ink: oklch(42% 0.088 76);
+  --tag-div: oklch(60% 0.108 220); --tag-div-ink: oklch(42% 0.076 220);
+  --tag-enc: oklch(60% 0.15 358); --tag-enc-ink: oklch(42% 0.13 358);
+  --tag-evo: oklch(60% 0.15 28); --tag-evo-ink: oklch(42% 0.13 28);
+  --tag-ill: oklch(60% 0.15 302); --tag-ill-ink: oklch(42% 0.13 302);
+  --tag-nec: oklch(60% 0.14 158); --tag-nec-ink: oklch(42% 0.098 158);
+  --tag-tra: oklch(60% 0.15 46); --tag-tra-ink: oklch(42% 0.118 46);
+  --tag-fire: oklch(60% 0.15 44); --tag-fire-ink: oklch(42% 0.122 44);
+  --tag-cold: oklch(60% 0.122 232); --tag-cold-ink: oklch(42% 0.086 232);
+  --tag-lit: oklch(60% 0.15 264); --tag-lit-ink: oklch(42% 0.13 264);
+  --tag-acid: oklch(64% 0.15 120); --tag-acid-ink: oklch(42% 0.1 120);
+  --tag-poi: oklch(60% 0.15 138); --tag-poi-ink: oklch(42% 0.13 138);
+  --tag-thu: oklch(60% 0.15 306); --tag-thu-ink: oklch(42% 0.13 306);
+  --tag-for: oklch(60% 0.15 20); --tag-for-ink: oklch(42% 0.13 20);
+  --tag-rad: oklch(64% 0.13 92); --tag-rad-ink: oklch(42% 0.086 92);
+  --tag-psy: oklch(60% 0.15 342); --tag-psy-ink: oklch(42% 0.13 342);
+  --tag-r0: oklch(64% 0.012 60); --tag-r0-ink: oklch(42% 0.01 60);
+  --tag-r1: oklch(60% 0.15 150); --tag-r1-ink: oklch(42% 0.116 150);
+  --tag-r2: oklch(60% 0.15 258); --tag-r2-ink: oklch(42% 0.13 258);
+  --tag-r3: oklch(60% 0.15 294); --tag-r3-ink: oklch(42% 0.13 294);
+  --tag-r4: oklch(60% 0.15 26); --tag-r4-ink: oklch(42% 0.13 26);
+  --tag-r5: oklch(64% 0.144 64); --tag-r5-ink: oklch(42% 0.094 64);
+  --tag-r6: oklch(60% 0.15 42); --tag-r6-ink: oklch(42% 0.128 42);
+  --tag-r7: oklch(60% 0.15 282); --tag-r7-ink: oklch(42% 0.13 282);
+  --tag-r8: oklch(60% 0.15 0); --tag-r8-ink: oklch(42% 0.13 0);
+  --tag-r9: oklch(45% 0.008 60); --tag-r9-ink: oklch(26% 0.01 60);
+  --tag-conc: oklch(60% 0.15 294); --tag-conc-ink: oklch(42% 0.13 294);
+  --tag-rit: oklch(64% 0.13 86); --tag-rit-ink: oklch(42% 0.086 86);
+  --tag-act: oklch(60% 0.15 150); --tag-act-ink: oklch(42% 0.116 150);
+  --tag-bon: oklch(60% 0.15 46); --tag-bon-ink: oklch(42% 0.118 46);
+  --tag-rea: oklch(60% 0.15 330); --tag-rea-ink: oklch(42% 0.13 330);
+  --tag-gloss: oklch(99% 0.012 90 / 0.6);
+  --tag-lift: oklch(24% 0.04 40 / 0.16);
+  --tag-sink: oklch(18% 0.04 40 / 0.36);
+  /* restored from the owner's sheet (v71): the CJK heads' weights, the coins' metals, the HP card's lit corner, the heading star */
+  --display-weight-cjk: 700; --serif-small-cjk: 600;
+  --color-coin-gp: oklch(48% 0.095 80); --color-coin-sp: oklch(47% 0.02 250); --color-coin-cp: oklch(47% 0.10 45);
+  --color-rubric-lit: oklch(46% 0.15 25);
+  --radius-round: 999px;
+  --star: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M6 0 7.4 4.6 12 6 7.4 7.4 6 12 4.6 7.4 0 6 4.6 4.6Z'/></svg>");
+  --corner: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'><path d='M4 76 V22 Q4 4 22 4 H76'/><path d='M12 68 V26 Q12 12 26 12 H68'/><path d='M12 26 q-6 14 6 22 q10 6 16-4 q4-10-8-10'/><path d='M26 12 q14-6 22 6 q6 10-4 16 q-10 4-10-8'/><circle cx='22' cy='22' r='3' fill='black' stroke='none'/></svg>");
+  --blood-stain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><path d='M78 14c10 0 20 8 18 20-1 8 8 10 6 20-2 10-14 12-22 8-8 4-22 2-24-10-2-8 4-10 2-18-2-10 8-20 20-20z'/><circle cx='44' cy='66' r='7'/><circle cx='30' cy='84' r='4'/><circle cx='56' cy='96' r='5'/><circle cx='100' cy='88' r='3'/><path d='M62 70c4 8 6 14 2 20-5-3-5-12-2-20z'/></svg>");
   --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.09'/></svg>");
   --fibre: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.85 .14' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .32  0 0 0 0 .25  0 0 0 0 .18  .2 0 0 0 -.09'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
   --chevron: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='none' stroke='%23b8902e' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' d='M1.5 1.5L6 6l4.5-4.5'/></svg>");
@@ -57,7 +148,7 @@
   --wax3: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'><filter id='w' x='-30%25' y='-30%25' width='160%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='.04' numOctaves='2' seed='14'/><feDisplacementMap in='SourceGraphic' scale='18' xChannelSelector='R' yChannelSelector='G'/></filter><circle cx='50%25' cy='50%25' r='38%25' filter='url(%23w)'/></svg>");
 }
 
-/* ---------- the page: limewash paper, one capped column ---------- */
+/* ---------- the page: limewash paper, one capped column; on wide screens a folio on a desk ---------- */
 html { background: var(--grain) 0 0 / 180px, var(--color-paper); background-blend-mode: multiply, normal; }
 body {
   min-height: 100dvh;
@@ -71,14 +162,86 @@ body {
 .book {
   position: relative;
   z-index: var(--z-base);
+  isolation: isolate;
   width: 100%;
   max-width: calc(68rem + 2 * var(--gutter));
   margin-inline: auto;
-  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
 }
-/* the shell: only the running head and the tabs share a row */
-#app, .vitals { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
-#app { padding-block: env(safe-area-inset-top) calc(var(--space-2xl) + env(safe-area-inset-bottom)); }
+/* the shell: one column; the leather mast spans it edge to edge, the tabs hang under it */
+#app, .vitals { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
+#app {
+  --page-l: max(var(--gutter), env(safe-area-inset-left));
+  --page-r: max(var(--gutter), env(safe-area-inset-right));
+  position: relative;
+  z-index: 1;
+  padding: env(safe-area-inset-top) var(--page-r) calc(var(--space-2xl) + env(safe-area-inset-bottom)) var(--page-l);
+}
+/* wide screens: the book lies on dark oak, two torn under-sheets peek out from beneath the top sheet */
+@media (min-width: 60.01rem) {
+  html {
+    background:
+      radial-gradient(1200px 600px at 50% -150px, var(--color-desk-lit), transparent 70%),
+      repeating-linear-gradient(90deg, var(--desk-grain) 0 2px, transparent 2px 9px),
+      var(--color-desk);
+    background-blend-mode: normal;
+    scrollbar-color: var(--color-gold-deep) var(--color-desk);
+  }
+  body { background: transparent; }
+  .book {
+    width: calc(100% - 2 * var(--space-lg));
+    margin-block: var(--space-lg);
+    border-radius: var(--radius-folio);
+    box-shadow: 0 18px 28px -8px var(--desk-shadow);
+  }
+  /* the under-sheets: a shadow-free, unfiltered layer each, torn by an alpha mask, turned a hair off square */
+  .book::before, .book::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: 6px -10px -14px 4px;
+    background: var(--fibre) 0 0 / 220px, linear-gradient(var(--color-sheet-1), var(--color-sheet-1-deep));
+    background-blend-mode: multiply, normal;
+    -webkit-mask: var(--tear2) 0 0 / 100% 100% no-repeat;
+    mask: var(--tear2) 0 0 / 100% 100% no-repeat;
+    transform: rotate(-0.35deg);
+    pointer-events: none;
+  }
+  .book::after {
+    inset: -10px 6px -6px -10px;
+    background: var(--fibre) 0 0 / 220px, linear-gradient(var(--color-sheet-2), var(--color-sheet-2-deep));
+    background-blend-mode: multiply, normal;
+    -webkit-mask: var(--tear) 0 0 / 100% 100% no-repeat;
+    mask: var(--tear) 0 0 / 100% 100% no-repeat;
+    transform: rotate(0.3deg);
+  }
+  /* the top sheet: parchment, warmer at the light, browned toward its edges */
+  #app {
+    border: var(--rule-hair) solid var(--folio-edge);
+    border-radius: var(--radius-folio);
+    background:
+      radial-gradient(130% 100% at 50% 35%, transparent 60%, var(--folio-vignette)),
+      var(--grain) 0 0 / 180px,
+      linear-gradient(140deg, var(--folio-lit), var(--color-paper));
+    background-blend-mode: normal, multiply, normal;
+    box-shadow: 0 1px 3px var(--folio-cast);
+  }
+  /* page-corner flourishes at the folio's foot, in the gutter; out of the grid's flow, they never meet the content column */
+  #app::before, #app::after {
+    content: "";
+    position: absolute;
+    bottom: var(--space-md);
+    left: var(--space-2xs);
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(--color-gold);
+    -webkit-mask: var(--corner) center / contain no-repeat;
+    mask: var(--corner) center / contain no-repeat;
+    opacity: 0.85;
+    transform: scaleY(-1);
+    pointer-events: none;
+  }
+  #app::after { left: auto; right: var(--space-2xs); transform: scale(-1, -1); }
+}
 :where(#app, .vitals) > * { grid-column: 1 / -1; min-width: 0; }
 :where(#app) > :is(.chk, input, select, .combo, .choice-block, p.muted, .big.primary) { max-width: 42rem; }
 
@@ -91,38 +254,70 @@ button { touch-action: manipulation; }
 .row { display: flex; gap: var(--space-xs); align-items: center; }
 .grow { flex: 1; }
 
-/* ---------- top bar: the running head and the tabs ---------- */
+/* ---------- top bar: the leather mast, then the tabs hanging from its gilt edge ---------- */
+/* the cover: a thin band of wine leather edge to edge across the folio, a tooled gilt line inside,
+   the running head stamped in gold and its runes (CHARACTER JOURNAL, set by app.js) under it */
 .mast {
-  grid-column: 1;
-  align-self: end;
-  margin: 0;
-  padding-block: var(--space-md) var(--space-sm);
-  border-bottom: var(--rule-hair) solid var(--color-rule);
-  font: var(--serif-small) var(--text-lg)/1.2 var(--font-display);
-  color: var(--color-rubric);
+  position: relative;
+  z-index: 1;
+  margin: calc(-1 * env(safe-area-inset-top)) calc(-1 * var(--page-r)) 0 calc(-1 * var(--page-l));
+  padding: calc(var(--space-xs) + env(safe-area-inset-top)) var(--space-md) var(--space-xs);
+  border-bottom: var(--gilt-edge) solid var(--color-gold);
+  background-color: var(--color-rubric);
+  background-image:
+    radial-gradient(80% 140% at 50% 0%, var(--leather-sheen), transparent 70%),
+    linear-gradient(var(--color-leather-lit), var(--color-rubric) 60%, var(--color-rubric-deep));
+  box-shadow: inset 0 0 0 4px var(--color-rubric-deep), inset 0 0 0 5px var(--gilt-line), 0 1px 1.5px var(--ribbon-drop);
+  font: var(--serif-small-cjk) var(--text-lg)/1.15 var(--font-display);
+  color: var(--color-gold-lit);
+  text-align: center;
 }
-/* the mast's runes (CHARACTER JOURNAL, set by app.js) pencilled under the running head */
+/* the gilt edge's light and shade, laid over the gold border the ribbons hang from */
+.mast::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * var(--gilt-edge));
+  height: var(--gilt-edge);
+  background: linear-gradient(var(--headband-lit), transparent 55%, var(--headband-shade));
+  pointer-events: none;
+}
 .mast::after {
   content: "";
   display: block;
-  height: 11px;
+  height: 10px;
   margin-top: var(--space-2xs);
-  background: var(--color-pencil);
-  -webkit-mask: var(--title-runes, none) 0 0 / auto 11px no-repeat;
-  mask: var(--title-runes, none) 0 0 / auto 11px no-repeat;
+  background: var(--color-gold-rune);
+  -webkit-mask: var(--title-runes, none) center / auto 10px no-repeat;
+  mask: var(--title-runes, none) center / auto 10px no-repeat;
 }
+@media (min-width: 60.01rem) {
+  .mast { border-radius: calc(var(--radius-folio) - var(--rule-hair)) calc(var(--radius-folio) - var(--rule-hair)) 0 0; }
+}
+/* the tabs: a book-cloth ribbon marker per tab, hung from the mast's gilt edge; the others peek under it,
+   the current one drops past the rule with its rune in gold (shape and length, not colour alone) */
 .ribbons {
-  grid-column: 2;
-  align-self: end;
-  display: flex;
+  --ribbon-lane: 15px;
+  --ribbon-peek: 10px;
+  --ribbon-hang: 26px;
+  --ribbon-rest: translateY(calc(-100% + var(--ribbon-peek)));
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: end;
   gap: var(--space-2xs);
   margin: 0;
   border-bottom: var(--rule-hair) solid var(--color-rule);
+  clip-path: inset(0 calc(-1 * var(--space-md)) calc(-1 * var(--space-2xl)) calc(-1 * var(--space-md)));
 }
 .ribbon {
   position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   min-height: 44px;
-  padding: 0 var(--space-sm);
+  padding: var(--space-md) var(--space-sm) var(--space-sm) calc(var(--ribbon-lane) + var(--space-sm));
   border: 0;
   background: transparent;
   color: var(--color-muted);
@@ -131,17 +326,53 @@ button { touch-action: manipulation; }
   cursor: pointer;
   transition: color var(--dur-short) var(--ease-out);
 }
-.ribbon::after {
+.ribbon:nth-child(1) { --cloth: var(--color-cloth-wine); --cloth-deep: var(--color-cloth-wine-deep); }
+.ribbon:nth-child(2) { --cloth: var(--color-cloth-forest); --cloth-deep: var(--color-cloth-forest-deep); }
+.ribbon:nth-child(3) { --cloth: var(--color-cloth-midnight); --cloth-deep: var(--color-cloth-midnight-deep); }
+.ribbon[aria-current="page"] { color: var(--cloth); }
+.ribbon-mark {
+  position: absolute;
+  top: 0;
+  left: 6px;
+  width: var(--ribbon-lane);
+  height: calc(100% + var(--ribbon-hang));
+  filter: drop-shadow(1px 1.5px 1px var(--ribbon-drop));
+  transform: var(--ribbon-rest);
+  transition: transform var(--dur-short) var(--ease-out);
+  pointer-events: none;
+}
+.ribbon[aria-current="page"] .ribbon-mark { transform: none; }
+/* grosgrain: fine ribs across, darker selvedges, a swallowtail end */
+.ribbon-mark::before {
   content: "";
   position: absolute;
-  left: var(--space-sm);
-  right: var(--space-sm);
-  bottom: -1px;
-  height: 2px;
-  background: transparent;
+  inset: 0;
+  background:
+    repeating-linear-gradient(var(--cloth-rib) 0 1px, transparent 1px 3px),
+    linear-gradient(90deg, var(--cloth-edge), transparent 2.5px, transparent calc(100% - 2.5px), var(--cloth-edge)),
+    linear-gradient(90deg, var(--cloth-deep), var(--cloth) 30%, var(--cloth) 70%, var(--cloth-deep));
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 5px), 0 100%);
 }
-.ribbon.on, .ribbon[aria-current="page"] { color: var(--color-rubric); }
-.ribbon[aria-current="page"]::after { background: var(--color-accent); }
+/* the tab's rune worked in gold above the tail (app.js sets --tab-rune) */
+.ribbon-mark::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 5px);
+  bottom: 11px;
+  width: 10px;
+  height: 10px;
+  background: var(--color-gold-lit);
+  -webkit-mask: var(--tab-rune, none) center / contain no-repeat;
+  mask: var(--tab-rune, none) center / contain no-repeat;
+}
+/* a tab change, once: the new marker drops, the old one rises back under the band */
+@keyframes ribbon-drop { from { transform: var(--ribbon-rest); } }
+@keyframes ribbon-rise { from { transform: none; } }
+.ribbon.just-on .ribbon-mark { animation: ribbon-drop 280ms var(--ease-out) calc(60ms + var(--ribbon-lag, 0ms)) backwards; }
+.ribbon.just-off .ribbon-mark { animation: ribbon-rise 200ms var(--ease-in-out) var(--ribbon-lag, 0ms) backwards; }
+@media (hover: hover) {
+  .ribbon:not([aria-current]):hover .ribbon-mark { transform: var(--ribbon-rest) translateY(5px); }
+}
 .ribbon:active { color: var(--color-ink); }
 .ribbon:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
 
@@ -164,7 +395,7 @@ button { touch-action: manipulation; }
   border-radius: 0;
   background: transparent;
   color: var(--color-rubric);
-  font: var(--display-weight) var(--text-3xl)/1.15 var(--font-display);
+  font: var(--display-weight-cjk) var(--text-3xl)/1.15 var(--font-display);
   overflow-wrap: break-word;
 }
 .kicker {
@@ -177,7 +408,7 @@ button { touch-action: manipulation; }
   font-size: var(--text-sm);
 }
 .kicker > span + span { padding-left: var(--space-sm); border-left: var(--rule-hair) solid var(--color-rule); }
-.gl-title { font: var(--serif-small) var(--text-xl)/1.25 var(--font-display); color: var(--color-rubric); }
+.gl-title { font: var(--serif-small-cjk) var(--text-xl)/1.25 var(--font-display); color: var(--color-rubric); }
 
 .mode-bar {
   display: flex;
@@ -438,19 +669,33 @@ h2 {
   max-width: 24ch;
   margin-top: var(--space-xl);
   font-size: var(--text-4xl);
+  font-weight: var(--display-weight-cjk);
   letter-spacing: 0;
   color: var(--color-rubric);
 }
 h3 {
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-xs);
   max-width: none;
   margin: var(--space-xl) 0 var(--space-sm);
-  font: var(--serif-small) var(--text-xl)/1.25 var(--font-display);
+  font: var(--serif-small-cjk) var(--text-xl)/1.25 var(--font-display);
   letter-spacing: 0;
   color: var(--color-rubric);
 }
+/* the gold star before each head, as the owner's sheet set it */
+h3::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  background: var(--color-gold);
+  -webkit-mask: var(--star) center / contain no-repeat;
+  mask: var(--star) center / contain no-repeat;
+}
 h3::after {
   content: "";
+  grid-column: 1 / -1;
   height: 20px;
   margin-top: var(--space-xs);
   background: linear-gradient(var(--color-gold), var(--color-gold)) 0 0 / 100% 1px no-repeat, var(--color-pencil);
@@ -483,38 +728,66 @@ h3::after {
 }
 
 /* the 5e sheet's concave-corner double frame: the box is notched, the gilt is painted through a mask */
-.hp-card, .seals, .stats .box:not(:first-child), .abi-card {
+.hp-card, .seals, .stats .box:not(:first-child), .abi-card, .quick-actions .slot, .fold summary {
   position: relative;
   -webkit-mask: var(--notch);
   mask: var(--notch);
 }
-.hp-card::after, .seals::after, .stats .box:not(:first-child)::after, .abi-card::after {
+.hp-card::after, .seals::after, .stats .box:not(:first-child)::after, .abi-card::after, .quick-actions .slot::after, .fold summary::before {
   content: "";
   position: absolute;
   inset: var(--space-2xs);
   border: var(--rule-hair) solid var(--color-gold);
   pointer-events: none;
 }
-.hp-card::after { border-color: var(--color-gold-lit); }
+.hp-card::after, .quick-actions .slot.cond-on::after { border-color: var(--color-gold-lit); }
 @supports (-webkit-mask-box-image: none) {
-  .hp-card::after, .seals::after, .stats .box:not(:first-child)::after, .abi-card::after {
+  .hp-card::after, .seals::after, .stats .box:not(:first-child)::after, .abi-card::after, .quick-actions .slot::after, .fold summary::before {
     inset: 0;
     border: 0;
     background: var(--color-gold);
     -webkit-mask-box-image: var(--gilt-mask) 16 / 16px stretch;
   }
-  .hp-card::after { background: var(--color-gold-lit); }
+  .hp-card::after, .quick-actions .slot.cond-on::after { background: var(--color-gold-lit); }
 }
 .stats .box input:focus-visible, .abi-card input:focus-visible { outline-offset: -2px; }
+/* the notch clips anything drawn outside the box, so these framed controls ring their focus inside both gilt lines */
+.quick-actions .slot:focus-visible, .fold summary:focus-visible { outline-offset: -9px; }
+.quick-actions .slot.cond-on:focus-visible { outline-color: var(--color-gold-lit); }
 
 /* HP: the lead figure on the wine ground, a gold-lit bar */
 .hp-card {
   padding: var(--space-xl) var(--space-xl) var(--space-lg);
   background-color: var(--color-rubric);
-  background-image: linear-gradient(180deg, var(--color-rubric), var(--color-rubric-deep));
+  background-image: radial-gradient(120% 90% at 30% 0%, var(--color-rubric-lit), transparent 60%), linear-gradient(180deg, var(--color-rubric), var(--color-rubric-deep));
   color: var(--color-on-rubric);
 }
 .hp-card :focus-visible { outline-color: var(--color-gold-lit); }
+/* 重傷: a deeper ground and a blood stain pressed into it, with the word as well */
+.hp-card.is-bloodied { background-image: radial-gradient(120% 90% at 30% 0%, var(--color-rubric), transparent 60%), linear-gradient(180deg, var(--color-rubric-blood), var(--color-rubric-deep)); }
+.hp-card.is-bloodied::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: var(--space-md);
+  bottom: var(--space-md);
+  width: 7.5rem;
+  height: 7.5rem;
+  background: var(--color-blood-stain);
+  -webkit-mask: var(--blood-stain) center / contain no-repeat;
+  mask: var(--blood-stain) center / contain no-repeat;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.hp-flag {
+  margin-left: var(--space-xs);
+  padding: var(--space-3xs) var(--space-xs);
+  border: var(--rule-hair) solid var(--color-gold-lit);
+  color: var(--color-gold-lit);
+  font: 400 var(--text-sm)/1.4 var(--font-body);
+  vertical-align: middle;
+}
+.hp-flag:empty { display: none; }
 .hp-heading {
   display: flex;
   justify-content: space-between;
@@ -523,7 +796,7 @@ h3::after {
   color: var(--color-on-rubric-soft);
   font-size: var(--text-sm);
 }
-.hp-heading > span:first-child { font: var(--serif-small) var(--text-xl)/1.2 var(--font-display); color: var(--color-on-rubric); }
+.hp-heading > span:first-child { font: var(--serif-small-cjk) var(--text-xl)/1.2 var(--font-display); color: var(--color-on-rubric); }
 .hp-ctrl {
   display: flex;
   align-items: center;
@@ -531,7 +804,7 @@ h3::after {
   gap: var(--space-md);
   margin-top: var(--space-md);
 }
-.hp-card .icon { width: 40px; padding: 0; border-color: var(--color-gold-lit); background: transparent; color: var(--color-gold-lit); font-size: var(--text-xl); }
+.hp-card .icon { width: 40px; padding: 0; border-color: var(--color-gold-lit); border-radius: var(--radius-round); background: transparent; color: var(--color-gold-lit); font-size: var(--text-xl); }
 @media (hover: hover) { .hp-card .icon:hover { border-color: var(--color-gold-lit); background: var(--color-gold-lit); color: var(--color-rubric-deep); } }
 .hp-pair {
   display: flex;
@@ -628,8 +901,35 @@ h3::after {
 .secondary-stats span { color: var(--color-muted); font-size: var(--text-sm); }
 .secondary-stats strong { font: 600 var(--text-xl)/1.1 var(--font-num); font-variant-numeric: tabular-nums; }
 .quick-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-xs); }
-.quick-actions .slot { padding-inline: var(--space-sm); border-color: var(--color-gold-deep); color: var(--color-rubric); font-size: var(--text-md); }
-.quick-actions .slot.cond-on { border-color: var(--color-gold); background: var(--color-accent); color: var(--color-gold-lit); }
+/* the rests and 專注 in the sheet's concave gilt frame; the notch would clip the 44px hit halo, so the button is 44px itself */
+.quick-actions .slot {
+  min-height: 44px;
+  padding-inline: var(--space-sm);
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--color-card), var(--card-shade));
+  color: var(--color-rubric);
+  font: var(--serif-small-cjk) var(--text-md)/1.2 var(--font-display);
+}
+.quick-actions .slot.cond-on { border-color: transparent; background: linear-gradient(180deg, var(--color-rubric), var(--color-rubric-deep)); color: var(--color-gold-lit); }
+@media (hover: hover) {
+  .quick-actions .slot:hover, .quick-actions .slot.cond-on:hover { border-color: transparent; }
+  .quick-actions .slot:not(.cond-on):hover::after { border-color: var(--color-gold-deep); }
+}
+@supports (-webkit-mask-box-image: none) {
+  @media (hover: hover) { .quick-actions .slot:not(.cond-on):hover::after { background: var(--color-gold-deep); } }
+}
+/* concentrating: the runes of CONCENTRATION turn slowly round beside 專注中 (app.js sets --rune-ring), clear of the gilt lines */
+.quick-actions .slot[aria-pressed="true"] { gap: var(--space-2xs); padding-inline: var(--space-2xs); }
+.conc-ring {
+  flex: none;
+  width: clamp(24px, 7.5vw, 30px);
+  aspect-ratio: 1;
+  background: var(--color-gold-lit);
+  -webkit-mask: var(--rune-ring, none) center / contain no-repeat;
+  mask: var(--rune-ring, none) center / contain no-repeat;
+  animation: ring-turn 20s linear infinite;
+}
+@keyframes ring-turn { to { transform: rotate(1turn); } }
 
 .death-saves {
   margin-top: var(--space-lg);
@@ -640,6 +940,68 @@ h3::after {
 .death-saves strong { font: var(--serif-small) var(--text-lg)/1.3 var(--font-display); color: var(--color-error); }
 .death-saves p { display: flex; gap: var(--space-lg); margin-block: var(--space-2xs) var(--space-sm); color: var(--color-ink); font-variant-numeric: tabular-nums; }
 .death-saves .row .icon { flex: 1; }
+/* three candles in each save button: a success lights one, a failure snuffs one */
+.death-saves .row { align-items: stretch; }
+.death-saves [data-act="ds"] { flex-direction: column; gap: var(--space-2xs); min-height: 84px; padding-block: var(--space-xs); }
+.candles {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3xs);
+  padding: 0 var(--space-2xs) var(--space-2xs);
+  background: linear-gradient(var(--color-gold), var(--color-gold-deep)) 0 100% / 100% var(--space-2xs) no-repeat;
+}
+.candle {
+  --body: 20px;
+  --glow: transparent;
+  position: relative;
+  width: 18px;
+  height: 40px;
+  background:
+    radial-gradient(circle at 50% calc(100% - var(--body) - 9px), var(--glow), transparent 10px),
+    linear-gradient(var(--wick), var(--wick)) 50% calc(100% - var(--body)) / 1.5px 4px no-repeat,
+    linear-gradient(90deg, var(--candle-shade), var(--candle) 30%, var(--candle-lit) 46%, var(--candle) 66%, var(--candle-shade)) 50% 100% / 10px var(--body) no-repeat;
+}
+.candle:nth-child(2) { --body: 16px; }
+.candle:nth-child(3) { --body: 18px; }
+.candle.is-lit { --glow: var(--flame-glow); }
+.candle.is-lit::before {
+  content: "";
+  position: absolute;
+  left: calc(50% - 4.5px);
+  bottom: calc(var(--body) + 2px);
+  width: 9px;
+  height: 14px;
+  background: radial-gradient(ellipse 60% 50% at 50% 74%, var(--flame-core) 0 32%, var(--flame-mid) 62%, var(--flame-outer));
+  -webkit-mask: var(--flame) center / 100% 100% no-repeat;
+  mask: var(--flame) center / 100% 100% no-repeat;
+  transform-origin: 50% 100%;
+  animation: flame-flicker 2.4s ease-in-out infinite alternate;
+}
+.candle:nth-child(2)::before { animation-delay: -0.8s; }
+.candle:nth-child(3)::before { animation-delay: -1.7s; }
+@keyframes flame-flicker {
+  0% { transform: scale(1, 1) skewX(0deg); opacity: 0.94; }
+  35% { transform: scale(0.94, 1.07) skewX(-2deg); opacity: 1; }
+  70% { transform: scale(1.04, 0.95) skewX(2deg); opacity: 0.9; }
+  100% { transform: scale(0.97, 1.04) skewX(-1deg); opacity: 1; }
+}
+/* once, on the candle just ticked: the flame catches, or the snuffed wick lets one wisp go */
+@keyframes flame-catch { from { transform: scale(0.2, 0.1); opacity: 0.4; } 60% { transform: scale(1.1, 1.2); opacity: 1; } }
+@keyframes smoke-wisp { from { transform: translateY(2px) scaleY(0.5); opacity: 0.9; } to { transform: translateY(-9px) scaleY(1.15); opacity: 0; } }
+.candle.just-lit::before { animation: flame-catch 360ms var(--ease-out), flame-flicker 2.4s ease-in-out 360ms infinite alternate; }
+.candle.just-snuffed::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 4px);
+  bottom: calc(var(--body) + 3px);
+  width: 8px;
+  height: 18px;
+  background: var(--smoke);
+  -webkit-mask: var(--wisp) center / 100% 100% no-repeat;
+  mask: var(--wisp) center / 100% 100% no-repeat;
+  transform-origin: 50% 100%;
+  animation: smoke-wisp 1.6s var(--ease-out) forwards;
+}
 
 /* ---------- the two columns of the sheet ---------- */
 .sheet-grid { display: grid; margin-top: var(--space-xl); }
@@ -648,6 +1010,8 @@ h3::after {
 
 /* the signature: wax seals pressed into the framed parchment */
 .seals { padding: var(--space-xl); background-color: var(--color-card); background-image: var(--fibre); background-size: 220px; color: var(--color-ink-2); text-shadow: 0 1px 0 var(--lit); }
+/* the narrow two-column range: four seals still fit one row */
+@media (max-width: 80rem) { .seals { padding-inline: var(--space-lg); } }
 .slot-row {
   display: grid;
   grid-template-columns: 4.25rem minmax(0, 1fr) 3rem;
@@ -719,6 +1083,16 @@ h3::after {
   .pip.spent:hover::before { border-color: var(--color-ink-2); }
 }
 
+/* the press: state only, replayed once on the pip just toggled (app.js adds the class after render) */
+@keyframes seal-press { 0% { transform: scale(1); } 40% { transform: scale(0.85); } 100% { transform: scale(1); } }
+@keyframes seal-swell { 0% { transform: scale(0.8); } 65% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes seal-fade { from { opacity: 1; } }
+@keyframes seal-rise { from { opacity: 0.3; } }
+.pip.just-spent { animation: seal-press var(--dur-short) var(--ease-out); }
+.pip.just-spent::after { animation: seal-fade var(--dur-short) var(--ease-out); }
+.pip.just-restored { animation: seal-swell var(--dur-short) var(--ease-out); }
+.pip.just-restored::before { animation: seal-rise var(--dur-short) var(--ease-out); }
+
 /* ruled tables: attacks, gear, saves, skills */
 .atk, .gear, .skill-row, .save-row {
   display: grid;
@@ -741,7 +1115,7 @@ h3::after {
 .gear { grid-template-columns: minmax(0, 1fr) 4rem 40px; }
 .is-locked .gear { grid-template-columns: minmax(0, 1fr) 4rem; }
 .gear input { width: 100%; }
-.skill-row, .save-row { grid-template-columns: minmax(0, 1fr) 4rem; color: var(--color-ink); }
+.skill-row, .save-row { grid-template-columns: minmax(0, 1fr) 4rem; border-bottom-style: dotted; color: var(--color-ink); }
 .skill-row .muted { margin-left: var(--space-2xs); }
 
 /* lists: spells, powers, features, feats */
@@ -756,17 +1130,17 @@ h3::after {
 }
 .slots { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
 
-/* ---------- folds: hairline disclosures ---------- */
-.fold { border-bottom: var(--rule-hair) solid var(--color-rule); }
-.sheet-grid > div > .fold:first-child { border-top: var(--rule-head) solid var(--color-gold); }
+/* ---------- folds: each summary row in the sheet's concave gilt frame, the open content left on ruled rows below it ---------- */
+.fold + .fold { margin-top: var(--space-xs); }
 .fold summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
   min-height: 56px;
-  padding-inline: 0;
-  font: var(--serif-small) var(--text-lg)/1.3 var(--font-display);
+  padding-inline: var(--space-md);
+  background-color: var(--color-card);
+  font: var(--serif-small-cjk) var(--text-lg)/1.3 var(--font-display);
   color: var(--color-rubric);
   cursor: pointer;
   list-style: none;
@@ -788,7 +1162,8 @@ h3::after {
 }
 .fold[open] summary::after { transform: translateY(2px) rotate(-135deg); }
 .fold[open] { padding-bottom: var(--space-lg); }
-.fold summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+.fold[open] summary { margin-bottom: var(--space-sm); }
+.fold summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -6px; }
 @media (hover: hover) { .fold summary:hover { text-decoration-color: var(--color-accent); } }
 
 /* abilities: framed cards, the modifier in its hexagon, the score in an oval */
@@ -842,6 +1217,14 @@ h3::after {
 .money { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-md); margin-top: var(--space-sm); }
 .money label { display: flex; flex-direction: column; gap: var(--space-3xs); color: var(--color-muted); font-size: var(--text-sm); }
 .money input { font-family: var(--font-num); font-weight: 600; font-size: var(--text-xl); text-align: left; }
+/* the coins named in their metals: gold, silver, copper, on the label and its line */
+.money label:nth-child(1) { --coin: var(--color-coin-gp); }
+.money label:nth-child(2) { --coin: var(--color-coin-sp); }
+.money label:nth-child(3) { --coin: var(--color-coin-cp); }
+.money label { color: var(--coin, var(--color-muted)); }
+.money input { color: var(--color-ink); }
+.money input:not(:disabled) { border-bottom-color: var(--coin, currentColor); }
+.is-locked .money label { border-bottom-color: var(--coin, var(--color-rule-strong)); }
 
 .note-peek {
   display: flex;
@@ -896,6 +1279,69 @@ h3::after {
 }
 .tag.mini::before { content: none; }
 .tag.mini .tag-ic { width: 12px; height: 12px; }
+
+/* the spell tags in their colours: a tint of the hue, its edge and icon in the tone, the label in its ink */
+.t-abj { --tone: var(--tag-abj); --tone-ink: var(--tag-abj-ink); }
+.t-con { --tone: var(--tag-con); --tone-ink: var(--tag-con-ink); }
+.t-div { --tone: var(--tag-div); --tone-ink: var(--tag-div-ink); }
+.t-enc { --tone: var(--tag-enc); --tone-ink: var(--tag-enc-ink); }
+.t-evo { --tone: var(--tag-evo); --tone-ink: var(--tag-evo-ink); }
+.t-ill { --tone: var(--tag-ill); --tone-ink: var(--tag-ill-ink); }
+.t-nec { --tone: var(--tag-nec); --tone-ink: var(--tag-nec-ink); }
+.t-tra { --tone: var(--tag-tra); --tone-ink: var(--tag-tra-ink); }
+.t-fire { --tone: var(--tag-fire); --tone-ink: var(--tag-fire-ink); }
+.t-cold { --tone: var(--tag-cold); --tone-ink: var(--tag-cold-ink); }
+.t-lit { --tone: var(--tag-lit); --tone-ink: var(--tag-lit-ink); }
+.t-acid { --tone: var(--tag-acid); --tone-ink: var(--tag-acid-ink); }
+.t-poi { --tone: var(--tag-poi); --tone-ink: var(--tag-poi-ink); }
+.t-thu { --tone: var(--tag-thu); --tone-ink: var(--tag-thu-ink); }
+.t-for { --tone: var(--tag-for); --tone-ink: var(--tag-for-ink); }
+.t-rad { --tone: var(--tag-rad); --tone-ink: var(--tag-rad-ink); }
+.t-psy { --tone: var(--tag-psy); --tone-ink: var(--tag-psy-ink); }
+.t-r0 { --tone: var(--tag-r0); --tone-ink: var(--tag-r0-ink); }
+.t-r1 { --tone: var(--tag-r1); --tone-ink: var(--tag-r1-ink); }
+.t-r2 { --tone: var(--tag-r2); --tone-ink: var(--tag-r2-ink); }
+.t-r3 { --tone: var(--tag-r3); --tone-ink: var(--tag-r3-ink); }
+.t-r4 { --tone: var(--tag-r4); --tone-ink: var(--tag-r4-ink); }
+.t-r5 { --tone: var(--tag-r5); --tone-ink: var(--tag-r5-ink); }
+.t-r6 { --tone: var(--tag-r6); --tone-ink: var(--tag-r6-ink); }
+.t-r7 { --tone: var(--tag-r7); --tone-ink: var(--tag-r7-ink); }
+.t-r8 { --tone: var(--tag-r8); --tone-ink: var(--tag-r8-ink); }
+.t-r9 { --tone: var(--tag-r9); --tone-ink: var(--tag-r9-ink); }
+.t-conc { --tone: var(--tag-conc); --tone-ink: var(--tag-conc-ink); }
+.t-rit { --tone: var(--tag-rit); --tone-ink: var(--tag-rit-ink); }
+.t-act { --tone: var(--tag-act); --tone-ink: var(--tag-act-ink); }
+.t-bon { --tone: var(--tag-bon); --tone-ink: var(--tag-bon-ink); }
+.t-rea { --tone: var(--tag-rea); --tone-ink: var(--tag-rea-ink); }
+.tag[class*=" t-"] {
+  --tag-cut: color-mix(in oklab, var(--tone) 8%, var(--color-card));
+  border-color: var(--tone);
+  background: linear-gradient(to bottom, var(--tag-cut), color-mix(in oklab, var(--tone) 30%, var(--color-card)));
+  color: var(--tone-ink);
+  box-shadow: inset 0 1px 0 var(--tag-gloss), 0 1px 0 var(--tag-lift);
+}
+.tag[class*=" t-"] .tag-ic { color: var(--tone-ink); }
+/* the icons' cut-outs take the tag's own ground, so they stay drawn when the tag is pressed */
+.tag-ic [fill^="#"] { fill: var(--tag-cut, var(--color-card)); }
+.tag-ic [stroke^="#"] { stroke: var(--tag-cut, var(--color-card)); }
+/* state: a pressed tag sinks into a solid fill of its own hue, the label and icon in card white */
+.tag[class*=" t-"].on {
+  --tag-cut: var(--tone-ink);
+  border-color: color-mix(in oklab, var(--tone-ink) 60%, var(--color-ink));
+  background: var(--tone-ink);
+  color: var(--color-card);
+  box-shadow: inset 0 2px 4px var(--tag-sink);
+}
+.tag[class*=" t-"].on .tag-ic { color: var(--color-card); }
+@media (hover: hover) {
+  .tag[class*=" t-"]:hover { border-color: var(--tone-ink); }
+  .tag[class*=" t-"].on:hover { border-color: var(--color-ink); }
+}
+.tag.mini[class*=" t-"] {
+  padding: var(--space-3xs) var(--space-2xs);
+  border: var(--rule-hair) solid var(--tone);
+  box-shadow: inset 0 1px 0 var(--tag-gloss);
+}
 .pick-flags { display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-sm); margin-top: var(--space-2xs); }
 .combo-list {
   list-style: none;
@@ -925,11 +1371,11 @@ h3::after {
 }
 .combo-opt:active { background: var(--color-paper-3); }
 .combo-opt:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
-.combo-opt.is-on { background: var(--accent-wash); }
+.combo-opt.is-on { background: var(--accent-wash); box-shadow: inset 4px 0 0 var(--color-accent); }
 .combo-opt.is-on .pick-name { color: var(--color-accent); }
 @media (hover: hover) { .combo-opt:hover { background: var(--color-paper-2); } }
 .chip { min-height: 36px; padding: 0 var(--space-sm); }
-.pick-name { display: block; color: var(--color-ink); font: var(--serif-small) var(--text-md)/1.35 var(--font-display); }
+.pick-name { display: block; color: var(--color-ink); font: var(--serif-small-cjk) var(--text-md)/1.35 var(--font-display); }
 .pick-body { display: block; max-width: 65ch; margin-top: var(--space-2xs); color: var(--color-ink-2); font-size: var(--text-sm); line-height: 1.55; }
 .pick-card { margin-bottom: var(--space-xs); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-pill); background: var(--color-paper-2); }
 .pick-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs); }
@@ -942,8 +1388,8 @@ h3::after {
 .create-form .big { margin-top: var(--space-sm); text-align: center; }
 .create-form .big.primary { margin-top: var(--space-xl); }
 .abi { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-md) var(--space-lg); margin-top: var(--space-sm); }
-.abi-in { display: flex; flex-direction: column; gap: var(--space-2xs); color: var(--color-muted); font-size: var(--text-sm); }
-.abi-in input { color: var(--color-ink); font: 600 var(--text-2xl)/1.1 var(--font-num); text-align: left; }
+.abi-in { display: flex; flex-direction: column; align-items: center; gap: var(--space-2xs); padding: var(--space-sm) var(--space-sm) var(--space-md); color: var(--color-rubric); font-size: var(--text-sm); }
+.abi-in input { width: min(100%, 5rem); color: var(--color-ink); font: 600 var(--text-2xl)/1.1 var(--font-num); text-align: center; }
 
 /* ---------- 備忘錄 and 對照表 ---------- */
 .form-card { padding: var(--space-md) var(--space-lg); border-radius: var(--radius-pill); background: var(--color-paper-2); }
@@ -955,13 +1401,15 @@ h3::after {
 #gl-list { margin-top: var(--space-lg); border-top: var(--rule-head) solid var(--color-gold); }
 .gl { padding-block: var(--space-md); border-bottom: var(--rule-hair) solid var(--color-rule); }
 .gl-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2xs) var(--space-sm); }
-.gl-zh { color: var(--color-ink); font: var(--serif-small) var(--text-lg)/1.3 var(--font-display); }
+.gl-zh { color: var(--color-ink); font: var(--serif-small-cjk) var(--text-lg)/1.3 var(--font-display); }
 .gl-en { color: var(--color-muted); font-size: var(--text-sm); }
 .gl-cat { margin-left: auto; color: var(--color-ink-2); font-size: var(--text-sm); }
 .gl-ch { color: var(--color-muted); font-size: var(--text-sm); }
 .gl-note { max-width: 65ch; margin-top: var(--space-xs); line-height: 1.7; }
-.gl-reveal { min-height: 36px; margin-top: var(--space-sm); padding: 0 var(--space-sm); border-color: var(--color-rule); }
-.gl-spoiler { max-width: 65ch; margin-top: var(--space-sm); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-pill); background: var(--color-paper-2); color: var(--color-ink); line-height: 1.7; }
+/* a spoiler waits behind a dashed wine button and opens behind a wine bar */
+.gl-reveal { min-height: 36px; margin-top: var(--space-sm); padding: 0 var(--space-sm); border-style: dashed; border-color: var(--color-rubric); color: var(--color-rubric); }
+@media (hover: hover) { .gl-reveal:hover { border-color: var(--color-rubric); background: var(--accent-wash); } }
+.gl-spoiler { max-width: 65ch; margin-top: var(--space-sm); padding: var(--space-sm) var(--space-md); border-left: 3px solid var(--color-rubric); border-radius: 0; background: var(--accent-wash); color: var(--color-ink); line-height: 1.7; }
 .gl-hide { margin-left: var(--space-2xs); padding: 0; border: 0; background: transparent; color: var(--color-ink); font: inherit; font-size: var(--text-sm); text-decoration: underline 1px var(--color-accent); text-underline-offset: 0.2em; cursor: pointer; }
 .gl-hide:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .gl-hidden { margin-block: var(--space-lg); }
@@ -984,14 +1432,14 @@ h3::after {
   background: transparent;
   color: inherit;
   font: inherit;
-  text-decoration: underline 1px var(--color-accent);
+  text-decoration: underline 2px dotted var(--color-rubric);
   text-underline-offset: 0.22em;
   cursor: pointer;
   transition: background-color var(--dur-micro) var(--ease-out);
 }
-.term.on { background: var(--accent-wash); }
+.term.on { background: var(--accent-wash); text-decoration-style: solid; }
 .term:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; }
-@media (hover: hover) { .term:hover { background: var(--accent-wash); } }
+@media (hover: hover) { .term:hover { background: var(--accent-wash); text-decoration-style: solid; } }
 .notes-actions { margin-top: var(--space-md); }
 .notes-actions .big { flex: 1; text-align: center; }
 #app > .big.primary { margin-top: var(--space-md); }
@@ -1006,15 +1454,25 @@ h3::after {
     grid-template-areas: "seals turn" "spells ref" "cond ref";
     column-gap: var(--space-xl);
     align-items: start;
+    position: relative;
+  }
+  /* the gutter between the columns ruled in gold, as the owner's sheet had it */
+  .sheet-grid::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: var(--space-xl);
+    left: calc((100% - var(--space-xl)) * 5 / 12 + var(--space-xl) / 2);
+    width: var(--rule-hair);
+    background: var(--color-gold);
+    pointer-events: none;
   }
   .sheet-grid:not(:has(> .seals)) { grid-template-areas: "turn ref" "spells ref" "cond ref"; }
   .sheet-grid:not(:has(> .seals)):not(:has(> .sheet-spells)) { grid-template-rows: auto 1fr; grid-template-areas: "turn ref" "cond ref"; }
   .seals { grid-area: seals; } .sheet-turn { grid-area: turn; } .sheet-spells { grid-area: spells; } .sheet-cond { grid-area: cond; } .sheet-ref { grid-area: ref; }
 }
 @media (max-width: 40rem) {
-  .mast { grid-column: 1 / -1; padding-bottom: var(--space-xs); border-bottom: 0; }
-  .ribbons { grid-column: 1 / -1; }
-  .ribbon { flex: 1; }
+  .ribbons { grid-template-columns: repeat(3, minmax(0, 1fr)); justify-content: normal; --ribbon-hang: 18px; }
   .top { padding-top: var(--space-lg); }
   .hp-card { padding: var(--space-lg) var(--space-lg) var(--space-md); }
   .create-form::before { inset: var(--space-2xs); }
@@ -1032,5 +1490,9 @@ h3::after {
 @media (prefers-reduced-motion: reduce) {
   .icon, .slot, .tag, .chip, .gl-reveal, .big, .ribbon, .pip, .combo-opt, .term, .fold summary, .fold summary::after,
   input, select, textarea { transition: none; }
+  .pip.just-spent, .pip.just-spent::after, .pip.just-restored, .pip.just-restored::before { animation: none; }
+  .ribbon-mark { transition: none; }
+  .ribbon.just-on .ribbon-mark, .ribbon.just-off .ribbon-mark, .conc-ring, .candle.is-lit::before, .candle.just-lit::before { animation: none; }
+  .candle.just-snuffed::after { content: none; }
   .icon:active, .slot:active, .tag:active, .chip:active, .gl-reveal:active, .pip:active { transform: none; }
 }

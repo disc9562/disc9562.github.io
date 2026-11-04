@@ -1,4 +1,4 @@
-const CACHE = 'dnd5e-pwa-v68'
+const CACHE = 'dnd5e-pwa-v73'
 const ASSETS = [
   './',
   './index.html',
@@ -53,7 +53,7 @@ self.addEventListener('fetch', event => {
     return
   }
   event.respondWith(
-    caches.match(req).then(hit => {
+    caches.match(req, { ignoreSearch: true }).then(hit => {
       if (hit) return hit
       return fetch(req).then(res => {
         const copy = res.clone()

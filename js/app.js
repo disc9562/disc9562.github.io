@@ -56,14 +56,32 @@ function runeBand(en, repeat) {
     x += RUNE_PATH[r] ? 12 : 6
     if (r === '᛫') return `<circle cx='${at + 3}' cy='6' r='1.1'/>`
     if (r === '᛬') return `<circle cx='${at + 3}' cy='4' r='1.1'/><circle cx='${at + 3}' cy='8' r='1.1'/>`
-    return `<path transform='translate(${at})' d='${RUNE_PATH[r]}' fill='none' stroke='black' stroke-width='1.3'/>`
+    return `<path transform='translate(${at})' d='${RUNE_PATH[r]}' fill='none' stroke='currentColor' stroke-width='1.3'/>`
   }).join('')
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${x}' height='12' viewBox='0 0 ${x} 12'>${parts}</svg>`
   return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`
 }
 
+// 同一套筆畫排成一圈（100×100，符文頭朝外），給專注的符文環當 mask；尾端 ᛬ 接回開頭
+function runeRing(en) {
+  const runes = [...runify(en) + '᛬']
+  const s = 1.3
+  const parts = runes.map((r, i) => {
+    const turn = `rotate(${(i * 360 / runes.length).toFixed(2)} 50 50) translate(${50 - 6 * s} 4) scale(${s})`
+    if (r === '᛬') return `<g transform='${turn}'><circle cx='6' cy='4' r='1.3'/><circle cx='6' cy='8' r='1.3'/></g>`
+    return `<path transform='${turn}' d='${RUNE_PATH[r]}' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>`
+  }).join('')
+  const rims = `<circle cx='50' cy='50' r='48' fill='none' stroke='currentColor' stroke-width='2.2'/><circle cx='50' cy='50' r='29' fill='none' stroke='currentColor' stroke-width='2.2'/>`
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>${parts}${rims}</svg>`
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`
+}
+
 const RUNE_BANDS = Object.fromEntries(Object.entries(TITLE_EN).map(([zh, en]) => [zh, runeBand(en, true)]))
 const MAST_RUNES = runeBand('CHARACTER JOURNAL')
+const CONC_RING = runeRing('CONCENTRATION')
+// 分頁書籤尾端繡的符文：各分頁英文名的第一個字母
+const TAB_EN = { combat: 'CHARACTER', notes: 'NOTES', script: 'REFERENCE' }
+const TAB_RUNES = Object.fromEntries(Object.entries(TAB_EN).map(([v, en]) => [v, runeBand(en[0])]))
 
 const el = document.getElementById('app')
 let data = { races: {}, classes: {}, spells: {}, feats: {} }
@@ -77,6 +95,9 @@ let glQ = ''
 let glCat = ''
 let glOpen = {}
 let notesEdit = false
+let pipFlash = null // the pip just toggled: render() replays its press once
+let tabMove = null // the tab change in flight { from, at }: renders inside its 340ms carry the ribbon drop and rise on
+let dsFlash = null // the death save just ticked: its candle lights or snuffs once
 let notesGl = false
 let termOpen = ''
 let glProg = Number(localStorage.getItem('dnd5e-script-progress')) || 1
@@ -185,8 +206,16 @@ function render() {
     if (m) m.insertAdjacentHTML('afterend', ribbonsHtml())
   }
   ;[...el.querySelectorAll('details')].forEach((d, i) => { if (opened[i]) d.open = true })
+  if (pipFlash) {
+    const f = pipFlash
+    pipFlash = null
+    const pip = [...el.querySelectorAll('.pip')].find(n => n.dataset.k === f.k && n.dataset.i === String(f.i))
+    if (pip) pip.classList.add(f.spent ? 'just-spent' : 'just-restored')
+  }
   for (const h of el.querySelectorAll('h3')) if (RUNE_BANDS[h.textContent]) h.style.setProperty('--title-runes', RUNE_BANDS[h.textContent])
   for (const m of el.querySelectorAll('.mast')) m.style.setProperty('--title-runes', MAST_RUNES)
+  for (const r of el.querySelectorAll('.ribbon')) r.style.setProperty('--tab-rune', TAB_RUNES[r.dataset.v])
+  for (const r of el.querySelectorAll('.conc-ring')) r.style.setProperty('--rune-ring', CONC_RING)
   el.classList.toggle('is-locked', !!(c && c.locked && view === 'combat'))
   for (const input of el.querySelectorAll('.create-form input, .create-form select')) {
     const previous = draft.find(d => input.id ? d.id === input.id : input.dataset.k && d.key === input.dataset.k)
@@ -199,10 +228,16 @@ function render() {
   }
 }
 
+// 每個分頁一條書布書籤。剛換分頁時新的那條垂下、舊的那條收回；
+// 340ms 內再 render（例如對照表資料剛載到）就用負的延遲從原處接著播，不會重來
 function ribbonsHtml() {
   const tabs = [['combat', '角色卡'], ['notes', '備忘錄'], ['script', '對照表']]
+  const t = tabMove ? Date.now() - tabMove.at : Infinity
+  const from = t < 340 && tabMove.from !== view ? tabMove.from : null
+  const move = v => !from ? '' : view === v ? ' just-on' : from === v ? ' just-off' : ''
+  const lag = v => move(v) ? ` style="--ribbon-lag: -${t}ms"` : ''
   return `<nav class="ribbons" aria-label="冒險紀錄分頁">${tabs.map(([v, label]) =>
-    `<button class="ribbon${view === v ? ' on' : ''}" data-act="tab" data-v="${v}"${view === v ? ' aria-current="page"' : ''}>${label}</button>`
+    `<button class="ribbon${view === v ? ' on' : ''}${move(v)}" data-act="tab" data-v="${v}"${view === v ? ' aria-current="page"' : ''}${lag(v)}><span class="ribbon-mark" aria-hidden="true"></span>${label}</button>`
   ).join('')}</nav>`
 }
 
@@ -290,16 +325,30 @@ function slotSpent(sl) {
   return a
 }
 
+// 三根蠟燭：成功從熄的點起，失敗從亮的吹熄；剛按的那根播一次點燃或冒煙
+function candlesHtml(k, n, flash) {
+  return `<span class="candles" aria-hidden="true">${[0, 1, 2].map(i => {
+    const lit = k === 'success' ? i < n : i >= n
+    const just = flash && flash.k === k && flash.i === i ? (k === 'success' ? ' just-lit' : ' just-snuffed') : ''
+    return `<i class="candle${lit ? ' is-lit' : ''}${just}"></i>`
+  }).join('')}</span>`
+}
+
 function deathSavesHtml(c) {
+  const flash = dsFlash
+  dsFlash = null
   return c.hp.current === 0 ? `<div class="box death-saves" role="status">
     <strong>死亡豁免</strong><p><span>成功 ${c.deathSaves.success}/3</span><span>失敗 ${c.deathSaves.fail}/3</span></p>
     <div class="row">
-      <button class="icon grow" data-act="ds" data-k="success">成功</button>
-      <button class="icon grow" data-act="ds" data-k="fail">失敗</button>
+      <button class="icon grow" data-act="ds" data-k="success">${candlesHtml('success', c.deathSaves.success, flash)}成功</button>
+      <button class="icon grow" data-act="ds" data-k="fail">${candlesHtml('fail', c.deathSaves.fail, flash)}失敗</button>
       <button class="icon grow" data-act="ds-reset">重設</button>
     </div>
   </div>` : ''
 }
+
+// 重傷: above 0 and at or under half. At 0 the death saves take over.
+function isBloodied(c) { return c.hp.current > 0 && c.hp.current <= c.hp.max / 2 }
 
 function refreshHp(c) {
   // Keep inputs mounted: replacing the page on blur would swallow the next +/- click.
@@ -311,6 +360,10 @@ function refreshHp(c) {
   if (max) max.value = c.hp.max
   const death = el.querySelector('#death-saves')
   if (death) death.innerHTML = deathSavesHtml(c)
+  const card = el.querySelector('.hp-card')
+  if (card) card.classList.toggle('is-bloodied', isBloodied(c))
+  const flag = el.querySelector('.hp-flag')
+  if (flag) flag.textContent = isBloodied(c) ? '重傷' : ''
 }
 
 function combatHtml(c) {
@@ -475,8 +528,8 @@ function combatHtml(c) {
       </label>
     </div>
     <div class="combat-overview">
-      <section class="hp-card" aria-label="生命值">
-        <div class="hp-heading"><span>生命值</span><span>目前 / 上限</span></div>
+      <section class="hp-card${isBloodied(c) ? ' is-bloodied' : ''}" aria-label="生命值">
+        <div class="hp-heading"><span>生命值<span class="hp-flag">${isBloodied(c) ? '重傷' : ''}</span></span><span>目前 / 上限</span></div>
         <div class="hp-ctrl">
           <button class="icon" data-act="hp" data-d="-1" aria-label="生命減少 1">−</button>
           <div class="hp-pair">
@@ -506,7 +559,7 @@ function combatHtml(c) {
         <div class="quick-actions" aria-label="戰鬥常用操作">
           <button class="slot" data-act="short">短休</button>
           <button class="slot" data-act="long">長休</button>
-          <button class="slot${c.concentrating ? ' cond-on' : ''}" data-act="conc" aria-pressed="${!!c.concentrating}">${c.concentrating ? '專注中' : '開始專注'}</button>
+          <button class="slot${c.concentrating ? ' cond-on' : ''}" data-act="conc" aria-pressed="${!!c.concentrating}">${c.concentrating ? '<span class="conc-ring" aria-hidden="true"></span>專注中' : '開始專注'}</button>
         </div>
       </div>
     </div>
@@ -1053,6 +1106,7 @@ el.addEventListener('click', e => {
   if (act === 'tab') {
     const v = btn.dataset.v
     if (v === view) return
+    tabMove = { from: view, at: Date.now() }
     if (v === 'notes') openNotes(c)
     else if (v === 'script') openScript()
     else { view = 'combat'; menuOpen = false; render() }
@@ -1115,6 +1169,7 @@ el.addEventListener('click', e => {
     if (!sl) return
     const sp = slotSpent(sl)
     sp[i] = !sp[i]
+    pipFlash = { k, i, spent: sp[i] }
     const next = JSON.parse(JSON.stringify(c))
     next.spellSlots[k].spent = sp
     next.spellSlots[k].used = sp.filter(Boolean).length
@@ -1326,6 +1381,8 @@ el.addEventListener('click', e => {
   }
   if (act === 'ds') {
     const next = JSON.parse(JSON.stringify(c))
+    const was = next.deathSaves[btn.dataset.k] || 0
+    if (was < 3) dsFlash = { k: btn.dataset.k, i: was }
     next.deathSaves[btn.dataset.k] = Math.min(3, (next.deathSaves[btn.dataset.k] || 0) + 1)
     replace(next)
     return
