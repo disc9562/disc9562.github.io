@@ -1,7 +1,6 @@
-const CACHE = 'dnd5e-pwa-v73'
+const CACHE = 'dnd5e-pwa-v74'
 const ASSETS = [
   './',
-  './index.html',
   './css/app.css',
   './css/tokens.css',
   './css/base.css',
@@ -48,7 +47,7 @@ self.addEventListener('fetch', event => {
         const copy = res.clone()
         caches.open(CACHE).then(cache => cache.put(req, copy))
         return res
-      }).catch(() => caches.match('./index.html'))
+      }).catch(() => caches.match('./')) // ponytail: './' not './index.html', Cloudflare Pages 308-redirects *.html and a redirected response cannot answer a navigation
     )
     return
   }
@@ -59,7 +58,7 @@ self.addEventListener('fetch', event => {
         const copy = res.clone()
         caches.open(CACHE).then(cache => cache.put(req, copy))
         return res
-      }).catch(() => caches.match('./index.html'))
+      }).catch(() => caches.match('./'))
     })
   )
 })
